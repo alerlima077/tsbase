@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TS Hub | Plataforma de Gestão para Negócios</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #0a0a1a; color: #eee; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 20px; text-align: center; }
+        .header h1 { font-size: 48px; margin-bottom: 20px; }
+        .header p { font-size: 20px; opacity: 0.9; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .planos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        .plano { background: #1a1a2e; border-radius: 20px; padding: 30px; text-align: center; border: 1px solid #333; }
+        .plano:hover { transform: translateY(-5px); transition: 0.3s; border-color: #667eea; }
+        .plano h3 { font-size: 28px; margin-bottom: 20px; color: #667eea; }
+        .preco { font-size: 48px; font-weight: bold; margin: 20px 0; color: #fff; }
+        .preco span { font-size: 16px; font-weight: normal; }
+        .btn { display: inline-block; background: #667eea; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-top: 20px; }
+        .btn:hover { background: #5a67d8; }
+        .footer { text-align: center; padding: 40px; background: #0f0f1a; margin-top: 40px; }
+        @media (max-width: 768px) { .header h1 { font-size: 32px; } }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 TS Hub</h1>
+        <p>A plataforma completa para gestão do seu negócio</p>
+        <p style="font-size: 16px; margin-top: 20px;">🌐 tshub.vercel.app</p>
+    </div>
+
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 20px;">Planos e Preços</h2>
+        <div class="planos">
+            <div class="plano">
+                <h3>🍕 Básico</h3>
+                <div class="preco">R$ 49<span>/mês</span></div>
+                <ul style="list-style: none; margin: 20px 0; text-align: left;">
+                    <li>✅ Cardápio digital</li>
+                    <li>✅ Pedidos pelo WhatsApp</li>
+                    <li>✅ Carrinho de compras</li>
+                    <li>✅ Dashboard básico</li>
+                </ul>
+                <a href="#" class="btn">Começar agora</a>
+            </div>
+            <div class="plano">
+                <h3>🍔 Profissional</h3>
+                <div class="preco">R$ 99<span>/mês</span></div>
+                <ul style="list-style: none; margin: 20px 0; text-align: left;">
+                    <li>✅ Tudo do plano Básico</li>
+                    <li>✅ Caixa diário</li>
+                    <li>✅ Programa de fidelidade</li>
+                    <li>✅ Relatórios completos</li>
+                </ul>
+                <a href="#" class="btn">Começar agora</a>
+            </div>
+            <div class="plano">
+                <h3>🍽️ Premium</h3>
+                <div class="preco">R$ 199<span>/mês</span></div>
+                <ul style="list-style: none; margin: 20px 0; text-align: left;">
+                    <li>✅ Tudo do plano Profissional</li>
+                    <li>✅ App para entregador</li>
+                    <li>✅ Múltiplos usuários</li>
+                    <li>✅ Suporte prioritário</li>
+                </ul>
+                <a href="#" class="btn">Começar agora</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>TS Hub - Plataforma de Gestão para Negócios</p>
+        <p style="font-size: 12px; margin-top: 10px;">© 2024 TS Tecnologia e Serviços</p>
+    </div>
+</body>
+</html>
