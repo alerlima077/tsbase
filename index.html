@@ -33,8 +33,7 @@
         .preco-item { font-size: 24px; font-weight: bold; color: #ff6b35; margin: 15px 0; }
         .btn-adicionar { background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
         .btn-adicionar:hover { background: #5a67d8; }
-        .carrinho { position: fixed; right: 20px; bottom: 20px; background: #1a1a2e; border-radius: 16px; padding: 15px; min-width: 250px; border: 1px solid #667eea; }
-        
+        .carrinho { position: fixed; right: 20px; bottom: 20px; background: #1a1a2e; border-radius: 16px; padding: 15px; min-width: 250px; border: 1px solid #667eea; z-index: 1000; }
         @media (max-width: 768px) { .header h1 { font-size: 32px; } }
     </style>
     
@@ -142,14 +141,17 @@
         let carrinho = [];
 
         // ============================================
-        // DETECTAR SUBDOMÍNIO
+        // DETECTAR SUBDOMÍNIO (CORRIGIDO)
         // ============================================
         function getEmpresaFromSubdomain() {
             const hostname = window.location.hostname;
             const partes = hostname.split('.');
             
+            console.log('🌐 Hostname:', hostname);
+            
             // Para tsbase.com.br, o subdomínio é a primeira parte
-            if (partes.length === 3 && partes[0] !== 'tsbase' && partes[0] !== 'www') {
+            // Exemplo: pizzaria.tsbase.com.br → ["pizzaria", "tsbase", "com", "br"]
+            if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase') {
                 return partes[0];
             }
             return null;
@@ -186,10 +188,15 @@
                 // Buscar cardápio
                 const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
                 if (cardapioDoc.exists) {
-                    cardapioAtual = cardapioDoc.data().dados || {};
-                    if (typeof cardapioAtual === 'string') {
-                        cardapioAtual = JSON.parse(cardapioAtual);
+                    let dadosCardapio = cardapioDoc.data().dados || {};
+                    if (typeof dadosCardapio === 'string') {
+                        try {
+                            dadosCardapio = JSON.parse(dadosCardapio);
+                        } catch(e) {
+                            console.error('Erro ao parsear JSON:', e);
+                        }
                     }
+                    cardapioAtual = dadosCardapio;
                     renderizarCardapio();
                 } else {
                     document.getElementById('cardapioContainer').innerHTML = `
@@ -269,7 +276,7 @@
         // ============================================
         // FUNÇÕES DO CARRINHO
         // ============================================
-        function adicionarAoCarrinho(nome, preco) {
+        window.adicionarAoCarrinho = function(nome, preco) {
             const itemExistente = carrinho.find(item => item.nome === nome);
             if (itemExistente) {
                 itemExistente.quantidade++;
@@ -279,7 +286,7 @@
             atualizarCarrinhoUI();
         }
 
-        function removerDoCarrinho(index) {
+        window.removerDoCarrinho = function(index) {
             carrinho.splice(index, 1);
             atualizarCarrinhoUI();
         }
@@ -299,14 +306,14 @@
             carrinho.forEach((item, index) => {
                 const subtotal = item.preco * item.quantidade;
                 total += subtotal;
-                html += `<div>${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2)} 
+                html += `<div style="margin-bottom: 5px;">${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2)} 
                         <button onclick="removerDoCarrinho(${index})" style="background:#ff4444; border:none; border-radius:50%; width:20px; cursor:pointer;">✕</button></div>`;
             });
             container.innerHTML = html;
             totalSpan.innerText = total.toFixed(2);
         }
 
-        function finalizarPedido() {
+        window.finalizarPedido = function() {
             if (carrinho.length === 0) {
                 alert('Adicione itens ao carrinho primeiro!');
                 return;
