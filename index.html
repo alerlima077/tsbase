@@ -20,6 +20,59 @@
         .btn { display: inline-block; background: #667eea; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-top: 20px; }
         .btn:hover { background: #5a67d8; }
         .footer { text-align: center; padding: 40px; background: #0f0f1a; margin-top: 40px; }
+        
+        /* Estilo para o modo cliente (quando acessar via subdomínio) */
+        .modo-cliente .header,
+        .modo-cliente .container,
+        .modo-cliente .footer {
+            display: none;
+        }
+        
+        .sistema-cliente {
+            display: none;
+            padding: 40px 20px;
+            text-align: center;
+        }
+        
+        .modo-cliente .sistema-cliente {
+            display: block;
+        }
+        
+        .card-sistema {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            margin: 50px auto;
+            border: 1px solid #667eea;
+        }
+        
+        .card-sistema h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .card-sistema .empresa-id {
+            background: #0f0f1a;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: monospace;
+            margin: 20px 0;
+        }
+        
+        .btn-sistema {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px;
+        }
+        
+        .btn-sistema:hover { background: #5a67d8; }
+        
         @media (max-width: 768px) { .header h1 { font-size: 32px; } }
     </style>
 </head>
@@ -73,5 +126,98 @@
         <p>TS Base - Plataforma de Gestão para Negócios</p>
         <p style="font-size: 12px; margin-top: 10px;">© 2026 T&S Tecnologia e Serviços</p>
     </div>
+
+    <!-- Área do sistema do cliente (aparece quando acessa via subdomínio) -->
+    <div class="sistema-cliente">
+        <div class="card-sistema">
+            <h2>🚀 Seu sistema está pronto!</h2>
+            <p>Bem-vindo à plataforma TS Base.</p>
+            <div class="empresa-id" id="empresaDisplay"></div>
+            <p>Em breve você terá acesso completo ao seu sistema de gestão.</p>
+            <div>
+                <a href="#" class="btn-sistema" id="btnAcessarDashboard">📊 Acessar Dashboard</a>
+                <a href="#" class="btn-sistema" id="btnAcessarCardapio">🍕 Cardápio</a>
+            </div>
+            <p style="margin-top: 20px; font-size: 12px; color: #aaa;">
+                Entre em contato com o suporte para ativar seu plano.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // PASSO 2: DETECTAR SUBDOMÍNIO
+        // ============================================
+        function getEmpresaFromSubdomain() {
+            const hostname = window.location.hostname;
+            // Exemplo: "pizzaria-joao.tsbase.vercel.app" → "pizzaria-joao"
+            const partes = hostname.split('.');
+            
+            console.log('🌐 Hostname:', hostname);
+            console.log('📦 Partes:', partes);
+            
+            // Se tem mais de 2 partes, a primeira é o subdomínio
+            if (partes.length > 2 && partes[0] !== 'www' && partes[0] !== 'tsbase') {
+                return partes[0];
+            }
+            return null; // É o site principal
+        }
+
+        // ============================================
+        // PASSO 3: ROTEAMENTO BASEADO NO SUBDOMÍNIO
+        // ============================================
+        function carregarSiteVendas() {
+            console.log('🏠 Modo: Site principal - TS Base');
+            // O conteúdo normal do site já está visível
+            document.body.classList.remove('modo-cliente');
+        }
+        
+        function carregarSistemaCliente(empresaId) {
+            console.log(`🎯 Modo: Cliente - ${empresaId}`);
+            
+            // Mudar para o modo cliente
+            document.body.classList.add('modo-cliente');
+            
+            // Mostrar o ID da empresa na tela
+            const empresaDisplay = document.getElementById('empresaDisplay');
+            if (empresaDisplay) {
+                empresaDisplay.innerHTML = `📌 Sua empresa: <strong>${empresaId}</strong>`;
+            }
+            
+            // Mudar o título da página
+            document.title = `${empresaId} | TS Base`;
+            
+            // Configurar os links do sistema
+            const btnDashboard = document.getElementById('btnAcessarDashboard');
+            const btnCardapio = document.getElementById('btnAcessarCardapio');
+            
+            if (btnDashboard) {
+                btnDashboard.href = `https://${empresaId}.tsbase.vercel.app/dashboard.html`;
+            }
+            if (btnCardapio) {
+                btnCardapio.href = `https://${empresaId}.tsbase.vercel.app/cardapio.html`;
+            }
+            
+            // Salvar empresaId no localStorage para uso futuro
+            localStorage.setItem('empresaId', empresaId);
+        }
+        
+        function rotearAplicacao() {
+            const empresa = getEmpresaFromSubdomain();
+            
+            if (empresa) {
+                // É um cliente - mostrar sistema personalizado
+                carregarSistemaCliente(empresa);
+            } else {
+                // É o site principal - mostrar página de vendas
+                carregarSiteVendas();
+            }
+        }
+        
+        // ============================================
+        // EXECUTAR QUANDO A PÁGINA CARREGAR
+        // ============================================
+        rotearAplicacao();
+    </script>
 </body>
 </html>
