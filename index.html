@@ -457,7 +457,8 @@
         function getEmpresaFromSubdomain() {
             const hostname = window.location.hostname;
             const partes = hostname.split('.');
-            if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase') {
+            // Ignorar se for o subdomínio 'admin'
+            if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase' && partes[0] !== 'admin') {
                 return partes[0];
             }
             return null;
