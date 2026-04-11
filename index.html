@@ -57,6 +57,15 @@
         }
         
         /* Card do produto */
+        .card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            background: #0f0f1a;
+        }
+
         .card-item {
             background: #1a1a2e;
             border-radius: 16px;
@@ -401,7 +410,7 @@
         }
 
         // ============================================
-        // RENDERIZAR CARDÁPIO
+        // RENDERIZAR CARDÁPIO (COM IMAGENS)
         // ============================================
         function renderizarCardapio() {
             let html = '';
@@ -411,8 +420,10 @@
                 html += '<h2 class="categoria-titulo">🔥 Promoções</h2>';
                 html += '<div class="cardapio-grid">';
                 cardapioAtual.promocoes.forEach(item => {
+                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x180?text=Imagem';
                     html += `
                         <div class="card-item">
+                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
@@ -428,8 +439,10 @@
                 html += '<h2 class="categoria-titulo">🍕 Pizzas Salgadas</h2>';
                 html += '<div class="cardapio-grid">';
                 cardapioAtual.pizzasSalgadas.forEach(item => {
+                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x180?text=Imagem';
                     html += `
                         <div class="card-item">
+                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
@@ -445,8 +458,10 @@
                 html += '<h2 class="categoria-titulo">🍫 Pizzas Doces</h2>';
                 html += '<div class="cardapio-grid">';
                 cardapioAtual.pizzasDoces.forEach(item => {
+                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x180?text=Imagem';
                     html += `
                         <div class="card-item">
+                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
@@ -462,8 +477,10 @@
                 html += '<h2 class="categoria-titulo">🥤 Bebidas</h2>';
                 html += '<div class="cardapio-grid">';
                 cardapioAtual.bebidas.forEach(item => {
+                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x180?text=Imagem';
                     html += `
                         <div class="card-item">
+                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
