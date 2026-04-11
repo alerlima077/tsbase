@@ -8,14 +8,16 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: #0a0a1a; color: #eee; }
         
-        /* Estilos do site principal */
+        /* ============================================ */
+        /* ESTILOS DO SITE PRINCIPAL (VENDAS)          */
+        /* ============================================ */
         .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 20px; text-align: center; }
         .header h1 { font-size: 48px; margin-bottom: 20px; }
         .header p { font-size: 20px; opacity: 0.9; }
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         .planos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
-        .plano { background: #1a1a2e; border-radius: 20px; padding: 30px; text-align: center; border: 1px solid #333; }
-        .plano:hover { transform: translateY(-5px); transition: 0.3s; border-color: #667eea; }
+        .plano { background: #1a1a2e; border-radius: 20px; padding: 30px; text-align: center; border: 1px solid #333; transition: 0.3s; }
+        .plano:hover { transform: translateY(-5px); border-color: #667eea; }
         .plano h3 { font-size: 28px; margin-bottom: 20px; color: #667eea; }
         .preco { font-size: 48px; font-weight: bold; margin: 20px 0; color: #fff; }
         .preco span { font-size: 16px; font-weight: normal; }
@@ -23,18 +25,201 @@
         .btn:hover { background: #5a67d8; }
         .footer { text-align: center; padding: 40px; background: #0f0f1a; margin-top: 40px; }
         
-        /* Estilos do sistema do cliente */
-        .sistema-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-        .sistema-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 20px; text-align: center; border-radius: 20px; margin-bottom: 30px; }
-        .cardapio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
-        .card-item { background: #1a1a2e; border-radius: 16px; padding: 20px; border: 1px solid #333; transition: 0.3s; }
-        .card-item:hover { transform: translateY(-5px); border-color: #667eea; }
-        .card-item h3 { color: #667eea; margin-bottom: 10px; }
-        .preco-item { font-size: 24px; font-weight: bold; color: #ff6b35; margin: 15px 0; }
-        .btn-adicionar { background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; }
-        .btn-adicionar:hover { background: #5a67d8; }
-        .carrinho { position: fixed; right: 20px; bottom: 20px; background: #1a1a2e; border-radius: 16px; padding: 15px; min-width: 250px; border: 1px solid #667eea; z-index: 1000; }
-        @media (max-width: 768px) { .header h1 { font-size: 32px; } }
+        /* ============================================ */
+        /* ESTILOS DO SISTEMA DO CLIENTE (CARDÁPIO)     */
+        /* ============================================ */
+        .sistema-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .sistema-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .sistema-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        /* Grid do cardápio - centralizado */
+        .cardapio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+        
+        /* Card do produto */
+        .card-item {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #333;
+            transition: 0.3s;
+            text-align: center;
+        }
+        
+        .card-item:hover {
+            transform: translateY(-5px);
+            border-color: #667eea;
+        }
+        
+        .card-item h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+        
+        .card-item p {
+            color: #aaa;
+            font-size: 14px;
+            margin-bottom: 15px;
+            min-height: 40px;
+        }
+        
+        .preco-item {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b35;
+            margin: 15px 0;
+        }
+        
+        .btn-adicionar {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        
+        .btn-adicionar:hover {
+            background: #5a67d8;
+            transform: scale(1.02);
+        }
+        
+        /* Categorias */
+        .categoria-titulo {
+            color: #667eea;
+            font-size: 28px;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+            display: inline-block;
+        }
+        
+        /* ============================================ */
+        /* CARRINHO FLUTUANTE (CORRIGIDO)              */
+        /* ============================================ */
+        .carrinho-flutuante {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 320px;
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 15px;
+            border: 1px solid #667eea;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .carrinho-flutuante h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .carrinho-itens {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        
+        .carrinho-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .carrinho-item-info {
+            flex: 1;
+        }
+        
+        .carrinho-item-nome {
+            font-weight: bold;
+        }
+        
+        .carrinho-item-preco {
+            font-size: 12px;
+            color: #ff6b35;
+        }
+        
+        .carrinho-item-acoes button {
+            background: #ff4444;
+            border: none;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .carrinho-total {
+            text-align: center;
+            padding: 10px 0;
+            border-top: 1px solid #333;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .carrinho-total span {
+            color: #ff6b35;
+        }
+        
+        .btn-finalizar {
+            width: 100%;
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .btn-finalizar:hover {
+            background: #128C7E;
+        }
+        
+        .carrinho-vazio {
+            text-align: center;
+            padding: 20px;
+            color: #aaa;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 { font-size: 32px; }
+            .carrinho-flutuante { width: 90%; right: 5%; bottom: 10px; }
+            .cardapio-grid { grid-template-columns: 1fr; }
+        }
     </style>
     
     <!-- Firebase SDKs -->
@@ -103,19 +288,19 @@
                 <p id="empresaSlogan">Sistema de gestão integrado</p>
             </div>
             
-            <h2>🍕 Cardápio</h2>
-            <div id="cardapioContainer" class="cardapio-grid">
+            <div id="cardapioContainer">
                 <div style="text-align: center; padding: 50px;">Carregando cardápio...</div>
             </div>
         </div>
         
-        <!-- Carrinho simples -->
-        <div class="carrinho">
+        <!-- CARRINHO FLUTUANTE (CORRIGIDO) -->
+        <div class="carrinho-flutuante" id="carrinhoContainer">
             <h3>🛒 Carrinho</h3>
-            <div id="carrinhoItens">Nenhum item</div>
-            <hr style="margin: 10px 0;">
-            <div><strong>Total: R$ <span id="carrinhoTotal">0.00</span></strong></div>
-            <button class="btn-adicionar" style="margin-top: 10px;" onclick="finalizarPedido()">📞 Finalizar Pedido</button>
+            <div class="carrinho-itens" id="carrinhoItens">
+                <div class="carrinho-vazio">Nenhum item</div>
+            </div>
+            <div class="carrinho-total">Total: <span id="carrinhoTotal">R$ 0,00</span></div>
+            <button class="btn-finalizar" onclick="finalizarPedido()">📞 Finalizar Pedido</button>
         </div>
     </div>
 
@@ -141,7 +326,7 @@
         let carrinho = [];
 
         // ============================================
-        // DETECTAR SUBDOMÍNIO (CORRIGIDO)
+        // DETECTAR SUBDOMÍNIO
         // ============================================
         function getEmpresaFromSubdomain() {
             const hostname = window.location.hostname;
@@ -150,7 +335,6 @@
             console.log('🌐 Hostname:', hostname);
             
             // Para tsbase.com.br, o subdomínio é a primeira parte
-            // Exemplo: pizzaria.tsbase.com.br → ["pizzaria", "tsbase", "com", "br"]
             if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase') {
                 return partes[0];
             }
@@ -224,14 +408,15 @@
             
             // Promoções
             if (cardapioAtual.promocoes && cardapioAtual.promocoes.length > 0) {
-                html += '<h3>🔥 Promoções</h3><div class="cardapio-grid">';
+                html += '<h2 class="categoria-titulo">🔥 Promoções</h2>';
+                html += '<div class="cardapio-grid">';
                 cardapioAtual.promocoes.forEach(item => {
                     html += `
                         <div class="card-item">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
-                            <button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome}', ${item.preco})">Adicionar</button>
+                            <button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button>
                         </div>
                     `;
                 });
@@ -240,14 +425,32 @@
             
             // Pizzas Salgadas
             if (cardapioAtual.pizzasSalgadas && cardapioAtual.pizzasSalgadas.length > 0) {
-                html += '<h3>🍕 Pizzas Salgadas</h3><div class="cardapio-grid">';
+                html += '<h2 class="categoria-titulo">🍕 Pizzas Salgadas</h2>';
+                html += '<div class="cardapio-grid">';
                 cardapioAtual.pizzasSalgadas.forEach(item => {
                     html += `
                         <div class="card-item">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
-                            <button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome}', ${item.preco})">Adicionar</button>
+                            <button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Pizzas Doces
+            if (cardapioAtual.pizzasDoces && cardapioAtual.pizzasDoces.length > 0) {
+                html += '<h2 class="categoria-titulo">🍫 Pizzas Doces</h2>';
+                html += '<div class="cardapio-grid">';
+                cardapioAtual.pizzasDoces.forEach(item => {
+                    html += `
+                        <div class="card-item">
+                            <h3>${item.nome}</h3>
+                            <p>${item.descricao}</p>
+                            <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
+                            <button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button>
                         </div>
                     `;
                 });
@@ -256,21 +459,22 @@
             
             // Bebidas
             if (cardapioAtual.bebidas && cardapioAtual.bebidas.length > 0) {
-                html += '<h3>🥤 Bebidas</h3><div class="cardapio-grid">';
+                html += '<h2 class="categoria-titulo">🥤 Bebidas</h2>';
+                html += '<div class="cardapio-grid">';
                 cardapioAtual.bebidas.forEach(item => {
                     html += `
                         <div class="card-item">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
-                            <button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome}', ${item.preco})">Adicionar</button>
+                            <button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button>
                         </div>
                     `;
                 });
                 html += '</div>';
             }
             
-            document.getElementById('cardapioContainer').innerHTML = html || '<p>Cardápio vazio</p>';
+            document.getElementById('cardapioContainer').innerHTML = html || '<p style="text-align:center;">Cardápio vazio</p>';
         }
 
         // ============================================
@@ -296,8 +500,8 @@
             const totalSpan = document.getElementById('carrinhoTotal');
             
             if (carrinho.length === 0) {
-                container.innerHTML = 'Nenhum item';
-                totalSpan.innerText = '0.00';
+                container.innerHTML = '<div class="carrinho-vazio">Nenhum item</div>';
+                totalSpan.innerText = 'R$ 0,00';
                 return;
             }
             
@@ -306,11 +510,20 @@
             carrinho.forEach((item, index) => {
                 const subtotal = item.preco * item.quantidade;
                 total += subtotal;
-                html += `<div style="margin-bottom: 5px;">${item.quantidade}x ${item.nome} - R$ ${subtotal.toFixed(2)} 
-                        <button onclick="removerDoCarrinho(${index})" style="background:#ff4444; border:none; border-radius:50%; width:20px; cursor:pointer;">✕</button></div>`;
+                html += `
+                    <div class="carrinho-item">
+                        <div class="carrinho-item-info">
+                            <div class="carrinho-item-nome">${item.quantidade}x ${item.nome}</div>
+                            <div class="carrinho-item-preco">R$ ${subtotal.toFixed(2)}</div>
+                        </div>
+                        <div class="carrinho-item-acoes">
+                            <button onclick="removerDoCarrinho(${index})">✕</button>
+                        </div>
+                    </div>
+                `;
             });
             container.innerHTML = html;
-            totalSpan.innerText = total.toFixed(2);
+            totalSpan.innerText = `R$ ${total.toFixed(2)}`;
         }
 
         window.finalizarPedido = function() {
