@@ -6,7 +6,30 @@
     <title>TS Base | Plataforma de Gestão para Negócios</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #0a0a1a; color: #eee; }
+        
+        /* ============================================ */
+        /* FUNDO DE TELA COM IMAGEM                     */
+        /* ============================================ */
+        body {
+            background-image: url('images/img_fundo.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        /* Overlay escuro para destacar os cards */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: -1;
+        }
         
         /* ============================================ */
         /* ESTILOS DO SITE PRINCIPAL (VENDAS)          */
@@ -56,28 +79,22 @@
             margin-bottom: 40px;
         }
         
-        /* Card do produto */
-        .card-img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            background: #0f0f1a;
-        }
-
+        /* Card do produto - COM FUNDO ESCURO PARA DESTACAR */
         .card-item {
-            background: #1a1a2e;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(5px);
             border-radius: 16px;
             padding: 20px;
-            border: 1px solid #333;
+            border: 1px solid #667eea;
             transition: 0.3s;
             text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
         .card-item:hover {
             transform: translateY(-5px);
-            border-color: #667eea;
+            border-color: #ff6b35;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
         
         .card-item h3 {
@@ -87,10 +104,21 @@
         }
         
         .card-item p {
-            color: #aaa;
+            color: #ccc;
             font-size: 14px;
             margin-bottom: 15px;
             min-height: 40px;
+        }
+        
+        /* IMAGEM - AJUSTADA PARA CABER NO CARD */
+        .card-img {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            background: rgba(0,0,0,0.3);
+            padding: 5px;
         }
         
         .preco-item {
@@ -125,23 +153,24 @@
             padding-bottom: 10px;
             border-bottom: 2px solid #667eea;
             display: inline-block;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
         
         /* ============================================ */
-        /* CARRINHO FLUTUANTE (CORRIGIDO)              */
+        /* CARRINHO FLUTUANTE                          */
         /* ============================================ */
         .carrinho-flutuante {
             position: fixed;
             bottom: 20px;
             right: 20px;
             width: 320px;
-            background: #1a1a2e;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
             border-radius: 16px;
             padding: 15px;
             border: 1px solid #667eea;
             box-shadow: 0 4px 20px rgba(0,0,0,0.5);
             z-index: 1000;
-            backdrop-filter: blur(10px);
         }
         
         .carrinho-flutuante h3 {
@@ -228,6 +257,7 @@
             .header h1 { font-size: 32px; }
             .carrinho-flutuante { width: 90%; right: 5%; bottom: 10px; }
             .cardapio-grid { grid-template-columns: 1fr; }
+            .card-img { height: 180px; }
         }
     </style>
     
@@ -302,7 +332,7 @@
             </div>
         </div>
         
-        <!-- CARRINHO FLUTUANTE (CORRIGIDO) -->
+        <!-- CARRINHO FLUTUANTE -->
         <div class="carrinho-flutuante" id="carrinhoContainer">
             <h3>🛒 Carrinho</h3>
             <div class="carrinho-itens" id="carrinhoItens">
@@ -420,10 +450,10 @@
                 html += '<h2 class="categoria-titulo">🔥 Promoções</h2>';
                 html += '<div class="cardapio-grid">';
                 cardapioAtual.promocoes.forEach(item => {
-                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x180?text=Imagem';
+                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x200?text=Imagem';
                     html += `
                         <div class="card-item">
-                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'">
+                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x200?text=Produto'">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
@@ -439,10 +469,10 @@
                 html += '<h2 class="categoria-titulo">🍕 Pizzas Salgadas</h2>';
                 html += '<div class="cardapio-grid">';
                 cardapioAtual.pizzasSalgadas.forEach(item => {
-                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x180?text=Imagem';
+                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x200?text=Imagem';
                     html += `
                         <div class="card-item">
-                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'">
+                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x200?text=Produto'">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
@@ -458,10 +488,10 @@
                 html += '<h2 class="categoria-titulo">🍫 Pizzas Doces</h2>';
                 html += '<div class="cardapio-grid">';
                 cardapioAtual.pizzasDoces.forEach(item => {
-                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x180?text=Imagem';
+                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x200?text=Imagem';
                     html += `
                         <div class="card-item">
-                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'">
+                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x200?text=Produto'">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
@@ -477,10 +507,10 @@
                 html += '<h2 class="categoria-titulo">🥤 Bebidas</h2>';
                 html += '<div class="cardapio-grid">';
                 cardapioAtual.bebidas.forEach(item => {
-                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x180?text=Imagem';
+                    const imgUrl = item.imagem ? item.imagem : 'https://via.placeholder.com/280x200?text=Imagem';
                     html += `
                         <div class="card-item">
-                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'">
+                            <img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x200?text=Produto'">
                             <h3>${item.nome}</h3>
                             <p>${item.descricao}</p>
                             <div class="preco-item">R$ ${item.preco.toFixed(2)}</div>
