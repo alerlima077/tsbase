@@ -1,1 +1,355 @@
-<!--teste--> 
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | TS Base</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #0a0a1a; color: #eee; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Login */
+        .login-box {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #1a1a2e;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+        }
+        .login-box button {
+            width: 100%;
+            padding: 12px;
+            background: #ff6b35;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .login-box button:hover { background: #e85d2a; }
+        
+        /* Header Admin */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+        }
+        .admin-header h1 { color: #ff6b35; }
+        .logout-btn { background: #ff4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+        
+        /* Cards de empresas */
+        .empresas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .empresa-card {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+        .empresa-card:hover { border-color: #ff6b35; transform: translateY(-3px); }
+        .empresa-card h3 { color: #ff6b35; margin-bottom: 10px; }
+        .empresa-card p { margin: 5px 0; color: #aaa; }
+        .empresa-card .status { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-top: 10px; }
+        .status-ativo { background: #4caf50; }
+        .status-inativo { background: #555; }
+        .btn-editar { background: #ff6b35; border: none; padding: 8px 15px; border-radius: 8px; color: white; cursor: pointer; margin-right: 10px; }
+        .btn-excluir { background: #ff4444; border: none; padding: 8px 15px; border-radius: 8px; color: white; cursor: pointer; }
+        
+        /* Formulário */
+        .form-card {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 1px solid #ff6b35;
+        }
+        .form-card h2 { color: #ff6b35; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; color: #ccc; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            background: #0f0f1a;
+            color: white;
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn-salvar { background: #4caf50; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .btn-salvar:hover { background: #45a049; }
+        
+        .info { background: #2196f3; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .erro { background: #ff4444; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+            .empresas-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- TELA DE LOGIN -->
+        <div id="loginScreen">
+            <div class="login-box">
+                <h2 style="color: #ff6b35; margin-bottom: 20px;">🔐 Admin TS Base</h2>
+                <input type="email" id="adminEmail" placeholder="E-mail" value="admin@tsbase.com">
+                <input type="password" id="adminSenha" placeholder="Senha">
+                <button onclick="fazerLogin()">Entrar</button>
+                <p style="margin-top: 15px; font-size: 12px; color: #aaa;">Use o e-mail e senha cadastrados no Firebase Auth</p>
+            </div>
+        </div>
+        
+        <!-- PAINEL ADMIN -->
+        <div id="adminPanel" style="display: none;">
+            <div class="admin-header">
+                <h1>🚀 TS Base - Admin</h1>
+                <button class="logout-btn" onclick="fazerLogout()">Sair</button>
+            </div>
+            
+            <!-- FORMULÁRIO DE CADASTRO -->
+            <div class="form-card">
+                <h2>➕ Cadastrar Nova Empresa</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Subdomínio (ex: hamburgueria)</label>
+                        <input type="text" id="empresaSubdominio" placeholder="hamburgueria" required>
+                        <small style="color: #aaa;">*.tsbase.com.br</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Nome da Empresa</label>
+                        <input type="text" id="empresaNome" placeholder="Império das Pizzas" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Plano</label>
+                        <select id="empresaPlano">
+                            <option value="basico">Básico (R$ 49/mês)</option>
+                            <option value="profissional" selected>Profissional (R$ 99/mês)</option>
+                            <option value="premium">Premium (R$ 199/mês)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone (com DDD)</label>
+                        <input type="text" id="empresaTelefone" placeholder="16999999999">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Endereço</label>
+                    <input type="text" id="empresaEndereco" placeholder="Rua, número, bairro, cidade">
+                </div>
+                <div class="form-group">
+                    <label>Horário de Funcionamento</label>
+                    <input type="text" id="empresaHorario" placeholder="Quarta a Domingo, 18h às 23h">
+                </div>
+                <div class="form-group">
+                    <label>Taxa de Entrega (R$)</label>
+                    <input type="number" id="empresaTaxa" placeholder="3.50" step="0.01">
+                </div>
+                <button class="btn-salvar" onclick="cadastrarEmpresa()">✅ Cadastrar Empresa</button>
+            </div>
+            
+            <!-- LISTA DE EMPRESAS -->
+            <h2 style="color: #ff6b35; margin: 30px 0 15px;">📋 Empresas Cadastradas</h2>
+            <div id="empresasLista" class="empresas-grid">
+                <div style="text-align: center; padding: 50px;">Carregando...</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // CONFIGURAÇÃO DO FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyB8uUzNpj3RLdoVZoHqd61zGMxsm5KHbL8",
+            authDomain: "imperio-pizzas.firebaseapp.com",
+            projectId: "imperio-pizzas",
+            storageBucket: "imperio-pizzas.firebasestorage.app",
+            messagingSenderId: "177187165049",
+            appId: "1:177187165049:web:c0419e4fc621cd2621d5a8"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // FUNÇÕES DE LOGIN
+        async function fazerLogin() {
+            const email = document.getElementById('adminEmail').value;
+            const senha = document.getElementById('adminSenha').value;
+            try {
+                await auth.signInWithEmailAndPassword(email, senha);
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                carregarEmpresas();
+            } catch (error) {
+                alert('Erro no login: ' + error.message);
+            }
+        }
+
+        function fazerLogout() {
+            auth.signOut();
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('adminPanel').style.display = 'none';
+        }
+
+        // CARREGAR EMPRESAS
+        async function carregarEmpresas() {
+            const snapshot = await db.collection('empresas').orderBy('criadoEm', 'desc').get();
+            const empresas = [];
+            snapshot.forEach(doc => empresas.push({ id: doc.id, ...doc.data() }));
+            
+            if (empresas.length === 0) {
+                document.getElementById('empresasLista').innerHTML = '<div style="text-align: center; padding: 50px;">Nenhuma empresa cadastrada</div>';
+                return;
+            }
+            
+            let html = '';
+            empresas.forEach(emp => {
+                const statusClass = emp.ativo !== false ? 'status-ativo' : 'status-inativo';
+                const statusText = emp.ativo !== false ? 'Ativo' : 'Inativo';
+                html += `
+                    <div class="empresa-card">
+                        <h3>🍕 ${emp.nome || emp.id}</h3>
+                        <p><strong>Subdomínio:</strong> ${emp.id}.tsbase.com.br</p>
+                        <p><strong>Plano:</strong> ${emp.plano || 'profissional'}</p>
+                        <p><strong>Telefone:</strong> ${emp.telefone || 'Não informado'}</p>
+                        <p><strong>Cadastrado:</strong> ${emp.criadoEm?.toDate().toLocaleDateString() || new Date().toLocaleDateString()}</p>
+                        <span class="status ${statusClass}">${statusText}</span>
+                        <div style="margin-top: 15px;">
+                            <button class="btn-editar" onclick="editarEmpresa('${emp.id}')">✏️ Editar</button>
+                            <button class="btn-excluir" onclick="excluirEmpresa('${emp.id}')">🗑️ Excluir</button>
+                            <button class="btn-editar" onclick="gerarCardapioBase('${emp.id}')">📋 Gerar Cardápio</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('empresasLista').innerHTML = html;
+        }
+
+        // CADASTRAR EMPRESA
+        async function cadastrarEmpresa() {
+            const subdominio = document.getElementById('empresaSubdominio').value.trim().toLowerCase();
+            const nome = document.getElementById('empresaNome').value.trim();
+            const plano = document.getElementById('empresaPlano').value;
+            const telefone = document.getElementById('empresaTelefone').value;
+            const endereco = document.getElementById('empresaEndereco').value;
+            const horario = document.getElementById('empresaHorario').value;
+            const taxaEntrega = parseFloat(document.getElementById('empresaTaxa').value) || 3.50;
+            
+            if (!subdominio || !nome) {
+                alert('Preencha o subdomínio e o nome da empresa!');
+                return;
+            }
+            
+            // Verificar se subdomínio já existe
+            const empresaExistente = await db.collection('empresas').doc(subdominio).get();
+            if (empresaExistente.exists) {
+                alert('Este subdomínio já está em uso! Escolha outro.');
+                return;
+            }
+            
+            // Criar documento da empresa
+            await db.collection('empresas').doc(subdominio).set({
+                nome: nome,
+                plano: plano,
+                ativo: true,
+                telefone: telefone,
+                endereco: endereco,
+                horario: horario,
+                taxaEntrega: taxaEntrega,
+                criadoEm: new Date()
+            });
+            
+            // Criar cardápio base
+            await gerarCardapioBase(subdominio);
+            
+            alert(`✅ Empresa "${nome}" cadastrada com sucesso!\n\nAcesse: https://${subdominio}.tsbase.com.br`);
+            
+            // Limpar formulário
+            document.getElementById('empresaSubdominio').value = '';
+            document.getElementById('empresaNome').value = '';
+            document.getElementById('empresaTelefone').value = '';
+            document.getElementById('empresaEndereco').value = '';
+            document.getElementById('empresaHorario').value = '';
+            document.getElementById('empresaTaxa').value = '';
+            
+            carregarEmpresas();
+        }
+        
+        // GERAR CARDÁPIO BASE
+        async function gerarCardapioBase(empresaId) {
+            const cardapioBase = {
+                pizzasSalgadas: [
+                    { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 34.90, imagem: "images/calabresa.jpg" },
+                    { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 32.90, imagem: "images/musarela.jpg" },
+                    { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 39.90, imagem: "images/portuguesa.jpg" }
+                ],
+                pizzasDoces: [
+                    { id: 7, nome: "Chocolate", descricao: "Chocolate ao leite com granulado", preco: 35.90, imagem: "images/pizza_chocolate.jpg" }
+                ],
+                bebidas: [
+                    { id: 10, nome: "Coca-Cola 2L", descricao: "Refrigerante gelado", preco: 10.00, imagem: "images/coca-cola.jpg" }
+                ],
+                promocoes: []
+            };
+            
+            await db.collection('cardapio').doc(empresaId).set({
+                dados: cardapioBase
+            });
+            
+            console.log(`📋 Cardápio base criado para ${empresaId}`);
+        }
+        
+        // EDITAR EMPRESA
+        async function editarEmpresa(empresaId) {
+            const novoNome = prompt('Digite o novo nome da empresa:');
+            if (!novoNome) return;
+            await db.collection('empresas').doc(empresaId).update({ nome: novoNome });
+            alert('✅ Nome atualizado!');
+            carregarEmpresas();
+        }
+        
+        // EXCLUIR EMPRESA
+        async function excluirEmpresa(empresaId) {
+            if (!confirm(`Tem certeza que deseja excluir a empresa "${empresaId}"? Isso removerá todos os dados!`)) return;
+            await db.collection('empresas').doc(empresaId).delete();
+            await db.collection('cardapio').doc(empresaId).delete();
+            alert('✅ Empresa excluída!');
+            carregarEmpresas();
+        }
+        
+        // VERIFICAR LOGIN
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('adminPanel').style.display = 'block';
+                carregarEmpresas();
+            }
+        });
+    </script>
+</body>
+</html>
