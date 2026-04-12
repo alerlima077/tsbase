@@ -8,9 +8,33 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         
         /* ============================================ */
-        /* FUNDO DE TELA COM IMAGEM                     */
+        /* ESTILOS DO SITE PRINCIPAL (VENDAS)          */
         /* ============================================ */
-        body {
+        .site-principal {
+            background: #0a0a1a;
+            min-height: 100vh;
+        }
+        
+        .header-principal { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 20px; text-align: center; }
+        .header-principal h1 { font-size: 48px; margin-bottom: 20px; color: white; }
+        .header-principal p { font-size: 20px; opacity: 0.9; color: white; }
+        
+        .container-principal { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .planos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        .plano { background: #1a1a2e; border-radius: 20px; padding: 30px; text-align: center; border: 1px solid #333; transition: 0.3s; }
+        .plano:hover { transform: translateY(-5px); border-color: #667eea; }
+        .plano h3 { font-size: 28px; margin-bottom: 20px; color: #667eea; }
+        .preco { font-size: 48px; font-weight: bold; margin: 20px 0; color: #fff; }
+        .preco span { font-size: 16px; font-weight: normal; }
+        .btn-principal { display: inline-block; background: #667eea; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        .btn-principal:hover { background: #5a67d8; transform: scale(1.02); }
+        
+        .footer-principal { text-align: center; padding: 40px; background: #0f0f1a; margin-top: 40px; color: #aaa; }
+        
+        /* ============================================ */
+        /* ESTILOS DO SISTEMA DO CLIENTE (CARDÁPIO)     */
+        /* ============================================ */
+        .sistema-cliente {
             background-image: url('images/img_fundo.jpeg');
             background-size: cover;
             background-position: center;
@@ -19,8 +43,7 @@
             min-height: 100vh;
         }
         
-        /* Overlay escuro para destacar os cards */
-        body::before {
+        .sistema-cliente::before {
             content: '';
             position: fixed;
             top: 0;
@@ -31,28 +54,6 @@
             z-index: -1;
         }
         
-        /* ============================================ */
-        /* ESTILOS DO SITE PRINCIPAL (VENDAS)          */
-        /* ============================================ */
-        .header { background: linear-gradient(135deg, #ff6b35 0%, #e85d2a 100%); padding: 40px 20px; text-align: center; }
-        .header h1 { font-size: 36px; margin-bottom: 10px; color: #fff; }
-        .header p { font-size: 18px; opacity: 0.9; color: #fff; }
-        .logo-header { max-width: 180px; margin: 0 auto 20px; }
-        .logo-header img { width: 100%; height: auto; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-        .planos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
-        .plano { background: #2c2c2c; border-radius: 20px; padding: 30px; text-align: center; border: 1px solid #444; transition: 0.3s; }
-        .plano:hover { transform: translateY(-5px); border-color: #ff6b35; }
-        .plano h3 { font-size: 28px; margin-bottom: 20px; color: #ff6b35; }
-        .preco { font-size: 48px; font-weight: bold; margin: 20px 0; color: #fff; }
-        .preco span { font-size: 16px; font-weight: normal; }
-        .btn { display: inline-block; background: #ff6b35; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: 0.3s; }
-        .btn:hover { background: #e85d2a; transform: scale(1.02); }
-        .footer { text-align: center; padding: 40px; background: #1a1a1a; margin-top: 40px; color: #aaa; }
-        
-        /* ============================================ */
-        /* ESTILOS DO SISTEMA DO CLIENTE (CARDÁPIO)     */
-        /* ============================================ */
         .sistema-container {
             max-width: 1200px;
             margin: 0 auto;
@@ -78,23 +79,10 @@
             padding: 10px;
         }
         
-        .sistema-header .logo-cliente img {
-            width: 100%;
-            height: auto;
-        }
+        .sistema-header .logo-cliente img { width: 100%; height: auto; }
+        .sistema-header h1 { font-size: 32px; margin-bottom: 5px; color: #fff; }
+        .sistema-header p { color: rgba(255,255,255,0.9); font-size: 16px; }
         
-        .sistema-header h1 {
-            font-size: 32px;
-            margin-bottom: 5px;
-            color: #fff;
-        }
-        
-        .sistema-header p {
-            color: rgba(255,255,255,0.9);
-            font-size: 16px;
-        }
-        
-        /* Grid do cardápio */
         .cardapio-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -103,7 +91,6 @@
             margin-bottom: 40px;
         }
         
-        /* Card do produto */
         .card-item {
             background: #2c2c2c;
             border-radius: 16px;
@@ -114,26 +101,10 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
         
-        .card-item:hover {
-            transform: translateY(-5px);
-            border-color: #ff6b35;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-        }
+        .card-item:hover { transform: translateY(-5px); border-color: #ff6b35; }
+        .card-item h3 { color: #ff6b35; margin-bottom: 10px; font-size: 20px; }
+        .card-item p { color: #ccc; font-size: 14px; margin-bottom: 15px; min-height: 40px; }
         
-        .card-item h3 {
-            color: #ff6b35;
-            margin-bottom: 10px;
-            font-size: 20px;
-        }
-        
-        .card-item p {
-            color: #ccc;
-            font-size: 14px;
-            margin-bottom: 15px;
-            min-height: 40px;
-        }
-        
-        /* IMAGEM - AJUSTADA PARA CABER NO CARD */
         .card-img {
             width: 100%;
             height: 180px;
@@ -144,31 +115,10 @@
             padding: 10px;
         }
         
-        .preco-item {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff6b35;
-            margin: 15px 0;
-        }
+        .preco-item { font-size: 24px; font-weight: bold; color: #ff6b35; margin: 15px 0; }
+        .btn-adicionar { background: #ff6b35; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.3s; }
+        .btn-adicionar:hover { background: #e85d2a; transform: scale(1.02); }
         
-        .btn-adicionar {
-            background: #ff6b35;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-        
-        .btn-adicionar:hover {
-            background: #e85d2a;
-            transform: scale(1.02);
-        }
-        
-        /* Categorias */
         .categoria-titulo {
             color: #ff6b35;
             font-size: 28px;
@@ -176,12 +126,8 @@
             padding-bottom: 10px;
             border-bottom: 2px solid #ff6b35;
             display: inline-block;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
         }
         
-        /* ============================================ */
-        /* CARRINHO FLUTUANTE                          */
-        /* ============================================ */
         .carrinho-flutuante {
             position: fixed;
             bottom: 20px;
@@ -195,89 +141,19 @@
             z-index: 1000;
         }
         
-        .carrinho-flutuante h3 {
-            color: #ff6b35;
-            margin-bottom: 10px;
-            text-align: center;
-        }
+        .carrinho-flutuante h3 { color: #ff6b35; margin-bottom: 10px; text-align: center; }
+        .carrinho-itens { max-height: 300px; overflow-y: auto; margin-bottom: 10px; font-size: 13px; }
+        .carrinho-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #444; }
+        .carrinho-item-info { flex: 1; }
+        .carrinho-item-nome { font-weight: bold; color: #fff; }
+        .carrinho-item-preco { font-size: 12px; color: #ff6b35; }
+        .carrinho-item-acoes button { background: #ff4444; border: none; border-radius: 50%; width: 22px; height: 22px; color: white; cursor: pointer; font-size: 12px; margin-left: 5px; }
+        .carrinho-total { text-align: center; padding: 10px 0; border-top: 1px solid #444; font-weight: bold; font-size: 18px; color: #fff; }
+        .carrinho-total span { color: #ff6b35; }
+        .btn-finalizar { width: 100%; background: #25D366; color: white; border: none; padding: 10px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 10px; }
+        .btn-finalizar:hover { background: #128C7E; }
+        .carrinho-vazio { text-align: center; padding: 20px; color: #aaa; }
         
-        .carrinho-itens {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-bottom: 10px;
-            font-size: 13px;
-        }
-        
-        .carrinho-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid #444;
-        }
-        
-        .carrinho-item-info {
-            flex: 1;
-        }
-        
-        .carrinho-item-nome {
-            font-weight: bold;
-            color: #fff;
-        }
-        
-        .carrinho-item-preco {
-            font-size: 12px;
-            color: #ff6b35;
-        }
-        
-        .carrinho-item-acoes button {
-            background: #ff4444;
-            border: none;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            color: white;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-        
-        .carrinho-total {
-            text-align: center;
-            padding: 10px 0;
-            border-top: 1px solid #444;
-            font-weight: bold;
-            font-size: 18px;
-            color: #fff;
-        }
-        
-        .carrinho-total span {
-            color: #ff6b35;
-        }
-        
-        .btn-finalizar {
-            width: 100%;
-            background: #25D366;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        
-        .btn-finalizar:hover {
-            background: #128C7E;
-        }
-        
-        .carrinho-vazio {
-            text-align: center;
-            padding: 20px;
-            color: #aaa;
-        }
-        
-        /* Tabs */
         .tab-btn {
             background: #2c2c2c;
             border: 1px solid #ff6b35;
@@ -288,23 +164,13 @@
             font-weight: bold;
             transition: 0.3s;
         }
-        .tab-btn.ativo {
-            background: #ff6b35;
-            color: white;
-        }
-        .tab-btn:hover {
-            background: #e85d2a;
-        }
-        .aba-conteudo {
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        .tab-btn.ativo { background: #ff6b35; color: white; }
+        .tab-btn:hover { background: #e85d2a; }
+        .aba-conteudo { animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
         @media (max-width: 768px) {
-            .header h1 { font-size: 28px; }
+            .header-principal h1 { font-size: 32px; }
             .carrinho-flutuante { width: 90%; right: 5%; bottom: 10px; }
             .cardapio-grid { grid-template-columns: 1fr; }
             .card-img { height: 160px; }
@@ -312,24 +178,20 @@
         }
     </style>
     
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
     <!-- SITE PRINCIPAL (aparece em tsbase.com.br) -->
-    <div id="sitePrincipal">
-        <div class="header">
-            <div class="logo-header">
-                <img src="images/T&S_SF.png" alt="Império das Pizzas" onerror="this.src='https://via.placeholder.com/180x80?text=Logo'">
-            </div>
+    <div id="sitePrincipal" class="site-principal">
+        <div class="header-principal">
             <h1>🚀 TS Base</h1>
             <p>A plataforma completa para gestão do seu negócio</p>
             <p style="font-size: 16px; margin-top: 20px;">🌐 tsbase.com.br</p>
         </div>
 
-        <div class="container">
-            <h2 style="text-align: center; margin-bottom: 20px; color: #ff6b35;">Planos e Preços</h2>
+        <div class="container-principal">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #667eea;">Planos e Preços</h2>
             <div class="planos">
                 <div class="plano">
                     <h3>🍕 Básico</h3>
@@ -340,7 +202,7 @@
                         <li>✅ Carrinho de compras</li>
                         <li>✅ Dashboard básico</li>
                     </ul>
-                    <a href="#" class="btn">Começar agora</a>
+                    <a href="#" class="btn-principal">Começar agora</a>
                 </div>
                 <div class="plano">
                     <h3>🍔 Profissional</h3>
@@ -351,7 +213,7 @@
                         <li>✅ Programa de fidelidade</li>
                         <li>✅ Relatórios completos</li>
                     </ul>
-                    <a href="#" class="btn">Começar agora</a>
+                    <a href="#" class="btn-principal">Começar agora</a>
                 </div>
                 <div class="plano">
                     <h3>🍽️ Premium</h3>
@@ -362,26 +224,24 @@
                         <li>✅ Múltiplos usuários</li>
                         <li>✅ Suporte prioritário</li>
                     </ul>
-                    <a href="#" class="btn">Começar agora</a>
+                    <a href="#" class="btn-principal">Começar agora</a>
                 </div>
             </div>
         </div>
 
-        <div class="footer">
+        <div class="footer-principal">
             <p>TS Base - Plataforma de Gestão para Negócios</p>
             <p style="font-size: 12px; margin-top: 10px;">© 2026 T&S Tecnologia e Serviços</p>
         </div>
     </div>
 
     <!-- SISTEMA DO CLIENTE (aparece em subdomínios como pizzaria.tsbase.com.br) -->
-    <div id="sistemaCliente" style="display: none;">
-        <!-- Abas: Cardápio / Dashboard -->
+    <div id="sistemaCliente" style="display: none;" class="sistema-cliente">
         <div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
             <button class="tab-btn ativo" onclick="mudarAba('cardapio')">🍕 Cardápio</button>
             <button class="tab-btn" onclick="mudarAba('dashboard')">📊 Meus Pedidos</button>
         </div>
         
-        <!-- ABA CARDÁPIO -->
         <div id="abaCardapio" class="aba-conteudo">
             <div class="sistema-container">
                 <div class="sistema-header">
@@ -393,13 +253,10 @@
                         <p id="empresaSlogan">A melhor pizza da cidade</p>
                     </div>
                 </div>
-                <div id="cardapioContainer">
-                    <div style="text-align: center; padding: 50px;">Carregando cardápio...</div>
-                </div>
+                <div id="cardapioContainer"><div style="text-align: center; padding: 50px;">Carregando cardápio...</div></div>
             </div>
         </div>
         
-        <!-- ABA DASHBOARD (PEDIDOS DO CLIENTE) -->
         <div id="abaDashboard" class="aba-conteudo" style="display: none;">
             <div class="sistema-container">
                 <div class="sistema-header">
@@ -411,27 +268,19 @@
                         <p>Acompanhe o status dos seus pedidos</p>
                     </div>
                 </div>
-                <div id="pedidosContainer">
-                    <div style="text-align: center; padding: 50px;">Carregando seus pedidos...</div>
-                </div>
+                <div id="pedidosContainer"><div style="text-align: center; padding: 50px;">Carregando seus pedidos...</div></div>
             </div>
         </div>
         
-        <!-- CARRINHO FLUTUANTE -->
         <div class="carrinho-flutuante" id="carrinhoContainer">
             <h3>🛒 Carrinho</h3>
-            <div class="carrinho-itens" id="carrinhoItens">
-                <div class="carrinho-vazio">Nenhum item</div>
-            </div>
+            <div class="carrinho-itens" id="carrinhoItens"><div class="carrinho-vazio">Nenhum item</div></div>
             <div class="carrinho-total">Total: <span id="carrinhoTotal">R$ 0,00</span></div>
             <button class="btn-finalizar" onclick="finalizarPedido()">📞 Finalizar Pedido</button>
         </div>
     </div>
 
     <script>
-        // ============================================
-        // CONFIGURAÇÃO DO FIREBASE
-        // ============================================
         const firebaseConfig = {
             apiKey: "AIzaSyB8uUzNpj3RLdoVZoHqd61zGMxsm5KHbL8",
             authDomain: "imperio-pizzas.firebaseapp.com",
@@ -441,9 +290,7 @@
             appId: "1:177187165049:web:c0419e4fc621cd2621d5a8"
         };
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         let cardapioAtual = {};
@@ -451,22 +298,15 @@
         let empresaIdAtual = null;
         let telefoneCliente = null;
 
-        // ============================================
-        // DETECTAR SUBDOMÍNIO
-        // ============================================
         function getEmpresaFromSubdomain() {
             const hostname = window.location.hostname;
             const partes = hostname.split('.');
-            // Ignorar se for o subdomínio 'admin'
             if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase' && partes[0] !== 'admin') {
                 return partes[0];
             }
             return null;
         }
 
-        // ============================================
-        // ALTERNAR ABAS
-        // ============================================
         window.mudarAba = function(aba) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('ativo'));
             if (aba === 'cardapio') {
@@ -481,233 +321,121 @@
             }
         }
 
-        // ============================================
-        // CARREGAR PEDIDOS DO CLIENTE
-        // ============================================
         async function carregarPedidosCliente() {
             if (!telefoneCliente) {
                 document.getElementById('pedidosContainer').innerHTML = `
                     <div style="text-align: center; padding: 50px; background: #2c2c2c; border-radius: 16px;">
                         <p>⚠️ Informe seu telefone para ver seus pedidos.</p>
                         <input type="tel" id="telefoneBusca" placeholder="Seu telefone (com DDD)" style="padding: 10px; border-radius: 8px; border: none; margin-top: 10px; width: 250px;">
-                        <br>
-                        <button onclick="buscarPedidosPorTelefone()" style="background:#ff6b35; border:none; padding: 10px 20px; border-radius: 8px; color:white; cursor:pointer; margin-top: 10px;">🔍 Buscar</button>
+                        <br><button onclick="buscarPedidosPorTelefone()" style="background:#ff6b35; border:none; padding: 10px 20px; border-radius: 8px; color:white; cursor:pointer; margin-top: 10px;">🔍 Buscar</button>
                     </div>
                 `;
                 return;
             }
-            
             try {
-                const pedidosSnapshot = await db.collection('pedidos')
-                    .doc(empresaIdAtual)
-                    .collection('pedidos')
-                    .where('clienteTelefone', '==', telefoneCliente)
-                    .orderBy('dataHora', 'desc')
-                    .get();
-                
+                const pedidosSnapshot = await db.collection('pedidos').doc(empresaIdAtual).collection('pedidos').where('clienteTelefone', '==', telefoneCliente).orderBy('dataHora', 'desc').get();
                 if (pedidosSnapshot.empty) {
                     document.getElementById('pedidosContainer').innerHTML = '<div style="text-align: center; padding: 50px; background: #2c2c2c; border-radius: 16px;">📭 Nenhum pedido encontrado</div>';
                     return;
                 }
-                
                 let html = '';
                 pedidosSnapshot.forEach(doc => {
                     const pedido = doc.data();
                     const data = pedido.dataHora?.toDate() || new Date(pedido.dataHora);
-                    const statusText = {
-                        'recebido': '📋 Recebido',
-                        'preparo': '🍳 Em preparo',
-                        'entrega': '🏍️ Saiu entrega',
-                        'entregue': '✅ Entregue',
-                        'cancelado': '❌ Cancelado'
-                    };
-                    
+                    const statusText = { 'recebido': '📋 Recebido', 'preparo': '🍳 Em preparo', 'entrega': '🏍️ Saiu entrega', 'entregue': '✅ Entregue', 'cancelado': '❌ Cancelado' };
                     let itensHtml = '';
-                    if (pedido.itens) {
-                        pedido.itens.forEach(item => {
-                            itensHtml += `<div>${item.quantidade}x ${item.nome}</div>`;
-                        });
-                    }
-                    
-                    html += `
-                        <div style="background: #2c2c2c; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #444;">
-                            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #444;">
-                                <span><strong>Pedido #${doc.id.slice(0,8)}</strong></span>
-                                <span>${data.toLocaleString()}</span>
-                                <span style="background: ${pedido.statusPedido === 'entregue' ? '#4caf50' : '#ff6b35'}; padding: 4px 12px; border-radius: 20px; font-size: 12px;">${statusText[pedido.statusPedido] || '📋 Recebido'}</span>
-                            </div>
-                            <div style="margin-top: 10px; font-size: 14px; color: #ccc;">
-                                ${itensHtml}
-                            </div>
-                            <div style="margin-top: 10px; text-align: right; font-weight: bold; color: #ff6b35;">
-                                Total: R$ ${(pedido.total || 0).toFixed(2)}
-                            </div>
-                        </div>
-                    `;
+                    if (pedido.itens) pedido.itens.forEach(item => { itensHtml += `<div>${item.quantidade}x ${item.nome}</div>`; });
+                    html += `<div style="background: #2c2c2c; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #444;"><div style="display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #444;"><span><strong>Pedido #${doc.id.slice(0,8)}</strong></span><span>${data.toLocaleString()}</span><span style="background: ${pedido.statusPedido === 'entregue' ? '#4caf50' : '#ff6b35'}; padding: 4px 12px; border-radius: 20px; font-size: 12px;">${statusText[pedido.statusPedido] || '📋 Recebido'}</span></div><div style="margin-top: 10px; font-size: 14px; color: #ccc;">${itensHtml}</div><div style="margin-top: 10px; text-align: right; font-weight: bold; color: #ff6b35;">Total: R$ ${(pedido.total || 0).toFixed(2)}</div></div>`;
                 });
                 document.getElementById('pedidosContainer').innerHTML = html;
-            } catch (error) {
-                console.error('Erro:', error);
-                document.getElementById('pedidosContainer').innerHTML = '<div style="text-align: center; padding: 50px;">❌ Erro ao carregar pedidos</div>';
-            }
+            } catch (error) { console.error(error); document.getElementById('pedidosContainer').innerHTML = '<div style="text-align: center; padding: 50px;">❌ Erro ao carregar pedidos</div>'; }
         }
 
         window.buscarPedidosPorTelefone = function() {
             const telefone = document.getElementById('telefoneBusca').value.trim();
-            if (!telefone) {
-                alert('Digite seu telefone');
-                return;
-            }
+            if (!telefone) { alert('Digite seu telefone'); return; }
             telefoneCliente = telefone;
             localStorage.setItem('telefoneCliente', telefone);
             carregarPedidosCliente();
         }
 
-        // ============================================
-        // CARREGAR SISTEMA DO CLIENTE
-        // ============================================
         async function carregarSistemaCliente(empresaId) {
             empresaIdAtual = empresaId;
-            console.log(`🎯 Carregando sistema para: ${empresaId}`);
-            
             document.getElementById('sitePrincipal').style.display = 'none';
             document.getElementById('sistemaCliente').style.display = 'block';
-            
             telefoneCliente = localStorage.getItem('telefoneCliente');
-            
             try {
                 const empresaDoc = await db.collection('empresas').doc(empresaId).get();
-                if (!empresaDoc.exists) {
-                    document.getElementById('sistemaCliente').innerHTML = `<div style="text-align:center;padding:50px;"><h2>⚠️ Empresa não encontrada</h2><a href="https://tsbase.com.br">Voltar</a></div>`;
-                    return;
-                }
-                
+                if (!empresaDoc.exists) return;
                 const empresa = empresaDoc.data();
                 document.getElementById('empresaNome').innerHTML = `🍕 ${empresa.nome || empresaId}`;
                 document.title = `${empresa.nome || empresaId} | TS Base`;
-                
                 const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
                 if (cardapioDoc.exists) {
                     let dadosCardapio = cardapioDoc.data().dados || {};
-                    if (typeof dadosCardapio === 'string') {
-                        try {
-                            dadosCardapio = JSON.parse(dadosCardapio);
-                        } catch(e) {}
-                    }
+                    if (typeof dadosCardapio === 'string') try { dadosCardapio = JSON.parse(dadosCardapio); } catch(e) {}
                     cardapioAtual = dadosCardapio;
                     renderizarCardapio();
                 }
-            } catch (error) {
-                console.error('Erro:', error);
-            }
+            } catch (error) { console.error(error); }
         }
 
         function renderizarCardapio() {
             let html = '';
-            
             if (cardapioAtual.promocoes && cardapioAtual.promocoes.length) {
                 html += '<h2 class="categoria-titulo">🔥 Promoções</h2><div class="cardapio-grid">';
-                cardapioAtual.promocoes.forEach(item => {
-                    const imgUrl = item.imagem || 'https://via.placeholder.com/280x180?text=Imagem';
-                    html += `<div class="card-item"><img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
-                });
+                cardapioAtual.promocoes.forEach(item => { html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`; });
                 html += '</div>';
             }
-            
             if (cardapioAtual.pizzasSalgadas && cardapioAtual.pizzasSalgadas.length) {
                 html += '<h2 class="categoria-titulo">🍕 Pizzas Salgadas</h2><div class="cardapio-grid">';
-                cardapioAtual.pizzasSalgadas.forEach(item => {
-                    const imgUrl = item.imagem || 'https://via.placeholder.com/280x180?text=Imagem';
-                    html += `<div class="card-item"><img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
-                });
+                cardapioAtual.pizzasSalgadas.forEach(item => { html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`; });
                 html += '</div>';
             }
-            
             if (cardapioAtual.pizzasDoces && cardapioAtual.pizzasDoces.length) {
                 html += '<h2 class="categoria-titulo">🍫 Pizzas Doces</h2><div class="cardapio-grid">';
-                cardapioAtual.pizzasDoces.forEach(item => {
-                    const imgUrl = item.imagem || 'https://via.placeholder.com/280x180?text=Imagem';
-                    html += `<div class="card-item"><img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
-                });
+                cardapioAtual.pizzasDoces.forEach(item => { html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`; });
                 html += '</div>';
             }
-            
             if (cardapioAtual.bebidas && cardapioAtual.bebidas.length) {
                 html += '<h2 class="categoria-titulo">🥤 Bebidas</h2><div class="cardapio-grid">';
-                cardapioAtual.bebidas.forEach(item => {
-                    const imgUrl = item.imagem || 'https://via.placeholder.com/280x180?text=Imagem';
-                    html += `<div class="card-item"><img src="${imgUrl}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
-                });
+                cardapioAtual.bebidas.forEach(item => { html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`; });
                 html += '</div>';
             }
-            
             document.getElementById('cardapioContainer').innerHTML = html || '<p style="text-align:center;">Cardápio vazio</p>';
         }
 
-        // ============================================
-        // FUNÇÕES DO CARRINHO
-        // ============================================
         window.adicionarAoCarrinho = function(nome, preco) {
             const existente = carrinho.find(i => i.nome === nome);
             if (existente) existente.quantidade++;
             else carrinho.push({ nome, preco, quantidade: 1 });
             atualizarCarrinhoUI();
         }
-
-        window.removerDoCarrinho = function(index) {
-            carrinho.splice(index, 1);
-            atualizarCarrinhoUI();
-        }
+        window.removerDoCarrinho = function(index) { carrinho.splice(index, 1); atualizarCarrinhoUI(); }
 
         function atualizarCarrinhoUI() {
             const container = document.getElementById('carrinhoItens');
             const totalSpan = document.getElementById('carrinhoTotal');
-            if (!carrinho.length) {
-                container.innerHTML = '<div class="carrinho-vazio">Nenhum item</div>';
-                totalSpan.innerText = 'R$ 0,00';
-                return;
-            }
+            if (!carrinho.length) { container.innerHTML = '<div class="carrinho-vazio">Nenhum item</div>'; totalSpan.innerText = 'R$ 0,00'; return; }
             let html = '', total = 0;
-            carrinho.forEach((item, idx) => {
-                const sub = item.preco * item.quantidade;
-                total += sub;
-                html += `<div class="carrinho-item"><div class="carrinho-item-info"><div class="carrinho-item-nome">${item.quantidade}x ${item.nome}</div><div class="carrinho-item-preco">R$ ${sub.toFixed(2)}</div></div><div class="carrinho-item-acoes"><button onclick="removerDoCarrinho(${idx})">✕</button></div></div>`;
-            });
-            container.innerHTML = html;
-            totalSpan.innerText = `R$ ${total.toFixed(2)}`;
+            carrinho.forEach((item, idx) => { const sub = item.preco * item.quantidade; total += sub; html += `<div class="carrinho-item"><div class="carrinho-item-info"><div class="carrinho-item-nome">${item.quantidade}x ${item.nome}</div><div class="carrinho-item-preco">R$ ${sub.toFixed(2)}</div></div><div class="carrinho-item-acoes"><button onclick="removerDoCarrinho(${idx})">✕</button></div></div>`; });
+            container.innerHTML = html; totalSpan.innerText = `R$ ${total.toFixed(2)}`;
         }
 
         window.finalizarPedido = async function() {
             if (!carrinho.length) { alert('Adicione itens ao carrinho!'); return; }
-            
             if (!telefoneCliente) {
                 telefoneCliente = prompt('Informe seu telefone com DDD para acompanhar o pedido:', '');
                 if (!telefoneCliente) { alert('Telefone é obrigatório!'); return; }
                 localStorage.setItem('telefoneCliente', telefoneCliente);
             }
-            
             const total = carrinho.reduce((sum, i) => sum + (i.preco * i.quantidade), 0);
             let msg = '🍕 *PEDIDO* 🍕\n\n';
             carrinho.forEach(i => { msg += `${i.quantidade}x ${i.nome} = R$ ${(i.preco * i.quantidade).toFixed(2)}\n`; });
-            msg += `\n*TOTAL: R$ ${total.toFixed(2)}*`;
-            msg += `\n\nCliente: ${telefoneCliente}`;
-            msg += `\nEndereço: \nForma de pagamento:`;
-            
-            try {
-                await db.collection('pedidos').doc(empresaIdAtual).collection('pedidos').add({
-                    dataHora: new Date(),
-                    itens: carrinho,
-                    total: total,
-                    clienteTelefone: telefoneCliente,
-                    statusPedido: 'recebido',
-                    statusPagamento: 'pendente'
-                });
-                alert('✅ Pedido realizado! Você pode acompanhar na aba "Meus Pedidos"');
-            } catch(e) { console.error(e); }
-            
+            msg += `\n*TOTAL: R$ ${total.toFixed(2)}*\n\nCliente: ${telefoneCliente}\nEndereço: \nForma de pagamento:`;
+            try { await db.collection('pedidos').doc(empresaIdAtual).collection('pedidos').add({ dataHora: new Date(), itens: carrinho, total: total, clienteTelefone: telefoneCliente, statusPedido: 'recebido', statusPagamento: 'pendente' }); alert('✅ Pedido realizado!'); } catch(e) { console.error(e); }
             window.open(`https://wa.me/5516992600684?text=${encodeURIComponent(msg)}`, '_blank');
-            carrinho = [];
-            atualizarCarrinhoUI();
+            carrinho = []; atualizarCarrinhoUI();
         }
 
         const empresaId = getEmpresaFromSubdomain();
