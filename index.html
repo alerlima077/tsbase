@@ -14,11 +14,24 @@
             background: #0a0a1a;
             min-height: 100vh;
         }
-        
+
         .header-principal { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 20px; text-align: center; }
         .header-principal h1 { font-size: 48px; margin-bottom: 20px; color: white; }
         .header-principal p { font-size: 20px; opacity: 0.9; color: white; }
+
+        /* ESTILO DA LOGO NO SITE PRINCIPAL */
+        .logo-header {
+            max-width: 200px;
+            margin: 0 auto 20px auto;
+        }
         
+        .logo-header img {
+            width: 100%;
+            height: auto;
+            max-height: 80px;
+            object-fit: contain;
+        }
+
         .container-principal { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         .planos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
         .plano { background: #1a1a2e; border-radius: 20px; padding: 30px; text-align: center; border: 1px solid #333; transition: 0.3s; }
@@ -30,6 +43,14 @@
         .btn-principal:hover { background: #5a67d8; transform: scale(1.02); }
         
         .footer-principal { text-align: center; padding: 40px; background: #0f0f1a; margin-top: 40px; color: #aaa; }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 768px) {
+            .header-principal h1 { font-size: 32px; }
+            .logo-header { max-width: 150px; }
+            .logo-header img { max-height: 60px; }
+            .planos { grid-template-columns: 1fr; }
+        }
         
         /* ============================================ */
         /* ESTILOS DO SISTEMA DO CLIENTE (CARDÁPIO)     */
