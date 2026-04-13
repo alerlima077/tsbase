@@ -8,6 +8,41 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         
         /* ============================================ */
+        /* ESTILOS DO SITE PRINCIPAL (VENDAS)          */
+        /* ============================================ */
+        .site-principal {
+            background: #0a0a1a;
+            min-height: 100vh;
+        }
+        
+        .header-principal { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 20px; text-align: center; }
+        .header-principal h1 { font-size: 48px; margin-bottom: 20px; color: white; }
+        .header-principal p { font-size: 20px; opacity: 0.9; color: white; }
+        
+        .logo-header {
+            max-width: 220px;
+            margin: 0 auto 25px auto;
+        }
+        .logo-header img {
+            width: 100%;
+            height: auto;
+            max-height: 90px;
+            object-fit: contain;
+        }
+        
+        .container-principal { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .planos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+        .plano { background: #1a1a2e; border-radius: 20px; padding: 30px; text-align: center; border: 1px solid #333; transition: 0.3s; }
+        .plano:hover { transform: translateY(-5px); border-color: #667eea; }
+        .plano h3 { font-size: 28px; margin-bottom: 20px; color: #667eea; }
+        .preco { font-size: 48px; font-weight: bold; margin: 20px 0; color: #fff; }
+        .preco span { font-size: 16px; font-weight: normal; }
+        .btn-principal { display: inline-block; background: #667eea; color: white; padding: 12px 30px; border-radius: 50px; text-decoration: none; font-weight: bold; margin-top: 20px; transition: 0.3s; }
+        .btn-principal:hover { background: #5a67d8; transform: scale(1.02); }
+        
+        .footer-principal { text-align: center; padding: 40px; background: #0f0f1a; margin-top: 40px; color: #aaa; }
+        
+        /* ============================================ */
         /* ESTILOS DO SISTEMA DO CLIENTE (CARDÁPIO)     */
         /* ============================================ */
         .sistema-cliente {
@@ -104,7 +139,6 @@
             display: inline-block;
         }
         
-        /* CARRINHO FLUTUANTE */
         .carrinho-flutuante {
             position: fixed;
             bottom: 20px;
@@ -131,7 +165,6 @@
         .btn-finalizar:hover { background: #128C7E; }
         .carrinho-vazio { text-align: center; padding: 20px; color: #aaa; }
         
-        /* TABS */
         .tab-btn {
             background: #2c2c2c;
             border: 1px solid #ff6b35;
@@ -147,7 +180,7 @@
         .aba-conteudo { animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        /* MODAL DO CLIENTE */
+        /* Modal do Cliente */
         .modal-cliente {
             display: none;
             position: fixed;
@@ -181,24 +214,78 @@
             border-radius: 8px;
             border: none;
         }
-        .modal-cliente-content textarea { resize: vertical; }
         .btn-cancelar { background: #555; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; flex: 1; }
         .btn-confirmar { background: #25D366; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: bold; flex: 1; }
         
         @media (max-width: 768px) {
+            .header-principal h1 { font-size: 32px; }
             .carrinho-flutuante { width: 90%; right: 5%; bottom: 10px; }
             .cardapio-grid { grid-template-columns: 1fr; }
-            .card-img { height: 160px; }
-            .sistema-header .logo-cliente { max-width: 120px; }
         }
     </style>
     
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
-<body class="sistema-cliente">
-    <!-- SISTEMA DO CLIENTE -->
-    <div id="sistemaCliente">
+<body>
+    <!-- SITE PRINCIPAL (aparece em tsbase.com.br) -->
+    <div id="sitePrincipal" class="site-principal">
+        <div class="header-principal">
+            <div class="logo-header">
+                <img src="images/T&S_SF.png" alt="TS Base" onerror="this.src='https://via.placeholder.com/180x80?text=TS+Base'">
+            </div>
+            <h1>🚀 TS Base</h1>
+            <p>A plataforma completa para gestão do seu negócio</p>
+            <p style="font-size: 16px; margin-top: 20px;">🌐 tsbase.com.br</p>
+        </div>
+
+        <div class="container-principal">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #667eea;">Planos e Preços</h2>
+            <div class="planos">
+                <div class="plano">
+                    <h3>🍕 Básico</h3>
+                    <div class="preco">R$ 49<span>/mês</span></div>
+                    <ul style="list-style: none; margin: 20px 0; text-align: left; color: #ccc;">
+                        <li>✅ Cardápio digital</li>
+                        <li>✅ Pedidos pelo WhatsApp</li>
+                        <li>✅ Carrinho de compras</li>
+                        <li>✅ Dashboard básico</li>
+                    </ul>
+                    <a href="#" class="btn-principal">Começar agora</a>
+                </div>
+                <div class="plano">
+                    <h3>🍔 Profissional</h3>
+                    <div class="preco">R$ 99<span>/mês</span></div>
+                    <ul style="list-style: none; margin: 20px 0; text-align: left; color: #ccc;">
+                        <li>✅ Tudo do plano Básico</li>
+                        <li>✅ Caixa diário</li>
+                        <li>✅ Programa de fidelidade</li>
+                        <li>✅ Relatórios completos</li>
+                    </ul>
+                    <a href="#" class="btn-principal">Começar agora</a>
+                </div>
+                <div class="plano">
+                    <h3>🍽️ Premium</h3>
+                    <div class="preco">R$ 199<span>/mês</span></div>
+                    <ul style="list-style: none; margin: 20px 0; text-align: left; color: #ccc;">
+                        <li>✅ Tudo do plano Profissional</li>
+                        <li>✅ App para entregador</li>
+                        <li>✅ Múltiplos usuários</li>
+                        <li>✅ Suporte prioritário</li>
+                    </ul>
+                    <a href="#" class="btn-principal">Começar agora</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-principal">
+            <p>TS Base - Plataforma de Gestão para Negócios</p>
+            <p style="font-size: 12px; margin-top: 10px;">© 2026 T&S Tecnologia e Serviços</p>
+        </div>
+    </div>
+
+    <!-- SISTEMA DO CLIENTE (aparece em subdomínios como pizzaria.tsbase.com.br) -->
+    <div id="sistemaCliente" style="display: none;" class="sistema-cliente">
         <div style="display: flex; justify-content: center; gap: 10px; margin: 20px 0;">
             <button class="tab-btn ativo" onclick="mudarAba('cardapio')">🍕 Cardápio</button>
             <button class="tab-btn" onclick="mudarAba('dashboard')">📊 Meus Pedidos</button>
@@ -250,54 +337,42 @@
     <div id="modalCliente" class="modal-cliente">
         <div class="modal-cliente-content">
             <h3>📝 Complete seu pedido</h3>
-            
             <label>Seu nome:</label>
             <input type="text" id="clienteNome" placeholder="Ex: João Silva">
-            
             <label>📱 Seu telefone (com DDD):</label>
             <input type="tel" id="clienteTelefone" placeholder="Ex: 16999999999">
-            <div style="font-size: 11px; color: #aaa; margin-top: -10px; margin-bottom: 10px;">*Obrigatório para acompanhar o pedido</div>
-            
             <label>📦 Forma de retirada:</label>
             <select id="formaRetirada" onchange="toggleEndereco()">
-                <option value="entrega">🏍️ Delivery (Entrega) - Taxa R$ 3,50</option>
-                <option value="retirada">🏪 Retirar no local - Sem taxa</option>
+                <option value="entrega">🏍️ Delivery - Taxa R$ 3,50</option>
+                <option value="retirada">🏪 Retirar no local</option>
             </select>
-            
             <div id="campoEndereco">
                 <label>📍 Endereço de entrega:</label>
                 <input type="text" id="clienteEndereco" placeholder="Rua, número, bairro">
             </div>
-            
             <label>💳 Forma de pagamento:</label>
             <select id="clientePagamento" onchange="toggleTroco()">
                 <option value="Dinheiro">💰 Dinheiro</option>
                 <option value="Cartão">💳 Cartão</option>
                 <option value="PIX">📱 PIX</option>
             </select>
-            
             <div id="campoTroco" style="display: none;">
-                <label>Troco para quanto? (se dinheiro)</label>
+                <label>Troco para quanto?</label>
                 <input type="text" id="clienteTroco" placeholder="Ex: R$ 100,00">
             </div>
-            
             <div id="infoPIX" style="display: none; background: #16213e; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
                 <p style="color: #ff6b35;">📱 CHAVE PIX:</p>
-                <p style="background: #0f0f1a; padding: 10px; border-radius: 8px; font-family: monospace;">b3482a63-0c66-43bf-b6f1-193f37a25e6f</p>
+                <p style="background: #0f0f1a; padding: 10px; border-radius: 8px;">b3482a63-0c66-43bf-b6f1-193f37a25e6f</p>
                 <button onclick="copiarPIX()" style="background:#ff6b35; border:none; padding:5px 10px; border-radius:8px; cursor:pointer;">📋 Copiar</button>
             </div>
-            
-            <label>📝 Observações (opcional):</label>
-            <textarea id="observacoes" rows="2" placeholder="Ex: Sem cebola, extra queijo..."></textarea>
-            
+            <label>📝 Observações:</label>
+            <textarea id="observacoes" rows="2" placeholder="Ex: Sem cebola..."></textarea>
             <div id="infoRetirada" style="display: none; background: #ff6b35; padding: 10px; border-radius: 8px; margin-bottom: 15px; text-align: center;">
-                🏪 Você escolheu retirar no local!<br>
-                Endereço: Rua José Braga de Carvalho, 79 - Pontal - SP
+                🏪 Retirar no local! Rua José Braga de Carvalho, 79 - Pontal - SP
             </div>
-            
             <div style="display: flex; gap: 10px;">
                 <button class="btn-cancelar" onclick="fecharModalCliente()">Cancelar</button>
-                <button class="btn-confirmar" onclick="confirmarPedido()">✅ Confirmar Pedido</button>
+                <button class="btn-confirmar" onclick="confirmarPedido()">✅ Confirmar</button>
             </div>
         </div>
     </div>
@@ -320,7 +395,26 @@
         let empresaIdAtual = null;
         let telefoneCliente = null;
 
+        // ============================================
+        // DETECTAR SUBDOMÍNIO
+        // ============================================
+        function getEmpresaFromSubdomain() {
+            const hostname = window.location.hostname;
+            const partes = hostname.split('.');
+            
+            console.log('🌐 Hostname:', hostname);
+            console.log('📦 Partes:', partes);
+            
+            // Para tsbase.com.br, se não houver subdomínio, retorna null
+            if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase' && partes[0] !== 'admin') {
+                return partes[0];
+            }
+            return null;
+        }
+
+        // ============================================
         // FUNÇÕES DO MODAL
+        // ============================================
         function abrirModalCliente() {
             if (carrinho.length === 0) {
                 alert('Adicione itens ao carrinho primeiro!');
@@ -367,15 +461,156 @@
             alert('Chave PIX copiada! ✅');
         }
 
-        function getEmpresaFromSubdomain() {
-            const hostname = window.location.hostname;
-            const partes = hostname.split('.');
-            if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase' && partes[0] !== 'admin') {
-                return partes[0];
+        // ============================================
+        // CARREGAR SISTEMA DO CLIENTE
+        // ============================================
+        async function carregarSistemaCliente(empresaId) {
+            empresaIdAtual = empresaId;
+            console.log(`🎯 Carregando sistema para: ${empresaId}`);
+            
+            document.getElementById('sitePrincipal').style.display = 'none';
+            document.getElementById('sistemaCliente').style.display = 'block';
+            
+            telefoneCliente = localStorage.getItem('telefoneCliente');
+            
+            try {
+                const empresaDoc = await db.collection('empresas').doc(empresaId).get();
+                if (!empresaDoc.exists) {
+                    document.getElementById('sistemaCliente').innerHTML = `<div style="text-align:center;padding:50px;"><h2>⚠️ Empresa não encontrada</h2><a href="https://tsbase.com.br">Voltar</a></div>`;
+                    return;
+                }
+                
+                const empresa = empresaDoc.data();
+                document.getElementById('empresaNome').innerHTML = `🍕 ${empresa.nome || empresaId}`;
+                document.title = `${empresa.nome || empresaId} | TS Base`;
+                
+                const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
+                if (cardapioDoc.exists) {
+                    let dadosCardapio = cardapioDoc.data().dados || {};
+                    if (typeof dadosCardapio === 'string') {
+                        try { dadosCardapio = JSON.parse(dadosCardapio); } catch(e) {}
+                    }
+                    cardapioAtual = dadosCardapio;
+                    renderizarCardapio();
+                } else {
+                    document.getElementById('cardapioContainer').innerHTML = '<div style="text-align:center;padding:50px;">Cardápio não encontrado</div>';
+                }
+            } catch (error) {
+                console.error('Erro:', error);
             }
-            return null;
         }
 
+        function renderizarCardapio() {
+            let html = '';
+            if (cardapioAtual.promocoes && cardapioAtual.promocoes.length) {
+                html += '<h2 class="categoria-titulo">🔥 Promoções</h2><div class="cardapio-grid">';
+                cardapioAtual.promocoes.forEach(item => {
+                    html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
+                });
+                html += '</div>';
+            }
+            if (cardapioAtual.pizzasSalgadas && cardapioAtual.pizzasSalgadas.length) {
+                html += '<h2 class="categoria-titulo">🍕 Pizzas Salgadas</h2><div class="cardapio-grid">';
+                cardapioAtual.pizzasSalgadas.forEach(item => {
+                    html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
+                });
+                html += '</div>';
+            }
+            if (cardapioAtual.pizzasDoces && cardapioAtual.pizzasDoces.length) {
+                html += '<h2 class="categoria-titulo">🍫 Pizzas Doces</h2><div class="cardapio-grid">';
+                cardapioAtual.pizzasDoces.forEach(item => {
+                    html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
+                });
+                html += '</div>';
+            }
+            if (cardapioAtual.bebidas && cardapioAtual.bebidas.length) {
+                html += '<h2 class="categoria-titulo">🥤 Bebidas</h2><div class="cardapio-grid">';
+                cardapioAtual.bebidas.forEach(item => {
+                    html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
+                });
+                html += '</div>';
+            }
+            document.getElementById('cardapioContainer').innerHTML = html || '<p style="text-align:center;">Cardápio vazio</p>';
+        }
+
+        // ============================================
+        // FUNÇÕES DO CARRINHO
+        // ============================================
+        window.adicionarAoCarrinho = function(nome, preco) {
+            const existente = carrinho.find(i => i.nome === nome);
+            if (existente) existente.quantidade++;
+            else carrinho.push({ nome, preco, quantidade: 1 });
+            atualizarCarrinhoUI();
+        }
+        
+        window.removerDoCarrinho = function(index) { carrinho.splice(index, 1); atualizarCarrinhoUI(); }
+
+        function atualizarCarrinhoUI() {
+            const container = document.getElementById('carrinhoItens');
+            const totalSpan = document.getElementById('carrinhoTotal');
+            if (!carrinho.length) { container.innerHTML = '<div class="carrinho-vazio">Nenhum item</div>'; totalSpan.innerText = 'R$ 0,00'; return; }
+            let html = '', total = 0;
+            carrinho.forEach((item, idx) => { const sub = item.preco * item.quantidade; total += sub; html += `<div class="carrinho-item"><div class="carrinho-item-info"><div class="carrinho-item-nome">${item.quantidade}x ${item.nome}</div><div class="carrinho-item-preco">R$ ${sub.toFixed(2)}</div></div><div class="carrinho-item-acoes"><button onclick="removerDoCarrinho(${idx})">✕</button></div></div>`; });
+            container.innerHTML = html; totalSpan.innerText = `R$ ${total.toFixed(2)}`;
+        }
+
+        // ============================================
+        // FINALIZAR PEDIDO
+        // ============================================
+        window.confirmarPedido = async function() {
+            const nome = document.getElementById('clienteNome').value.trim();
+            const telefone = document.getElementById('clienteTelefone').value.trim();
+            const formaRetirada = document.getElementById('formaRetirada').value;
+            const endereco = formaRetirada === 'entrega' ? document.getElementById('clienteEndereco').value.trim() : 'Retirar no local - Rua José Braga de Carvalho, 79';
+            const pagamento = document.getElementById('clientePagamento').value;
+            const troco = document.getElementById('clienteTroco').value;
+            const observacoes = document.getElementById('observacoes').value.trim();
+            
+            if (!nome) { alert('Digite seu nome!'); return; }
+            if (!telefone) { alert('Digite seu telefone!'); return; }
+            if (formaRetirada === 'entrega' && !endereco) { alert('Digite seu endereço!'); return; }
+            
+            const subtotal = carrinho.reduce((s, i) => s + (i.preco * i.quantidade), 0);
+            const taxaEntrega = formaRetirada === 'entrega' ? 3.50 : 0;
+            const total = subtotal + taxaEntrega;
+            
+            let itensMsg = '';
+            carrinho.forEach(i => { itensMsg += `${i.quantidade}x ${i.nome} = R$ ${(i.preco * i.quantidade).toFixed(2)}\n`; });
+            
+            let msg = `🍕 *PEDIDO* 🍕\n\n👤 Cliente: ${nome}\n📱 Telefone: ${telefone}\n📦 ${formaRetirada === 'entrega' ? '🏍️ Delivery' : '🏪 Retirar no local'}\n📍 ${endereco}\n💳 Pagamento: ${pagamento}`;
+            if (pagamento === 'Dinheiro' && troco) msg += ` (Troco para: ${troco})`;
+            msg += `\n\n📋 ITENS:\n${itensMsg}`;
+            msg += `\n💰 Subtotal: R$ ${subtotal.toFixed(2)}`;
+            if (taxaEntrega > 0) msg += `\n🚚 Taxa entrega: R$ ${taxaEntrega.toFixed(2)}`;
+            msg += `\n━━━━━━━━━━━━━━━━━━━━━\n*TOTAL: R$ ${total.toFixed(2)}*`;
+            if (observacoes) msg += `\n\n📝 Obs: ${observacoes}`;
+            
+            try {
+                await db.collection('pedidos').add({
+                    empresaId: empresaIdAtual,
+                    dataHora: new Date(),
+                    cliente: { nome, telefone, endereco, formaRetirada, pagamento, troco, observacoes },
+                    itens: carrinho,
+                    subtotal: subtotal,
+                    taxaEntrega: taxaEntrega,
+                    total: total,
+                    clienteTelefone: telefone,
+                    statusPedido: 'recebido',
+                    statusPagamento: 'pendente'
+                });
+                alert('✅ Pedido realizado!');
+            } catch(e) { console.error(e); }
+            
+            window.open(`https://wa.me/5516992600684?text=${encodeURIComponent(msg)}`, '_blank');
+            carrinho = [];
+            atualizarCarrinhoUI();
+            fecharModalCliente();
+            localStorage.setItem('telefoneCliente', telefone);
+        }
+
+        // ============================================
+        // ABA DASHBOARD (PEDIDOS DO CLIENTE)
+        // ============================================
         window.mudarAba = function(aba) {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('ativo'));
             if (aba === 'cardapio') {
@@ -408,7 +643,7 @@
                     .orderBy('dataHora', 'desc')
                     .get();
                 if (pedidosSnapshot.empty) {
-                    document.getElementById('pedidosContainer').innerHTML = '<div style="text-align: center; padding: 50px; background: #2c2c2c; border-radius: 16px;">📭 Nenhum pedido encontrado</div>';
+                    document.getElementById('pedidosContainer').innerHTML = '<div style="text-align:center;padding:50px;">📭 Nenhum pedido encontrado</div>';
                     return;
                 }
                 let html = '';
@@ -418,10 +653,10 @@
                     const statusText = { 'recebido': '📋 Recebido', 'preparo': '🍳 Em preparo', 'entrega': '🏍️ Saiu entrega', 'entregue': '✅ Entregue', 'cancelado': '❌ Cancelado' };
                     let itensHtml = '';
                     if (pedido.itens) pedido.itens.forEach(item => { itensHtml += `<div>${item.quantidade}x ${item.nome}</div>`; });
-                    html += `<div style="background: #2c2c2c; border-radius: 16px; padding: 20px; margin-bottom: 20px; border: 1px solid #444;"><div style="display: flex; justify-content: space-between; flex-wrap: wrap; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #444;"><span><strong>Pedido #${doc.id.slice(0,8)}</strong></span><span>${data.toLocaleString()}</span><span style="background: ${pedido.statusPedido === 'entregue' ? '#4caf50' : '#ff6b35'}; padding: 4px 12px; border-radius: 20px; font-size: 12px;">${statusText[pedido.statusPedido] || '📋 Recebido'}</span></div><div style="margin-top: 10px; font-size: 14px; color: #ccc;">${itensHtml}</div><div style="margin-top: 10px; text-align: right; font-weight: bold; color: #ff6b35;">Total: R$ ${(pedido.total || 0).toFixed(2)}</div></div>`;
+                    html += `<div style="background:#2c2c2c; border-radius:16px; padding:20px; margin-bottom:20px; border:1px solid #444;"><div style="display:flex; justify-content:space-between; flex-wrap:wrap; margin-bottom:15px; padding-bottom:10px; border-bottom:1px solid #444;"><span><strong>Pedido #${doc.id.slice(0,8)}</strong></span><span>${data.toLocaleString()}</span><span style="background:${pedido.statusPedido === 'entregue' ? '#4caf50' : '#ff6b35'}; padding:4px 12px; border-radius:20px; font-size:12px;">${statusText[pedido.statusPedido] || '📋 Recebido'}</span></div><div style="margin-top:10px; font-size:14px; color:#ccc;">${itensHtml}</div><div style="margin-top:10px; text-align:right; font-weight:bold; color:#ff6b35;">Total: R$ ${(pedido.total || 0).toFixed(2)}</div></div>`;
                 });
                 document.getElementById('pedidosContainer').innerHTML = html;
-            } catch (error) { console.error(error); document.getElementById('pedidosContainer').innerHTML = '<div style="text-align: center; padding: 50px;">❌ Erro ao carregar pedidos</div>'; }
+            } catch (error) { console.error(error); document.getElementById('pedidosContainer').innerHTML = '<div style="text-align:center;padding:50px;">❌ Erro ao carregar pedidos</div>'; }
         }
 
         window.buscarPedidosPorTelefone = function() {
@@ -432,125 +667,18 @@
             carregarPedidosCliente();
         }
 
-        async function carregarSistemaCliente(empresaId) {
-            empresaIdAtual = empresaId;
-            document.getElementById('sistemaCliente').style.display = 'block';
-            telefoneCliente = localStorage.getItem('telefoneCliente');
-            try {
-                const empresaDoc = await db.collection('empresas').doc(empresaId).get();
-                if (!empresaDoc.exists) return;
-                const empresa = empresaDoc.data();
-                document.getElementById('empresaNome').innerHTML = `🍕 ${empresa.nome || empresaId}`;
-                document.title = `${empresa.nome || empresaId} | TS Base`;
-                const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
-                if (cardapioDoc.exists) {
-                    let dadosCardapio = cardapioDoc.data().dados || {};
-                    if (typeof dadosCardapio === 'string') try { dadosCardapio = JSON.parse(dadosCardapio); } catch(e) {}
-                    cardapioAtual = dadosCardapio;
-                    renderizarCardapio();
-                }
-            } catch (error) { console.error(error); }
-        }
-
-        function renderizarCardapio() {
-            let html = '';
-            if (cardapioAtual.promocoes && cardapioAtual.promocoes.length) {
-                html += '<h2 class="categoria-titulo">🔥 Promoções</h2><div class="cardapio-grid">';
-                cardapioAtual.promocoes.forEach(item => { html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`; });
-                html += '</div>';
-            }
-            if (cardapioAtual.pizzasSalgadas && cardapioAtual.pizzasSalgadas.length) {
-                html += '<h2 class="categoria-titulo">🍕 Pizzas Salgadas</h2><div class="cardapio-grid">';
-                cardapioAtual.pizzasSalgadas.forEach(item => { html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`; });
-                html += '</div>';
-            }
-            if (cardapioAtual.pizzasDoces && cardapioAtual.pizzasDoces.length) {
-                html += '<h2 class="categoria-titulo">🍫 Pizzas Doces</h2><div class="cardapio-grid">';
-                cardapioAtual.pizzasDoces.forEach(item => { html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`; });
-                html += '</div>';
-            }
-            if (cardapioAtual.bebidas && cardapioAtual.bebidas.length) {
-                html += '<h2 class="categoria-titulo">🥤 Bebidas</h2><div class="cardapio-grid">';
-                cardapioAtual.bebidas.forEach(item => { html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`; });
-                html += '</div>';
-            }
-            document.getElementById('cardapioContainer').innerHTML = html || '<p style="text-align:center;">Cardápio vazio</p>';
-        }
-
-        window.adicionarAoCarrinho = function(nome, preco) {
-            const existente = carrinho.find(i => i.nome === nome);
-            if (existente) existente.quantidade++;
-            else carrinho.push({ nome, preco, quantidade: 1 });
-            atualizarCarrinhoUI();
-        }
-        window.removerDoCarrinho = function(index) { carrinho.splice(index, 1); atualizarCarrinhoUI(); }
-
-        function atualizarCarrinhoUI() {
-            const container = document.getElementById('carrinhoItens');
-            const totalSpan = document.getElementById('carrinhoTotal');
-            if (!carrinho.length) { container.innerHTML = '<div class="carrinho-vazio">Nenhum item</div>'; totalSpan.innerText = 'R$ 0,00'; return; }
-            let html = '', total = 0;
-            carrinho.forEach((item, idx) => { const sub = item.preco * item.quantidade; total += sub; html += `<div class="carrinho-item"><div class="carrinho-item-info"><div class="carrinho-item-nome">${item.quantidade}x ${item.nome}</div><div class="carrinho-item-preco">R$ ${sub.toFixed(2)}</div></div><div class="carrinho-item-acoes"><button onclick="removerDoCarrinho(${idx})">✕</button></div></div>`; });
-            container.innerHTML = html; totalSpan.innerText = `R$ ${total.toFixed(2)}`;
-        }
-
-        window.confirmarPedido = async function() {
-            const nome = document.getElementById('clienteNome').value.trim();
-            const telefone = document.getElementById('clienteTelefone').value.trim();
-            const formaRetirada = document.getElementById('formaRetirada').value;
-            const endereco = formaRetirada === 'entrega' ? document.getElementById('clienteEndereco').value.trim() : 'Retirar no local - Rua José Braga de Carvalho, 79';
-            const pagamento = document.getElementById('clientePagamento').value;
-            const troco = document.getElementById('clienteTroco').value;
-            const observacoes = document.getElementById('observacoes').value.trim();
-            
-            if (!nome) { alert('Digite seu nome!'); return; }
-            if (!telefone) { alert('Digite seu telefone!'); return; }
-            if (formaRetirada === 'entrega' && !endereco) { alert('Digite seu endereço!'); return; }
-            
-            const subtotal = carrinho.reduce((s, i) => s + (i.preco * i.quantidade), 0);
-            const taxaEntrega = formaRetirada === 'entrega' ? 3.50 : 0;
-            const total = subtotal + taxaEntrega;
-            
-            let itensMsg = '';
-            carrinho.forEach(i => { itensMsg += `${i.quantidade}x ${i.nome} = R$ ${(i.preco * i.quantidade).toFixed(2)}\n`; });
-            
-            let msg = `🍕 *PEDIDO* 🍕\n\n`;
-            msg += `👤 Cliente: ${nome}\n📱 Telefone: ${telefone}\n📦 ${formaRetirada === 'entrega' ? '🏍️ Delivery' : '🏪 Retirar no local'}\n📍 ${endereco}\n💳 Pagamento: ${pagamento}`;
-            if (pagamento === 'Dinheiro' && troco) msg += ` (Troco para: ${troco})`;
-            msg += `\n\n📋 ITENS:\n${itensMsg}`;
-            msg += `\n💰 Subtotal: R$ ${subtotal.toFixed(2)}`;
-            if (taxaEntrega > 0) msg += `\n🚚 Taxa entrega: R$ ${taxaEntrega.toFixed(2)}`;
-            msg += `\n━━━━━━━━━━━━━━━━━━━━━\n*TOTAL: R$ ${total.toFixed(2)}*`;
-            if (observacoes) msg += `\n\n📝 Obs: ${observacoes}`;
-            
-            try {
-                await db.collection('pedidos').add({
-                    empresaId: empresaIdAtual,
-                    dataHora: new Date(),
-                    cliente: { nome, telefone, endereco, formaRetirada, pagamento, troco, observacoes },
-                    itens: carrinho,
-                    subtotal: subtotal,
-                    taxaEntrega: taxaEntrega,
-                    total: total,
-                    clienteTelefone: telefone,
-                    statusPedido: 'recebido',
-                    statusPagamento: 'pendente'
-                });
-                alert('✅ Pedido realizado! Você pode acompanhar na aba "Meus Pedidos"');
-            } catch(e) { console.error(e); }
-            
-            window.open(`https://wa.me/5516992600684?text=${encodeURIComponent(msg)}`, '_blank');
-            carrinho = [];
-            atualizarCarrinhoUI();
-            fecharModalCliente();
-            
-            // Salvar telefone para consulta
-            localStorage.setItem('telefoneCliente', telefone);
-            telefoneCliente = telefone;
-        }
-
+        // ============================================
+        // INICIAR
+        // ============================================
         const empresaId = getEmpresaFromSubdomain();
-        if (empresaId) carregarSistemaCliente(empresaId);
+        
+        if (empresaId) {
+            carregarSistemaCliente(empresaId);
+        } else {
+            console.log('🏠 Site principal - TS Base');
+            document.getElementById('sitePrincipal').style.display = 'block';
+            document.getElementById('sistemaCliente').style.display = 'none';
+        }
     </script>
 </body>
 </html>
