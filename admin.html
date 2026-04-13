@@ -146,19 +146,6 @@
         }
         th { color: #ff6b35; }
         
-        .status-pedido {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .status-recebido { background: #555; }
-        .status-preparo { background: #ff6b35; }
-        .status-entrega { background: #2196f3; }
-        .status-entregue { background: #4caf50; }
-        .status-cancelado { background: #c62828; }
-        
         .btn-whatsapp {
             background: #25D366;
             border: none;
@@ -203,7 +190,7 @@
         <div id="loginScreen">
             <div class="login-box">
                 <h2 style="color: #ff6b35; margin-bottom: 20px;">🔐 Admin TS Base</h2>
-                <input type="email" id="adminEmail" placeholder="E-mail" value="admin@tsbase.com">
+                <input type="email" id="adminEmail" placeholder="E-mail" value="alerlima07@gmail.com">
                 <input type="password" id="adminSenha" placeholder="Senha">
                 <button onclick="fazerLogin()">Entrar</button>
                 <p style="margin-top: 15px; font-size: 12px; color: #aaa;">Use o e-mail e senha cadastrados no Firebase Auth</p>
@@ -250,7 +237,7 @@
                     <div style="overflow-x: auto;">
                         <table id="tabelaPedidos">
                             <thead><tr><th>Data</th><th>Cliente</th><th>Telefone</th><th>Itens</th><th>Total</th><th>Status</th><th>Ações</th></tr></thead>
-                            <tbody id="listaPedidosAdmin"><tr><td colspan="7" class="loading">Carregando pedidos...</td></tr></tbody>
+                            <tbody id="listaPedidosAdmin"><td><td colspan="7" class="loading">Carregando pedidos...</td></tr></tbody>
                         </table>
                     </div>
                 </div>
@@ -258,7 +245,7 @@
                 <div id="tabCaixa" class="tab-conteudo">
                     <div id="caixaInfo" style="margin-bottom: 15px;">
                         <strong>Status do Caixa:</strong> <span id="caixaStatus">Carregando...</span>
-                        <button onclick="iniciarDiaEmpresa()" id="btnIniciarDia" style="background:#ff6b35; border:none; padding:5px 10px; border-radius:8px; margin-left:10px; cursor:pointer;">▶️ Iniciar Dia</button>
+                        <button onclick="iniciarDiaEmpresa()" style="background:#ff6b35; border:none; padding:5px 10px; border-radius:8px; margin-left:10px; cursor:pointer;">▶️ Iniciar Dia</button>
                     </div>
                     <div id="movimentacoesLista" class="loading">Carregando movimentações...</div>
                     <div style="margin-top: 15px;">
@@ -288,12 +275,17 @@
         const auth = firebase.auth();
 
         let empresasLista = [];
-        let empresaAtual = null;
         let empresaIdAtual = null;
 
-        // ============================================
-        // FUNÇÕES DE LOGIN
-        // ============================================
+        function getLocalDateString(date) {
+            if (!date) return null;
+            const d = date.toDate ? date.toDate() : new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         async function fazerLogin() {
             const email = document.getElementById('adminEmail').value;
             const senha = document.getElementById('adminSenha').value;
@@ -314,53 +306,27 @@
             document.getElementById('empresaPanel').style.display = 'none';
         }
 
-        // ============================================
-        // FUNÇÃO PARA OBTER DATA LOCAL (BRASIL)
-        // ============================================
-        function getLocalDateString(date) {
-            if (!date) return null;
-            const d = date.toDate ? date.toDate() : new Date(date);
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
-        // ============================================
-        // CARREGAR DASHBOARD
-        // ============================================
         async function carregarDashboard() {
-            console.log('🔄 Carregando dashboard...');
-            
             try {
-                // Buscar empresas da coleção correta
+                // Buscar empresas
                 const snapshot = await db.collection('empresas').get();
-                console.log('📦 Empresas encontradas:', snapshot.size);
-                
                 empresasLista = [];
                 snapshot.forEach(doc => {
                     empresasLista.push({ id: doc.id, ...doc.data() });
                 });
                 
-                // Atualizar card total empresas
                 document.getElementById('totalEmpresas').innerText = empresasLista.length;
                 
                 // Calcular métricas
                 let totalPedidosHoje = 0;
                 let totalFaturamento = 0;
-                let totalPontos = 0;
                 const hojeStr = getLocalDateString(new Date());
                 
                 for (const empresa of empresasLista) {
-                    console.log(`🔍 Processando empresa: ${empresa.id}`);
-                    
-                    // CORREÇÃO: Acessar pedidos diretamente (não como subcoleção)
-                    // Verificar se a coleção pedidos existe no nível raiz com campo empresaId
+                    // Buscar pedidos da empresa pelo campo empresaId
                     const pedidosSnapshot = await db.collection('pedidos')
                         .where('empresaId', '==', empresa.id)
                         .get();
-                    
-                    console.log(`   📋 Pedidos encontrados: ${pedidosSnapshot.size}`);
                     
                     pedidosSnapshot.forEach(doc => {
                         const pedido = doc.data();
@@ -372,33 +338,23 @@
                             totalFaturamento += pedido.total || 0;
                         }
                     });
-                    
-                    // CORREÇÃO: Acessar fidelidade como coleção raiz
-                    const pontosSnapshot = await db.collection('fidelidade')
-                        .where('empresaId', '==', empresa.id)
-                        .get();
-                    
-                    pontosSnapshot.forEach(doc => {
-                        totalPontos += doc.data().pontos || 0;
-                    });
                 }
                 
                 document.getElementById('totalPedidosHoje').innerText = totalPedidosHoje;
                 document.getElementById('totalFaturamento').innerText = `R$ ${totalFaturamento.toFixed(2)}`;
-                document.getElementById('totalPontosGeral').innerText = totalPontos;
+                document.getElementById('totalPontosGeral').innerText = '0';
                 
-                // Renderizar empresas
                 renderizarEmpresas();
                 
             } catch (error) {
-                console.error('❌ Erro ao carregar dashboard:', error);
-                document.getElementById('empresasLista').innerHTML = `<div class="loading">❌ Erro ao carregar empresas: ${error.message}</div>`;
+                console.error('Erro:', error);
+                document.getElementById('empresasLista').innerHTML = `<div class="loading">❌ Erro: ${error.message}</div>`;
             }
         }
 
         function renderizarEmpresas() {
             if (empresasLista.length === 0) {
-                document.getElementById('empresasLista').innerHTML = '<div class="loading">Nenhuma empresa cadastrada. Clique em "Cadastrar Empresa" no menu superior.</div>';
+                document.getElementById('empresasLista').innerHTML = '<div class="loading">Nenhuma empresa cadastrada</div>';
                 return;
             }
             
@@ -410,7 +366,6 @@
                         <p><strong>Subdomínio:</strong> ${emp.id}.tsbase.com.br</p>
                         <p><strong>Plano:</strong> ${emp.plano || 'profissional'}</p>
                         <p><strong>Telefone:</strong> ${emp.telefone || 'Não informado'}</p>
-                        <p><strong>Cadastro:</strong> ${emp.criadoEm?.toDate().toLocaleDateString() || new Date().toLocaleDateString()}</p>
                         <span class="status ${emp.ativo !== false ? 'status-ativo' : 'status-inativo'}">${emp.ativo !== false ? 'Ativo' : 'Inativo'}</span>
                     </div>
                 `;
@@ -418,20 +373,13 @@
             document.getElementById('empresasLista').innerHTML = html;
         }
 
-        // ============================================
-        // ABRIR PAINEL DA EMPRESA
-        // ============================================
         window.abrirPainelEmpresa = async function(empresaId) {
             empresaIdAtual = empresaId;
-            empresaAtual = empresasLista.find(e => e.id === empresaId);
-            if (!empresaAtual) return;
-            
-            console.log(`📂 Abrindo painel da empresa: ${empresaId}`);
+            const empresa = empresasLista.find(e => e.id === empresaId);
             
             document.getElementById('empresaPanel').style.display = 'block';
-            document.getElementById('panelEmpresaNome').innerHTML = `🍕 ${empresaAtual.nome || empresaId}`;
+            document.getElementById('panelEmpresaNome').innerHTML = `🍕 ${empresa?.nome || empresaId}`;
             
-            // Carregar dados das abas
             await carregarPedidosAdmin(empresaId);
             await carregarCaixaAdmin(empresaId);
             await carregarCardapioAdmin(empresaId);
@@ -439,23 +387,18 @@
 
         window.fecharPainelEmpresa = function() {
             document.getElementById('empresaPanel').style.display = 'none';
-            empresaAtual = null;
             empresaIdAtual = null;
         }
 
-        // ============================================
-        // CARREGAR PEDIDOS (ADMIN)
-        // ============================================
-         async function carregarPedidosAdmin(empresaId) {
+        async function carregarPedidosAdmin(empresaId) {
             try {
-                // CORREÇÃO: Buscar pedidos filtrando por empresaId
                 const pedidosSnapshot = await db.collection('pedidos')
                     .where('empresaId', '==', empresaId)
                     .orderBy('dataHora', 'desc')
                     .get();
                 
                 if (pedidosSnapshot.empty) {
-                    document.getElementById('listaPedidosAdmin').innerHTML = '<tr><td colspan="7" class="loading">Nenhum pedido encontrado</td></td>';
+                    document.getElementById('listaPedidosAdmin').innerHTML = '<td><td colspan="7" class="loading">Nenhum pedido encontrado</td></tr>';
                     return;
                 }
                 
@@ -468,12 +411,17 @@
                         pedido.itens.forEach(item => {
                             itensHtml += `${item.quantidade}x ${item.nome}<br>`;
                         });
-                    } else {
-                        itensHtml = '-';
                     }
-                    
                     const statusAtual = pedido.statusPedido || 'recebido';
-                    const telefoneCliente = pedido.cliente?.telefone || pedido.clienteTelefone || 'Não informado';
+                    const telefoneCliente = pedido.cliente?.telefone || 'Não informado';
+                    
+                    const statusOptions = {
+                        'recebido': '📋 Recebido',
+                        'preparo': '🍳 Em preparo',
+                        'entrega': '🏍️ Saiu entrega',
+                        'entregue': '✅ Entregue',
+                        'cancelado': '❌ Cancelado'
+                    };
                     
                     html += `
                         <tr>
@@ -499,30 +447,28 @@
                 });
                 document.getElementById('listaPedidosAdmin').innerHTML = html;
             } catch (error) {
-                console.error('Erro ao carregar pedidos:', error);
-                document.getElementById('listaPedidosAdmin').innerHTML = `<tr><td colspan="7" class="loading">❌ Erro ao carregar pedidos: ${error.message}</td></tr>`;
+                console.error('Erro:', error);
+                document.getElementById('listaPedidosAdmin').innerHTML = `<td><td colspan="7" class="loading">❌ Erro: ${error.message}</td></tr>`;
             }
         }
 
         window.alterarStatusPedidoAdmin = async function(empresaId, pedidoId, novoStatus) {
             try {
-                await db.collection('pedidos').doc(empresaId).collection('pedidos').doc(pedidoId).update({
+                await db.collection('pedidos').doc(pedidoId).update({
                     statusPedido: novoStatus
                 });
                 alert(`✅ Status atualizado para: ${novoStatus}`);
                 await carregarPedidosAdmin(empresaId);
             } catch (error) {
-                console.error('Erro ao atualizar status:', error);
                 alert('❌ Erro ao atualizar status');
             }
         }
 
         window.notificarClienteAdmin = function(telefone, pedidoId, status) {
-            if (!telefone || telefone === 'undefined' || telefone === '') {
+            if (!telefone || telefone === 'Não informado') {
                 alert('⚠️ Cliente não informou telefone!');
                 return;
             }
-            
             const statusText = {
                 'recebido': '📋 Pedido recebido! Em breve começaremos a preparar.',
                 'preparo': '🍳 Seu pedido entrou em preparo! Logo, logo estará pronto.',
@@ -530,35 +476,24 @@
                 'entregue': '✅ Seu pedido foi entregue! Obrigado pela preferência!',
                 'cancelado': '❌ Infelizmente seu pedido foi cancelado.'
             };
-            
             const msg = `🍕 *IMPÉRIO DAS PIZZAS* 🍕\n\nOlá,\n\n${statusText[status] || `Status: ${status}`}\n\n*Pedido:* ${pedidoId.slice(0,8)}\n\n📞 Qualquer dúvida: (16) 99260-0684`;
             window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
-        // ============================================
-        // CARREGAR CAIXA (ADMIN)
-        // ============================================
         async function carregarCaixaAdmin(empresaId) {
+            const dataAtual = getLocalDateString(new Date());
             try {
-                const dataAtual = getLocalDateString(new Date());
                 const caixaDoc = await db.collection('caixa').doc(empresaId).collection('movimentacoes').doc(dataAtual).get();
-                
                 if (!caixaDoc.exists) {
                     document.getElementById('caixaStatus').innerHTML = '🔴 Dia não iniciado';
                     document.getElementById('movimentacoesLista').innerHTML = '<div class="loading">Nenhuma movimentação hoje</div>';
                     document.getElementById('saldoCaixa').innerText = '0.00';
                     return;
                 }
-                
                 const dados = caixaDoc.data();
-                const ativo = dados.ativo || false;
-                const movimentacoes = dados.movimentacoes || [];
-                
-                document.getElementById('caixaStatus').innerHTML = ativo ? '🟢 Dia aberto' : '🔴 Dia fechado';
-                
-                let saldo = 0;
-                let html = '';
-                movimentacoes.forEach(m => {
+                document.getElementById('caixaStatus').innerHTML = dados.ativo ? '🟢 Dia aberto' : '🔴 Dia fechado';
+                let saldo = 0, html = '';
+                (dados.movimentacoes || []).forEach(m => {
                     if (m.tipo === 'entrada') saldo += m.valor;
                     else saldo -= m.valor;
                     html += `<div class="movimentacao-item ${m.tipo === 'entrada' ? 'entrada' : 'saida'}">
@@ -570,42 +505,25 @@
                 document.getElementById('movimentacoesLista').innerHTML = html || '<div class="loading">Nenhuma movimentação</div>';
                 document.getElementById('saldoCaixa').innerText = saldo.toFixed(2);
             } catch (error) {
-                console.error('Erro ao carregar caixa:', error);
-                document.getElementById('movimentacoesLista').innerHTML = '<div class="loading">❌ Erro ao carregar caixa</div>';
+                console.error('Erro caixa:', error);
             }
         }
 
         window.iniciarDiaEmpresa = async function() {
             if (!empresaIdAtual) return;
-            
-            try {
-                const dataAtual = getLocalDateString(new Date());
-                const caixaRef = db.collection('caixa').doc(empresaIdAtual).collection('movimentacoes').doc(dataAtual);
-                const caixaDoc = await caixaRef.get();
-                
-                if (caixaDoc.exists && caixaDoc.data().ativo) {
-                    alert('⚠️ Dia já está aberto!');
-                    return;
-                }
-                
-                const saldoInicial = parseFloat(prompt('Saldo inicial do caixa (R$):', '0')) || 0;
-                await caixaRef.set({
-                    data: dataAtual,
-                    ativo: true,
-                    movimentacoes: [{ tipo: 'entrada', descricao: '🔓 Abertura de caixa', valor: saldoInicial, hora: new Date().toLocaleTimeString() }],
-                    abertoEm: new Date()
-                });
-                alert('✅ Caixa iniciado com sucesso!');
-                await carregarCaixaAdmin(empresaIdAtual);
-            } catch (error) {
-                console.error('Erro ao iniciar caixa:', error);
-                alert('❌ Erro ao iniciar caixa');
-            }
+            const dataAtual = getLocalDateString(new Date());
+            const caixaRef = db.collection('caixa').doc(empresaIdAtual).collection('movimentacoes').doc(dataAtual);
+            const saldoInicial = parseFloat(prompt('Saldo inicial do caixa (R$):', '0')) || 0;
+            await caixaRef.set({
+                data: dataAtual,
+                ativo: true,
+                movimentacoes: [{ tipo: 'entrada', descricao: '🔓 Abertura de caixa', valor: saldoInicial, hora: new Date().toLocaleTimeString() }],
+                abertoEm: new Date()
+            });
+            alert('✅ Caixa iniciado!');
+            await carregarCaixaAdmin(empresaIdAtual);
         }
 
-        // ============================================
-        // CARREGAR CARDÁPIO (ADMIN)
-        // ============================================
         async function carregarCardapioAdmin(empresaId) {
             try {
                 const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
@@ -613,56 +531,25 @@
                     document.getElementById('cardapioAdmin').innerHTML = '<div class="loading">Cardápio não encontrado</div>';
                     return;
                 }
-                
                 let dados = cardapioDoc.data().dados || {};
-                if (typeof dados === 'string') {
-                    try {
-                        dados = JSON.parse(dados);
-                    } catch(e) {
-                        console.error('Erro ao parsear JSON:', e);
-                    }
-                }
-                
+                if (typeof dados === 'string') dados = JSON.parse(dados);
                 let html = '';
-                
-                if (dados.pizzasSalgadas && dados.pizzasSalgadas.length) {
+                if (dados.pizzasSalgadas?.length) {
                     html += '<h3>🍕 Pizzas Salgadas</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-bottom:20px;">';
                     dados.pizzasSalgadas.forEach(item => {
                         html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
                     });
                     html += '</div>';
                 }
-                
-                if (dados.pizzasDoces && dados.pizzasDoces.length) {
-                    html += '<h3>🍫 Pizzas Doces</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-bottom:20px;">';
-                    dados.pizzasDoces.forEach(item => {
-                        html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
-                    });
-                    html += '</div>';
-                }
-                
-                if (dados.bebidas && dados.bebidas.length) {
-                    html += '<h3>🥤 Bebidas</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px;">';
-                    dados.bebidas.forEach(item => {
-                        html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
-                    });
-                    html += '</div>';
-                }
-                
                 document.getElementById('cardapioAdmin').innerHTML = html || '<div class="loading">Cardápio vazio</div>';
             } catch (error) {
-                console.error('Erro ao carregar cardápio:', error);
                 document.getElementById('cardapioAdmin').innerHTML = '<div class="loading">❌ Erro ao carregar cardápio</div>';
             }
         }
 
-        // ============================================
-        // TAB ADMIN
-        // ============================================
         window.mudarTabAdmin = function(tab) {
             document.querySelectorAll('.tab-admin').forEach(btn => btn.classList.remove('ativo'));
             document.querySelectorAll('.tab-conteudo').forEach(div => div.classList.remove('ativo'));
-            
             if (tab === 'pedidos') {
                 document.querySelector('.tab-admin:first-child').classList.add('ativo');
                 document.getElementById('tabPedidos').classList.add('ativo');
@@ -675,19 +562,11 @@
             }
         }
 
-        // ============================================
-        // VERIFICAR LOGIN
-        // ============================================
         auth.onAuthStateChanged(user => {
             if (user) {
-                console.log('✅ Usuário logado:', user.email);
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 carregarDashboard();
-            } else {
-                console.log('🔓 Usuário não logado');
-                document.getElementById('loginScreen').style.display = 'block';
-                document.getElementById('adminPanel').style.display = 'none';
             }
         });
     </script>
