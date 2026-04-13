@@ -9,7 +9,6 @@
         body { background: #0a0a1a; color: #eee; padding: 20px; }
         .container { max-width: 1400px; margin: 0 auto; }
         
-        /* Login */
         .login-box {
             max-width: 400px;
             margin: 100px auto;
@@ -37,7 +36,6 @@
         }
         .login-box button:hover { background: #e85d2a; }
         
-        /* Header Admin */
         .admin-header {
             display: flex;
             justify-content: space-between;
@@ -51,7 +49,6 @@
         .admin-header h1 { color: #ff6b35; }
         .logout-btn { background: #ff4444; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
         
-        /* Cards de resumo */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -68,7 +65,6 @@
         .stat-card h3 { color: #aaa; font-size: 14px; margin-bottom: 10px; }
         .stat-card .numero { font-size: 32px; font-weight: bold; color: #ff6b35; }
         
-        /* Lista de empresas */
         .empresas-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
@@ -90,7 +86,6 @@
         .status-ativo { background: #4caf50; }
         .status-inativo { background: #555; }
         
-        /* Painel da empresa (detalhes) */
         .empresa-panel {
             background: #1a1a2e;
             border-radius: 16px;
@@ -116,7 +111,6 @@
             cursor: pointer;
         }
         
-        /* Tabs */
         .tabs-admin {
             display: flex;
             gap: 10px;
@@ -139,7 +133,6 @@
         .tab-conteudo { display: none; }
         .tab-conteudo.ativo { display: block; }
         
-        /* Tabela de pedidos */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -176,7 +169,6 @@
             font-size: 12px;
         }
         
-        /* Movimentações do caixa */
         .movimentacao-item {
             background: #2c2c2c;
             padding: 10px;
@@ -188,6 +180,12 @@
         }
         .entrada { border-left: 4px solid #4caf50; }
         .saida { border-left: 4px solid #f44336; }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #aaa;
+        }
         
         @media (max-width: 768px) {
             .empresas-grid { grid-template-columns: 1fr; }
@@ -232,10 +230,10 @@
             <!-- LISTA DE EMPRESAS -->
             <h2 style="color: #ff6b35; margin: 20px 0;">📋 Empresas</h2>
             <div id="empresasLista" class="empresas-grid">
-                <div style="text-align: center; padding: 50px;">Carregando...</div>
+                <div class="loading">Carregando empresas...</div>
             </div>
             
-            <!-- PAINEL DETALHADO DA EMPRESA (aparece ao clicar) -->
+            <!-- PAINEL DETALHADO DA EMPRESA -->
             <div id="empresaPanel" class="empresa-panel" style="display: none;">
                 <div class="panel-header">
                     <h2 id="panelEmpresaNome">Carregando...</h2>
@@ -248,37 +246,28 @@
                     <button class="tab-admin" onclick="mudarTabAdmin('cardapio')">🍕 Cardápio</button>
                 </div>
                 
-                <!-- ABA PEDIDOS -->
                 <div id="tabPedidos" class="tab-conteudo ativo">
                     <div style="overflow-x: auto;">
                         <table id="tabelaPedidos">
-                            <thead>
-                                <tr><th>Data</th><th>Cliente</th><th>Telefone</th><th>Itens</th><th>Total</th><th>Status</th><th>Ações</th></tr>
-                            </thead>
-                            <tbody id="listaPedidosAdmin"><tr><td colspan="7">Carregando...</td></tr></tbody>
+                            <thead><tr><th>Data</th><th>Cliente</th><th>Telefone</th><th>Itens</th><th>Total</th><th>Status</th><th>Ações</th></tr></thead>
+                            <tbody id="listaPedidosAdmin"><tr><td colspan="7" class="loading">Carregando pedidos...</td></tr></tbody>
                         </table>
                     </div>
                 </div>
                 
-                <!-- ABA CAIXA -->
                 <div id="tabCaixa" class="tab-conteudo">
                     <div id="caixaInfo" style="margin-bottom: 15px;">
                         <strong>Status do Caixa:</strong> <span id="caixaStatus">Carregando...</span>
                         <button onclick="iniciarDiaEmpresa()" id="btnIniciarDia" style="background:#ff6b35; border:none; padding:5px 10px; border-radius:8px; margin-left:10px; cursor:pointer;">▶️ Iniciar Dia</button>
                     </div>
-                    <div id="movimentacoesLista">
-                        <div style="text-align:center;">Carregando movimentações...</div>
-                    </div>
+                    <div id="movimentacoesLista" class="loading">Carregando movimentações...</div>
                     <div style="margin-top: 15px;">
                         <strong>Saldo Atual: R$ <span id="saldoCaixa">0.00</span></strong>
                     </div>
                 </div>
                 
-                <!-- ABA CARDÁPIO -->
                 <div id="tabCardapio" class="tab-conteudo">
-                    <div id="cardapioAdmin">
-                        <div style="text-align:center;">Carregando cardápio...</div>
-                    </div>
+                    <div id="cardapioAdmin" class="loading">Carregando cardápio...</div>
                 </div>
             </div>
         </div>
@@ -300,7 +289,7 @@
 
         let empresasLista = [];
         let empresaAtual = null;
-        let caixaDocRef = null;
+        let empresaIdAtual = null;
 
         // ============================================
         // FUNÇÕES DE LOGIN
@@ -312,7 +301,7 @@
                 await auth.signInWithEmailAndPassword(email, senha);
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
-                carregarDashboard();
+                await carregarDashboard();
             } catch (error) {
                 alert('Erro no login: ' + error.message);
             }
@@ -326,45 +315,85 @@
         }
 
         // ============================================
+        // FUNÇÃO PARA OBTER DATA LOCAL (BRASIL)
+        // ============================================
+        function getLocalDateString(date) {
+            if (!date) return null;
+            const d = date.toDate ? date.toDate() : new Date(date);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // ============================================
         // CARREGAR DASHBOARD
         // ============================================
         async function carregarDashboard() {
-            const snapshot = await db.collection('empresas').orderBy('criadoEm', 'desc').get();
-            empresasLista = [];
-            snapshot.forEach(doc => empresasLista.push({ id: doc.id, ...doc.data() }));
+            console.log('🔄 Carregando dashboard...');
             
-            // Atualizar cards
-            document.getElementById('totalEmpresas').innerText = empresasLista.length;
-            
-            // Calcular pedidos de hoje e faturamento
-            let totalPedidosHoje = 0;
-            let totalFaturamento = 0;
-            let totalPontos = 0;
-            
-            for (const empresa of empresasLista) {
-                const pedidosSnapshot = await db.collection('pedidos').doc(empresa.id).collection('pedidos').get();
-                const hoje = new Date().toLocaleDateString();
-                pedidosSnapshot.forEach(doc => {
-                    const pedido = doc.data();
-                    const dataPedido = pedido.dataHora?.toDate() || new Date(pedido.dataHora);
-                    if (dataPedido.toLocaleDateString() === hoje && pedido.statusPagamento === 'pago') {
-                        totalPedidosHoje++;
-                        totalFaturamento += pedido.total || 0;
-                    }
+            try {
+                // Buscar empresas da coleção correta
+                const snapshot = await db.collection('empresas').get();
+                console.log('📦 Empresas encontradas:', snapshot.size);
+                
+                empresasLista = [];
+                snapshot.forEach(doc => {
+                    empresasLista.push({ id: doc.id, ...doc.data() });
                 });
                 
-                // Pontos de fidelidade
-                const pontosSnapshot = await db.collection('fidelidade').doc(empresa.id).collection('clientes').get();
-                pontosSnapshot.forEach(doc => {
-                    totalPontos += doc.data().pontos || 0;
-                });
+                // Atualizar card total empresas
+                document.getElementById('totalEmpresas').innerText = empresasLista.length;
+                
+                // Calcular métricas
+                let totalPedidosHoje = 0;
+                let totalFaturamento = 0;
+                let totalPontos = 0;
+                const hojeStr = getLocalDateString(new Date());
+                
+                for (const empresa of empresasLista) {
+                    console.log(`🔍 Processando empresa: ${empresa.id}`);
+                    
+                    // Buscar pedidos da empresa
+                    const pedidosSnapshot = await db.collection('pedidos').doc(empresa.id).collection('pedidos').get();
+                    
+                    pedidosSnapshot.forEach(doc => {
+                        const pedido = doc.data();
+                        const dataPedido = pedido.dataHora?.toDate() || new Date(pedido.dataHora);
+                        const dataPedidoStr = getLocalDateString(dataPedido);
+                        
+                        if (dataPedidoStr === hojeStr && pedido.statusPagamento === 'pago') {
+                            totalPedidosHoje++;
+                            totalFaturamento += pedido.total || 0;
+                        }
+                    });
+                    
+                    // Buscar pontos de fidelidade
+                    const pontosSnapshot = await db.collection('fidelidade').doc(empresa.id).collection('clientes').get();
+                    pontosSnapshot.forEach(doc => {
+                        totalPontos += doc.data().pontos || 0;
+                    });
+                }
+                
+                document.getElementById('totalPedidosHoje').innerText = totalPedidosHoje;
+                document.getElementById('totalFaturamento').innerText = `R$ ${totalFaturamento.toFixed(2)}`;
+                document.getElementById('totalPontosGeral').innerText = totalPontos;
+                
+                // Renderizar empresas
+                renderizarEmpresas();
+                
+            } catch (error) {
+                console.error('❌ Erro ao carregar dashboard:', error);
+                document.getElementById('empresasLista').innerHTML = `<div class="loading">❌ Erro ao carregar empresas: ${error.message}</div>`;
+            }
+        }
+
+        function renderizarEmpresas() {
+            if (empresasLista.length === 0) {
+                document.getElementById('empresasLista').innerHTML = '<div class="loading">Nenhuma empresa cadastrada. Clique em "Cadastrar Empresa" no menu superior.</div>';
+                return;
             }
             
-            document.getElementById('totalPedidosHoje').innerText = totalPedidosHoje;
-            document.getElementById('totalFaturamento').innerText = `R$ ${totalFaturamento.toFixed(2)}`;
-            document.getElementById('totalPontosGeral').innerText = totalPontos;
-            
-            // Renderizar empresas
             let html = '';
             empresasLista.forEach(emp => {
                 html += `
@@ -373,101 +402,114 @@
                         <p><strong>Subdomínio:</strong> ${emp.id}.tsbase.com.br</p>
                         <p><strong>Plano:</strong> ${emp.plano || 'profissional'}</p>
                         <p><strong>Telefone:</strong> ${emp.telefone || 'Não informado'}</p>
+                        <p><strong>Cadastro:</strong> ${emp.criadoEm?.toDate().toLocaleDateString() || new Date().toLocaleDateString()}</p>
                         <span class="status ${emp.ativo !== false ? 'status-ativo' : 'status-inativo'}">${emp.ativo !== false ? 'Ativo' : 'Inativo'}</span>
                     </div>
                 `;
             });
-            document.getElementById('empresasLista').innerHTML = html || '<div style="text-align:center;">Nenhuma empresa cadastrada</div>';
+            document.getElementById('empresasLista').innerHTML = html;
         }
 
         // ============================================
         // ABRIR PAINEL DA EMPRESA
         // ============================================
-        async function abrirPainelEmpresa(empresaId) {
+        window.abrirPainelEmpresa = async function(empresaId) {
+            empresaIdAtual = empresaId;
             empresaAtual = empresasLista.find(e => e.id === empresaId);
             if (!empresaAtual) return;
+            
+            console.log(`📂 Abrindo painel da empresa: ${empresaId}`);
             
             document.getElementById('empresaPanel').style.display = 'block';
             document.getElementById('panelEmpresaNome').innerHTML = `🍕 ${empresaAtual.nome || empresaId}`;
             
-            // Carregar abas
+            // Carregar dados das abas
             await carregarPedidosAdmin(empresaId);
             await carregarCaixaAdmin(empresaId);
             await carregarCardapioAdmin(empresaId);
         }
 
-        function fecharPainelEmpresa() {
+        window.fecharPainelEmpresa = function() {
             document.getElementById('empresaPanel').style.display = 'none';
             empresaAtual = null;
+            empresaIdAtual = null;
         }
 
         // ============================================
         // CARREGAR PEDIDOS (ADMIN)
         // ============================================
         async function carregarPedidosAdmin(empresaId) {
-            const pedidosSnapshot = await db.collection('pedidos').doc(empresaId).collection('pedidos').orderBy('dataHora', 'desc').get();
-            if (pedidosSnapshot.empty) {
-                document.getElementById('listaPedidosAdmin').innerHTML = '<tr><td colspan="7">Nenhum pedido encontrado</td></tr>';
+            try {
+                const pedidosSnapshot = await db.collection('pedidos').doc(empresaId).collection('pedidos').orderBy('dataHora', 'desc').get();
+                
+                if (pedidosSnapshot.empty) {
+                    document.getElementById('listaPedidosAdmin').innerHTML = '<tr><td colspan="7" class="loading">Nenhum pedido encontrado</td></tr>';
+                    return;
+                }
+                
+                let html = '';
+                pedidosSnapshot.forEach(doc => {
+                    const pedido = doc.data();
+                    const data = pedido.dataHora?.toDate() || new Date(pedido.dataHora);
+                    let itensHtml = '';
+                    if (pedido.itens && pedido.itens.length) {
+                        pedido.itens.forEach(item => {
+                            itensHtml += `${item.quantidade}x ${item.nome}<br>`;
+                        });
+                    } else {
+                        itensHtml = '-';
+                    }
+                    
+                    const statusAtual = pedido.statusPedido || 'recebido';
+                    
+                    html += `
+                        <tr>
+                            <td>${data.toLocaleString()}</td>
+                            <td>${pedido.clienteTelefone || 'Não informado'}</td>
+                            <td>${pedido.clienteTelefone || '-'}</td>
+                            <td>${itensHtml}</td>
+                            <td>R$ ${(pedido.total || 0).toFixed(2)}</td>
+                            <td>
+                                <select onchange="alterarStatusPedidoAdmin('${empresaId}', '${doc.id}', this.value)" style="background:#2c2c2c; color:white; border:1px solid #ff6b35; border-radius:8px; padding:5px;">
+                                    <option value="recebido" ${statusAtual === 'recebido' ? 'selected' : ''}>📋 Recebido</option>
+                                    <option value="preparo" ${statusAtual === 'preparo' ? 'selected' : ''}>🍳 Em preparo</option>
+                                    <option value="entrega" ${statusAtual === 'entrega' ? 'selected' : ''}>🏍️ Saiu entrega</option>
+                                    <option value="entregue" ${statusAtual === 'entregue' ? 'selected' : ''}>✅ Entregue</option>
+                                    <option value="cancelado" ${statusAtual === 'cancelado' ? 'selected' : ''}>❌ Cancelado</option>
+                                </select>
+                            </td>
+                            <td>
+                                <button class="btn-whatsapp" onclick="notificarClienteAdmin('${pedido.clienteTelefone}', '${doc.id}', '${statusAtual}')">📱 Notificar</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                document.getElementById('listaPedidosAdmin').innerHTML = html;
+            } catch (error) {
+                console.error('Erro ao carregar pedidos:', error);
+                document.getElementById('listaPedidosAdmin').innerHTML = `<tr><td colspan="7" class="loading">❌ Erro ao carregar pedidos</td></tr>`;
+            }
+        }
+
+        window.alterarStatusPedidoAdmin = async function(empresaId, pedidoId, novoStatus) {
+            try {
+                await db.collection('pedidos').doc(empresaId).collection('pedidos').doc(pedidoId).update({
+                    statusPedido: novoStatus
+                });
+                alert(`✅ Status atualizado para: ${novoStatus}`);
+                await carregarPedidosAdmin(empresaId);
+            } catch (error) {
+                console.error('Erro ao atualizar status:', error);
+                alert('❌ Erro ao atualizar status');
+            }
+        }
+
+        window.notificarClienteAdmin = function(telefone, pedidoId, status) {
+            if (!telefone || telefone === 'undefined' || telefone === '') {
+                alert('⚠️ Cliente não informou telefone!');
                 return;
             }
             
-            let html = '';
-            pedidosSnapshot.forEach(doc => {
-                const pedido = doc.data();
-                const data = pedido.dataHora?.toDate() || new Date(pedido.dataHora);
-                let itensHtml = '';
-                if (pedido.itens) {
-                    pedido.itens.forEach(item => {
-                        itensHtml += `${item.quantidade}x ${item.nome}<br>`;
-                    });
-                }
-                const statusClass = `status-${pedido.statusPedido || 'recebido'}`;
-                const statusText = {
-                    'recebido': '📋 Recebido',
-                    'preparo': '🍳 Em preparo',
-                    'entrega': '🏍️ Saiu entrega',
-                    'entregue': '✅ Entregue',
-                    'cancelado': '❌ Cancelado'
-                }[pedido.statusPedido] || '📋 Recebido';
-                
-                html += `
-                    <tr>
-                        <td>${data.toLocaleString()}</td>
-                        <td>${pedido.clienteTelefone || 'Não informado'}</td>
-                        <td>${pedido.clienteTelefone || '-'}</td>
-                        <td>${itensHtml}</td>
-                        <td>R$ ${(pedido.total || 0).toFixed(2)}</td>
-                        <td>
-                            <select onchange="alterarStatusPedidoAdmin('${empresaId}', '${doc.id}', this.value)" class="status-pedido ${statusClass}" style="background:${statusClass === 'status-recebido' ? '#555' : statusClass === 'status-preparo' ? '#ff6b35' : statusClass === 'status-entrega' ? '#2196f3' : '#4caf50'}">
-                                <option value="recebido" ${pedido.statusPedido === 'recebido' ? 'selected' : ''}>📋 Recebido</option>
-                                <option value="preparo" ${pedido.statusPedido === 'preparo' ? 'selected' : ''}>🍳 Em preparo</option>
-                                <option value="entrega" ${pedido.statusPedido === 'entrega' ? 'selected' : ''}>🏍️ Saiu entrega</option>
-                                <option value="entregue" ${pedido.statusPedido === 'entregue' ? 'selected' : ''}>✅ Entregue</option>
-                                <option value="cancelado" ${pedido.statusPedido === 'cancelado' ? 'selected' : ''}>❌ Cancelado</option>
-                            </select>
-                        </td>
-                        <td>
-                            <button class="btn-whatsapp" onclick="notificarClienteAdmin('${empresaId}', '${pedido.clienteTelefone}', '${doc.id}', '${pedido.statusPedido || 'recebido'}')">📱 Notificar</button>
-                        </td>
-                    </tr>
-                `;
-            });
-            document.getElementById('listaPedidosAdmin').innerHTML = html;
-        }
-
-        async function alterarStatusPedidoAdmin(empresaId, pedidoId, novoStatus) {
-            await db.collection('pedidos').doc(empresaId).collection('pedidos').doc(pedidoId).update({
-                statusPedido: novoStatus
-            });
-            alert(`✅ Status atualizado para: ${novoStatus}`);
-            carregarPedidosAdmin(empresaId);
-        }
-
-        function notificarClienteAdmin(empresaId, telefone, pedidoId, status) {
-            if (!telefone || telefone === 'undefined') {
-                alert('Cliente não informou telefone!');
-                return;
-            }
             const statusText = {
                 'recebido': '📋 Pedido recebido! Em breve começaremos a preparar.',
                 'preparo': '🍳 Seu pedido entrou em preparo! Logo, logo estará pronto.',
@@ -475,6 +517,7 @@
                 'entregue': '✅ Seu pedido foi entregue! Obrigado pela preferência!',
                 'cancelado': '❌ Infelizmente seu pedido foi cancelado.'
             };
+            
             const msg = `🍕 *IMPÉRIO DAS PIZZAS* 🍕\n\nOlá,\n\n${statusText[status] || `Status: ${status}`}\n\n*Pedido:* ${pedidoId.slice(0,8)}\n\n📞 Qualquer dúvida: (16) 99260-0684`;
             window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
@@ -483,100 +526,127 @@
         // CARREGAR CAIXA (ADMIN)
         // ============================================
         async function carregarCaixaAdmin(empresaId) {
-            const dataAtual = new Date().toLocaleDateString('pt-BR').split('/').reverse().join('-');
-            caixaDocRef = db.collection('caixa').doc(empresaId).collection('movimentacoes').doc(dataAtual);
-            const caixaDoc = await caixaDocRef.get();
-            
-            if (!caixaDoc.exists) {
-                document.getElementById('caixaStatus').innerHTML = '🔴 Dia não iniciado';
-                document.getElementById('movimentacoesLista').innerHTML = '<div style="text-align:center;">Nenhuma movimentação</div>';
-                document.getElementById('saldoCaixa').innerText = '0.00';
-                return;
+            try {
+                const dataAtual = getLocalDateString(new Date());
+                const caixaDoc = await db.collection('caixa').doc(empresaId).collection('movimentacoes').doc(dataAtual).get();
+                
+                if (!caixaDoc.exists) {
+                    document.getElementById('caixaStatus').innerHTML = '🔴 Dia não iniciado';
+                    document.getElementById('movimentacoesLista').innerHTML = '<div class="loading">Nenhuma movimentação hoje</div>';
+                    document.getElementById('saldoCaixa').innerText = '0.00';
+                    return;
+                }
+                
+                const dados = caixaDoc.data();
+                const ativo = dados.ativo || false;
+                const movimentacoes = dados.movimentacoes || [];
+                
+                document.getElementById('caixaStatus').innerHTML = ativo ? '🟢 Dia aberto' : '🔴 Dia fechado';
+                
+                let saldo = 0;
+                let html = '';
+                movimentacoes.forEach(m => {
+                    if (m.tipo === 'entrada') saldo += m.valor;
+                    else saldo -= m.valor;
+                    html += `<div class="movimentacao-item ${m.tipo === 'entrada' ? 'entrada' : 'saida'}">
+                        <span>${m.hora || ''}</span>
+                        <span>${m.descricao}</span>
+                        <span>R$ ${m.valor.toFixed(2)}</span>
+                    </div>`;
+                });
+                document.getElementById('movimentacoesLista').innerHTML = html || '<div class="loading">Nenhuma movimentação</div>';
+                document.getElementById('saldoCaixa').innerText = saldo.toFixed(2);
+            } catch (error) {
+                console.error('Erro ao carregar caixa:', error);
+                document.getElementById('movimentacoesLista').innerHTML = '<div class="loading">❌ Erro ao carregar caixa</div>';
             }
-            
-            const dados = caixaDoc.data();
-            const ativo = dados.ativo || false;
-            const movimentacoes = dados.movimentacoes || [];
-            
-            document.getElementById('caixaStatus').innerHTML = ativo ? '🟢 Dia aberto' : '🔴 Dia fechado';
-            
-            let saldo = 0;
-            let html = '';
-            movimentacoes.forEach(m => {
-                if (m.tipo === 'entrada') saldo += m.valor;
-                else saldo -= m.valor;
-                html += `<div class="movimentacao-item ${m.tipo === 'entrada' ? 'entrada' : 'saida'}">
-                    <span>${m.hora || ''}</span>
-                    <span>${m.descricao}</span>
-                    <span>R$ ${m.valor.toFixed(2)}</span>
-                </div>`;
-            });
-            document.getElementById('movimentacoesLista').innerHTML = html || '<div style="text-align:center;">Nenhuma movimentação</div>';
-            document.getElementById('saldoCaixa').innerText = saldo.toFixed(2);
         }
 
-        async function iniciarDiaEmpresa() {
-            if (!empresaAtual) return;
-            const dataAtual = new Date().toLocaleDateString('pt-BR').split('/').reverse().join('-');
-            const caixaRef = db.collection('caixa').doc(empresaAtual.id).collection('movimentacoes').doc(dataAtual);
-            const caixaDoc = await caixaRef.get();
+        window.iniciarDiaEmpresa = async function() {
+            if (!empresaIdAtual) return;
             
-            if (caixaDoc.exists && caixaDoc.data().ativo) {
-                alert('Dia já está aberto!');
-                return;
+            try {
+                const dataAtual = getLocalDateString(new Date());
+                const caixaRef = db.collection('caixa').doc(empresaIdAtual).collection('movimentacoes').doc(dataAtual);
+                const caixaDoc = await caixaRef.get();
+                
+                if (caixaDoc.exists && caixaDoc.data().ativo) {
+                    alert('⚠️ Dia já está aberto!');
+                    return;
+                }
+                
+                const saldoInicial = parseFloat(prompt('Saldo inicial do caixa (R$):', '0')) || 0;
+                await caixaRef.set({
+                    data: dataAtual,
+                    ativo: true,
+                    movimentacoes: [{ tipo: 'entrada', descricao: '🔓 Abertura de caixa', valor: saldoInicial, hora: new Date().toLocaleTimeString() }],
+                    abertoEm: new Date()
+                });
+                alert('✅ Caixa iniciado com sucesso!');
+                await carregarCaixaAdmin(empresaIdAtual);
+            } catch (error) {
+                console.error('Erro ao iniciar caixa:', error);
+                alert('❌ Erro ao iniciar caixa');
             }
-            
-            const saldoInicial = parseFloat(prompt('Saldo inicial do caixa (R$):', '0')) || 0;
-            await caixaRef.set({
-                data: dataAtual,
-                ativo: true,
-                movimentacoes: [{ tipo: 'entrada', descricao: '🔓 Abertura de caixa', valor: saldoInicial, hora: new Date().toLocaleTimeString() }],
-                abertoEm: new Date()
-            });
-            alert('✅ Caixa iniciado com sucesso!');
-            carregarCaixaAdmin(empresaAtual.id);
         }
 
         // ============================================
         // CARREGAR CARDÁPIO (ADMIN)
         // ============================================
         async function carregarCardapioAdmin(empresaId) {
-            const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
-            if (!cardapioDoc.exists) {
-                document.getElementById('cardapioAdmin').innerHTML = '<div style="text-align:center;">Cardápio não encontrado</div>';
-                return;
+            try {
+                const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
+                if (!cardapioDoc.exists) {
+                    document.getElementById('cardapioAdmin').innerHTML = '<div class="loading">Cardápio não encontrado</div>';
+                    return;
+                }
+                
+                let dados = cardapioDoc.data().dados || {};
+                if (typeof dados === 'string') {
+                    try {
+                        dados = JSON.parse(dados);
+                    } catch(e) {
+                        console.error('Erro ao parsear JSON:', e);
+                    }
+                }
+                
+                let html = '';
+                
+                if (dados.pizzasSalgadas && dados.pizzasSalgadas.length) {
+                    html += '<h3>🍕 Pizzas Salgadas</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-bottom:20px;">';
+                    dados.pizzasSalgadas.forEach(item => {
+                        html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
+                    });
+                    html += '</div>';
+                }
+                
+                if (dados.pizzasDoces && dados.pizzasDoces.length) {
+                    html += '<h3>🍫 Pizzas Doces</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-bottom:20px;">';
+                    dados.pizzasDoces.forEach(item => {
+                        html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
+                    });
+                    html += '</div>';
+                }
+                
+                if (dados.bebidas && dados.bebidas.length) {
+                    html += '<h3>🥤 Bebidas</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px;">';
+                    dados.bebidas.forEach(item => {
+                        html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
+                    });
+                    html += '</div>';
+                }
+                
+                document.getElementById('cardapioAdmin').innerHTML = html || '<div class="loading">Cardápio vazio</div>';
+            } catch (error) {
+                console.error('Erro ao carregar cardápio:', error);
+                document.getElementById('cardapioAdmin').innerHTML = '<div class="loading">❌ Erro ao carregar cardápio</div>';
             }
-            
-            let dados = cardapioDoc.data().dados || {};
-            if (typeof dados === 'string') dados = JSON.parse(dados);
-            
-            let html = '<h3>🍕 Pizzas Salgadas</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px;">';
-            if (dados.pizzasSalgadas) {
-                dados.pizzasSalgadas.forEach(item => {
-                    html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
-                });
-            }
-            html += '</div><h3>🍫 Pizzas Doces</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px;">';
-            if (dados.pizzasDoces) {
-                dados.pizzasDoces.forEach(item => {
-                    html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
-                });
-            }
-            html += '</div><h3>🥤 Bebidas</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px;">';
-            if (dados.bebidas) {
-                dados.bebidas.forEach(item => {
-                    html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
-                });
-            }
-            html += '</div>';
-            
-            document.getElementById('cardapioAdmin').innerHTML = html;
         }
 
         // ============================================
         // TAB ADMIN
         // ============================================
-        function mudarTabAdmin(tab) {
+        window.mudarTabAdmin = function(tab) {
             document.querySelectorAll('.tab-admin').forEach(btn => btn.classList.remove('ativo'));
             document.querySelectorAll('.tab-conteudo').forEach(div => div.classList.remove('ativo'));
             
@@ -592,11 +662,19 @@
             }
         }
 
+        // ============================================
+        // VERIFICAR LOGIN
+        // ============================================
         auth.onAuthStateChanged(user => {
             if (user) {
+                console.log('✅ Usuário logado:', user.email);
                 document.getElementById('loginScreen').style.display = 'none';
                 document.getElementById('adminPanel').style.display = 'block';
                 carregarDashboard();
+            } else {
+                console.log('🔓 Usuário não logado');
+                document.getElementById('loginScreen').style.display = 'block';
+                document.getElementById('adminPanel').style.display = 'none';
             }
         });
     </script>
