@@ -354,8 +354,13 @@
                 for (const empresa of empresasLista) {
                     console.log(`🔍 Processando empresa: ${empresa.id}`);
                     
-                    // Buscar pedidos da empresa
-                    const pedidosSnapshot = await db.collection('pedidos').doc(empresa.id).collection('pedidos').get();
+                    // CORREÇÃO: Acessar pedidos diretamente (não como subcoleção)
+                    // Verificar se a coleção pedidos existe no nível raiz com campo empresaId
+                    const pedidosSnapshot = await db.collection('pedidos')
+                        .where('empresaId', '==', empresa.id)
+                        .get();
+                    
+                    console.log(`   📋 Pedidos encontrados: ${pedidosSnapshot.size}`);
                     
                     pedidosSnapshot.forEach(doc => {
                         const pedido = doc.data();
@@ -368,8 +373,11 @@
                         }
                     });
                     
-                    // Buscar pontos de fidelidade
-                    const pontosSnapshot = await db.collection('fidelidade').doc(empresa.id).collection('clientes').get();
+                    // CORREÇÃO: Acessar fidelidade como coleção raiz
+                    const pontosSnapshot = await db.collection('fidelidade')
+                        .where('empresaId', '==', empresa.id)
+                        .get();
+                    
                     pontosSnapshot.forEach(doc => {
                         totalPontos += doc.data().pontos || 0;
                     });
@@ -438,12 +446,16 @@
         // ============================================
         // CARREGAR PEDIDOS (ADMIN)
         // ============================================
-        async function carregarPedidosAdmin(empresaId) {
+         async function carregarPedidosAdmin(empresaId) {
             try {
-                const pedidosSnapshot = await db.collection('pedidos').doc(empresaId).collection('pedidos').orderBy('dataHora', 'desc').get();
+                // CORREÇÃO: Buscar pedidos filtrando por empresaId
+                const pedidosSnapshot = await db.collection('pedidos')
+                    .where('empresaId', '==', empresaId)
+                    .orderBy('dataHora', 'desc')
+                    .get();
                 
                 if (pedidosSnapshot.empty) {
-                    document.getElementById('listaPedidosAdmin').innerHTML = '<tr><td colspan="7" class="loading">Nenhum pedido encontrado</td></tr>';
+                    document.getElementById('listaPedidosAdmin').innerHTML = '<tr><td colspan="7" class="loading">Nenhum pedido encontrado</td></td>';
                     return;
                 }
                 
@@ -461,12 +473,13 @@
                     }
                     
                     const statusAtual = pedido.statusPedido || 'recebido';
+                    const telefoneCliente = pedido.cliente?.telefone || pedido.clienteTelefone || 'Não informado';
                     
                     html += `
                         <tr>
                             <td>${data.toLocaleString()}</td>
-                            <td>${pedido.clienteTelefone || 'Não informado'}</td>
-                            <td>${pedido.clienteTelefone || '-'}</td>
+                            <td>${pedido.cliente?.nome || 'Cliente'}</td>
+                            <td>${telefoneCliente}</td>
                             <td>${itensHtml}</td>
                             <td>R$ ${(pedido.total || 0).toFixed(2)}</td>
                             <td>
@@ -479,7 +492,7 @@
                                 </select>
                             </td>
                             <td>
-                                <button class="btn-whatsapp" onclick="notificarClienteAdmin('${pedido.clienteTelefone}', '${doc.id}', '${statusAtual}')">📱 Notificar</button>
+                                <button class="btn-whatsapp" onclick="notificarClienteAdmin('${telefoneCliente}', '${doc.id}', '${statusAtual}')">📱 Notificar</button>
                             </td>
                         </tr>
                     `;
@@ -487,7 +500,7 @@
                 document.getElementById('listaPedidosAdmin').innerHTML = html;
             } catch (error) {
                 console.error('Erro ao carregar pedidos:', error);
-                document.getElementById('listaPedidosAdmin').innerHTML = `<tr><td colspan="7" class="loading">❌ Erro ao carregar pedidos</td></tr>`;
+                document.getElementById('listaPedidosAdmin').innerHTML = `<tr><td colspan="7" class="loading">❌ Erro ao carregar pedidos: ${error.message}</td></tr>`;
             }
         }
 
