@@ -174,6 +174,18 @@
             color: #aaa;
         }
         
+        .btn-caixa {
+            background: #ff6b35;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 8px;
+            margin-left: 10px;
+            cursor: pointer;
+            color: white;
+        }
+        .btn-caixa-verde { background: #4caf50; }
+        .btn-caixa-vermelho { background: #f44336; }
+        
         @media (max-width: 768px) {
             .empresas-grid { grid-template-columns: 1fr; }
             th, td { padding: 8px; font-size: 12px; }
@@ -233,19 +245,26 @@
                     <button class="tab-admin" onclick="mudarTabAdmin('cardapio')">🍕 Cardápio</button>
                 </div>
                 
+                <!-- ABA PEDIDOS -->
                 <div id="tabPedidos" class="tab-conteudo ativo">
                     <div style="overflow-x: auto;">
                         <table id="tabelaPedidos">
                             <thead><tr><th>Data</th><th>Cliente</th><th>Telefone</th><th>Itens</th><th>Total</th><th>Status</th><th>Ações</th></tr></thead>
-                            <tbody id="listaPedidosAdmin"><td><td colspan="7" class="loading">Carregando pedidos...</td></tr></tbody>
+                            <tbody id="listaPedidosAdmin"><td><td colspan="7" class="loading">Carregando pedidos...</td></table></tbody>
                         </table>
                     </div>
                 </div>
                 
+                <!-- ABA CAIXA -->
                 <div id="tabCaixa" class="tab-conteudo">
                     <div id="caixaInfo" style="margin-bottom: 15px;">
                         <strong>Status do Caixa:</strong> <span id="caixaStatus">Carregando...</span>
-                        <button onclick="iniciarDiaEmpresa()" style="background:#ff6b35; border:none; padding:5px 10px; border-radius:8px; margin-left:10px; cursor:pointer;">▶️ Iniciar Dia</button>
+                        <button onclick="iniciarDiaEmpresa()" class="btn-caixa">▶️ Iniciar Dia</button>
+                        <button onclick="fecharDiaCaixa()" class="btn-caixa" style="background:#c62828;">🔒 Fechar Dia</button>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <button onclick="adicionarEntradaCaixa()" class="btn-caixa btn-caixa-verde">➕ Entrada Manual</button>
+                        <button onclick="adicionarSaidaCaixa()" class="btn-caixa btn-caixa-vermelho">➖ Sangria</button>
                     </div>
                     <div id="movimentacoesLista" class="loading">Carregando movimentações...</div>
                     <div style="margin-top: 15px;">
@@ -253,6 +272,7 @@
                     </div>
                 </div>
                 
+                <!-- ABA CARDÁPIO -->
                 <div id="tabCardapio" class="tab-conteudo">
                     <div id="cardapioAdmin" class="loading">Carregando cardápio...</div>
                 </div>
@@ -308,7 +328,6 @@
 
         async function carregarDashboard() {
             try {
-                // Buscar empresas
                 const snapshot = await db.collection('empresas').get();
                 empresasLista = [];
                 snapshot.forEach(doc => {
@@ -317,13 +336,11 @@
                 
                 document.getElementById('totalEmpresas').innerText = empresasLista.length;
                 
-                // Calcular métricas
                 let totalPedidosHoje = 0;
                 let totalFaturamento = 0;
                 const hojeStr = getLocalDateString(new Date());
                 
                 for (const empresa of empresasLista) {
-                    // Buscar pedidos da empresa pelo campo empresaId
                     const pedidosSnapshot = await db.collection('pedidos')
                         .where('empresaId', '==', empresa.id)
                         .get();
@@ -398,7 +415,7 @@
                     .get();
                 
                 if (pedidosSnapshot.empty) {
-                    document.getElementById('listaPedidosAdmin').innerHTML = '<td><td colspan="7" class="loading">Nenhum pedido encontrado</td></tr>';
+                    document.getElementById('listaPedidosAdmin').innerHTML = '<tr><td colspan="7" class="loading">Nenhum pedido encontrado</td>' + '</tr>';
                     return;
                 }
                 
@@ -414,14 +431,6 @@
                     }
                     const statusAtual = pedido.statusPedido || 'recebido';
                     const telefoneCliente = pedido.cliente?.telefone || 'Não informado';
-                    
-                    const statusOptions = {
-                        'recebido': '📋 Recebido',
-                        'preparo': '🍳 Em preparo',
-                        'entrega': '🏍️ Saiu entrega',
-                        'entregue': '✅ Entregue',
-                        'cancelado': '❌ Cancelado'
-                    };
                     
                     html += `
                         <tr>
@@ -441,14 +450,14 @@
                             </td>
                             <td>
                                 <button class="btn-whatsapp" onclick="notificarClienteAdmin('${telefoneCliente}', '${doc.id}', '${statusAtual}')">📱 Notificar</button>
-                            </td>
+                             </td>
                         </tr>
                     `;
                 });
                 document.getElementById('listaPedidosAdmin').innerHTML = html;
             } catch (error) {
                 console.error('Erro:', error);
-                document.getElementById('listaPedidosAdmin').innerHTML = `<td><td colspan="7" class="loading">❌ Erro: ${error.message}</td></tr>`;
+                document.getElementById('listaPedidosAdmin').innerHTML = '<tr><td colspan="7" class="loading">❌ Erro: ' + error.message + '</td>' + '</tr>';
             }
         }
 
@@ -480,6 +489,9 @@
             window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
+        // ============================================
+        // CAIXA - CARREGAR
+        // ============================================
         async function carregarCaixaAdmin(empresaId) {
             const dataAtual = getLocalDateString(new Date());
             try {
@@ -509,10 +521,20 @@
             }
         }
 
+        // ============================================
+        // CAIXA - INICIAR DIA
+        // ============================================
         window.iniciarDiaEmpresa = async function() {
             if (!empresaIdAtual) return;
             const dataAtual = getLocalDateString(new Date());
             const caixaRef = db.collection('caixa').doc(empresaIdAtual).collection('movimentacoes').doc(dataAtual);
+            const caixaDoc = await caixaRef.get();
+            
+            if (caixaDoc.exists && caixaDoc.data().ativo) {
+                alert('⚠️ Dia já está aberto!');
+                return;
+            }
+            
             const saldoInicial = parseFloat(prompt('Saldo inicial do caixa (R$):', '0')) || 0;
             await caixaRef.set({
                 data: dataAtual,
@@ -524,6 +546,104 @@
             await carregarCaixaAdmin(empresaIdAtual);
         }
 
+        // ============================================
+        // CAIXA - ENTRADA MANUAL
+        // ============================================
+        window.adicionarEntradaCaixa = async function() {
+            if (!empresaIdAtual) return;
+            const descricao = prompt('Descrição da entrada (ex: Venda extra):', '');
+            if (!descricao) return;
+            const valor = parseFloat(prompt('Valor da entrada (R$):', '0'));
+            if (isNaN(valor) || valor <= 0) {
+                alert('Valor inválido!');
+                return;
+            }
+            
+            const dataAtual = getLocalDateString(new Date());
+            const caixaRef = db.collection('caixa').doc(empresaIdAtual).collection('movimentacoes').doc(dataAtual);
+            const caixaDoc = await caixaRef.get();
+            
+            if (!caixaDoc.exists || !caixaDoc.data().ativo) {
+                alert('⚠️ Dia não iniciado! Clique em "Iniciar Dia" primeiro.');
+                return;
+            }
+            
+            const movimentacoes = caixaDoc.data().movimentacoes || [];
+            movimentacoes.push({
+                tipo: 'entrada',
+                descricao: `➕ ${descricao}`,
+                valor: valor,
+                hora: new Date().toLocaleTimeString()
+            });
+            
+            await caixaRef.update({ movimentacoes: movimentacoes });
+            alert('✅ Entrada registrada!');
+            await carregarCaixaAdmin(empresaIdAtual);
+        }
+
+        // ============================================
+        // CAIXA - SAÍDA (SANGRIA)
+        // ============================================
+        window.adicionarSaidaCaixa = async function() {
+            if (!empresaIdAtual) return;
+            const descricao = prompt('Descrição da saída (ex: Pagamento fornecedor):', '');
+            if (!descricao) return;
+            const valor = parseFloat(prompt('Valor da saída (R$):', '0'));
+            if (isNaN(valor) || valor <= 0) {
+                alert('Valor inválido!');
+                return;
+            }
+            
+            const dataAtual = getLocalDateString(new Date());
+            const caixaRef = db.collection('caixa').doc(empresaIdAtual).collection('movimentacoes').doc(dataAtual);
+            const caixaDoc = await caixaRef.get();
+            
+            if (!caixaDoc.exists || !caixaDoc.data().ativo) {
+                alert('⚠️ Dia não iniciado! Clique em "Iniciar Dia" primeiro.');
+                return;
+            }
+            
+            const movimentacoes = caixaDoc.data().movimentacoes || [];
+            movimentacoes.push({
+                tipo: 'saida',
+                descricao: `➖ ${descricao}`,
+                valor: valor,
+                hora: new Date().toLocaleTimeString()
+            });
+            
+            await caixaRef.update({ movimentacoes: movimentacoes });
+            alert('✅ Saída registrada!');
+            await carregarCaixaAdmin(empresaIdAtual);
+        }
+
+        // ============================================
+        // CAIXA - FECHAR DIA
+        // ============================================
+        window.fecharDiaCaixa = async function() {
+            if (!empresaIdAtual) return;
+            const dataAtual = getLocalDateString(new Date());
+            const caixaRef = db.collection('caixa').doc(empresaIdAtual).collection('movimentacoes').doc(dataAtual);
+            const caixaDoc = await caixaRef.get();
+            
+            if (!caixaDoc.exists || !caixaDoc.data().ativo) {
+                alert('⚠️ Dia não está aberto!');
+                return;
+            }
+            
+            if (confirm('Deseja fechar o caixa do dia? Não será possível adicionar novas movimentações.')) {
+                await caixaRef.update({ 
+                    ativo: false,
+                    fechadoEm: new Date(),
+                    fechadoPor: auth.currentUser?.email || 'admin'
+                });
+                alert('✅ Caixa fechado com sucesso!');
+                await carregarCaixaAdmin(empresaIdAtual);
+            }
+        }
+
+        // ============================================
+        // CARDÁPIO
+        // ============================================
         async function carregarCardapioAdmin(empresaId) {
             try {
                 const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
@@ -541,12 +661,29 @@
                     });
                     html += '</div>';
                 }
+                if (dados.pizzasDoces?.length) {
+                    html += '<h3>🍫 Pizzas Doces</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; margin-bottom:20px;">';
+                    dados.pizzasDoces.forEach(item => {
+                        html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
+                    });
+                    html += '</div>';
+                }
+                if (dados.bebidas?.length) {
+                    html += '<h3>🥤 Bebidas</h3><div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px;">';
+                    dados.bebidas.forEach(item => {
+                        html += `<div style="background:#2c2c2c; padding:10px; border-radius:8px;"><strong>${item.nome}</strong><br>R$ ${item.preco.toFixed(2)}<br><small>${item.descricao.substring(0,50)}...</small></div>`;
+                    });
+                    html += '</div>';
+                }
                 document.getElementById('cardapioAdmin').innerHTML = html || '<div class="loading">Cardápio vazio</div>';
             } catch (error) {
                 document.getElementById('cardapioAdmin').innerHTML = '<div class="loading">❌ Erro ao carregar cardápio</div>';
             }
         }
 
+        // ============================================
+        // TAB ADMIN
+        // ============================================
         window.mudarTabAdmin = function(tab) {
             document.querySelectorAll('.tab-admin').forEach(btn => btn.classList.remove('ativo'));
             document.querySelectorAll('.tab-conteudo').forEach(div => div.classList.remove('ativo'));
@@ -562,6 +699,9 @@
             }
         }
 
+        // ============================================
+        // VERIFICAR LOGIN
+        // ============================================
         auth.onAuthStateChanged(user => {
             if (user) {
                 document.getElementById('loginScreen').style.display = 'none';
