@@ -427,23 +427,69 @@
         let telefoneCliente = null;
 
         // ============================================
-        // DETECTAR SUBDOMÍNIO
+        // REDIRECIONAMENTO PARA CLIENTES
         // ============================================
-        function getEmpresaFromSubdomain() {
+        async function verificarERedirecionar() {
             const hostname = window.location.hostname;
             const partes = hostname.split('.');
             
             console.log('🌐 Hostname:', hostname);
             console.log('📦 Partes:', partes);
             
-            // Para tsbase.com.br, se não houver subdomínio, retorna null
+            // Verificar se é um subdomínio de cliente
+            let empresaId = null;
             if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase' && partes[0] !== 'admin') {
-                return partes[0];
+                empresaId = partes[0];
             }
-            return null;
+            
+            if (empresaId) {
+                console.log(`🎯 Subdomínio detectado: ${empresaId}`);
+                
+                try {
+                    // Buscar dados da empresa no Firebase
+                    const empresaDoc = await db.collection('empresas').doc(empresaId).get();
+                    
+                    if (empresaDoc.exists) {
+                        const empresa = empresaDoc.data();
+                        const template = empresa.template || 'pizzaria'; // padrão: pizzaria
+                        
+                        console.log(`📋 Template definido: ${template}.html`);
+                        
+                        // Redirecionar para o template correto
+                        window.location.href = `/${template}.html`;
+                    } else {
+                        console.log('⚠️ Empresa não encontrada no Firebase');
+                        // Mostrar mensagem de erro amigável
+                        document.body.innerHTML = `
+                            <div style="text-align:center;padding:50px;background:#0a0a1a;color:white;min-height:100vh;">
+                                <h2 style="color:#ff6b35;">⚠️ Empresa não encontrada</h2>
+                                <p>A empresa <strong>${empresaId}</strong> não está cadastrada em nosso sistema.</p>
+                                <p>Entre em contato com o suporte para ativar sua conta.</p>
+                                <a href="https://tsbase.com.br" style="color:#ff6b35;">Voltar para o site principal</a>
+                            </div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error('❌ Erro ao buscar empresa:', error);
+                    document.body.innerHTML = `
+                        <div style="text-align:center;padding:50px;background:#0a0a1a;color:white;min-height:100vh;">
+                            <h2 style="color:#ff6b35;">❌ Erro de conexão</h2>
+                            <p>Não foi possível carregar os dados da empresa.</p>
+                            <p>Tente novamente mais tarde.</p>
+                            <a href="https://tsbase.com.br" style="color:#ff6b35;">Voltar para o site principal</a>
+                        </div>
+                    `;
+                }
+            } else {
+                console.log('🏠 Site principal - TS Base');
+                // Continua normalmente com o site de vendas
+            }
         }
+        
+        // Executar o redirecionamento
+        verificarERedirecionar();
 
-                // ============================================
+        // ============================================
         // MODAL DE INTERESSE (PLANOS)
         // ============================================
         let planoAtual = '';
