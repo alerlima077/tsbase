@@ -357,6 +357,129 @@
             justify-content: center;
             font-weight: bold;
         }
+
+                /* Cards de categorias especiais (pizzas) */
+        .categorias-especiais {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card-categoria {
+            background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%);
+            border-radius: 24px;
+            padding: 25px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-categoria::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #d32f2f, #ff6b35);
+        }
+        
+        .card-categoria:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .card-categoria .icone {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .card-categoria h3 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .card-categoria .sabores {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 12px;
+        }
+        
+        .card-categoria .preco {
+            font-size: 24px;
+            font-weight: 800;
+            color: #d32f2f;
+            margin-bottom: 5px;
+        }
+        
+        .card-categoria .preco small {
+            font-size: 12px;
+            font-weight: normal;
+            color: #999;
+        }
+        
+        .card-categoria .btn-escolher {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 12px;
+            transition: 0.3s;
+        }
+        
+        .card-categoria .btn-escolher:hover {
+            background: #b71c1c;
+            transform: scale(1.02);
+        }
+        
+        .card-destaque {
+            border: 2px solid #ffc107;
+            background: linear-gradient(135deg, #fff9e6 0%, #fff 100%);
+        }
+        
+        .card-destaque .badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #ffc107;
+            color: #333;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        /* Divisória entre seções */
+        .divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0 20px;
+        }
+        
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #ddd, transparent);
+        }
+        
+        .divider-text {
+            font-size: 14px;
+            color: #999;
+            font-weight: 500;
+        }
         
         @media (max-width: 480px) {
             .info-valor { font-size: 11px; }
@@ -429,6 +552,50 @@
         <span class="tab-item" data-categoria="rodizioButeco">🍺 RODÍZIO COMIDA BUTECO</span>
         <span class="tab-item" data-categoria="copoLimao">🍋 COPO LIMÃO</span>
         <span class="tab-item" data-categoria="sacoGelo">🧊 SACO DE GELO</span>
+    </div>
+
+    <!-- SEÇÃO DE CATEGORIAS ESPECIAIS (PIZZAS) -->
+    <div class="content-area">
+        <div class="categorias-especiais" id="categoriasEspeciais">
+            <div class="card-categoria" onclick="abrirModalPizza('pequena')">
+                <div class="icone">🍕</div>
+                <h3>Pizza Pequena</h3>
+                <div class="sabores">1 sabor</div>
+                <div class="preco">R$ 50,00</div>
+                <button class="btn-escolher">Escolher</button>
+            </div>
+            
+            <div class="card-categoria" onclick="abrirModalPizza('grande')">
+                <div class="icone">🍕🔥</div>
+                <h3>Pizza Grande</h3>
+                <div class="sabores">2 sabores</div>
+                <div class="preco">R$ 65,00</div>
+                <button class="btn-escolher">Escolher</button>
+            </div>
+            
+            <div class="card-categoria" onclick="abrirModalPizza('tresSabores')">
+                <div class="icone">🍕🍕🍕</div>
+                <h3>Pizza 3 Sabores</h3>
+                <div class="sabores">3 sabores</div>
+                <div class="preco">R$ 100,00</div>
+                <button class="btn-escolher">Escolher</button>
+            </div>
+            
+            <div class="card-categoria card-destaque" onclick="abrirModalRodizio()">
+                <div class="badge">🔥 MAIS PEDIDO</div>
+                <div class="icone">🍽️🍕🍝</div>
+                <h3>RODÍZIO NA CAIXA</h3>
+                <div class="sabores">5 sabores de pizza + salgado + macarrão + batata frita</div>
+                <div class="preco">R$ 80,00</div>
+                <button class="btn-escolher">Escolher</button>
+            </div>
+        </div>
+        
+        <div class="divider">
+            <span class="divider-line"></span>
+            <span class="divider-text">🍕 CARDÁPIO COMPLETO</span>
+            <span class="divider-line"></span>
+        </div>
     </div>
 
     <!-- ÁREA DE PRODUTOS -->
@@ -605,6 +772,40 @@
                 return partes[0];
             }
             return null;
+        }
+
+        // ============================================
+        // FUNÇÕES PARA CARDS DE PIZZA
+        // ============================================
+        function abrirModalPizza(tipo) {
+            let titulo = '';
+            let descricao = '';
+            let preco = 0;
+            
+            switch(tipo) {
+                case 'pequena':
+                    titulo = '🍕 Pizza Pequena';
+                    descricao = 'Escolha 1 sabor para sua pizza';
+                    preco = 50;
+                    break;
+                case 'grande':
+                    titulo = '🍕 Pizza Grande';
+                    descricao = 'Escolha 2 sabores para sua pizza';
+                    preco = 65;
+                    break;
+                case 'tresSabores':
+                    titulo = '🍕 Pizza 3 Sabores';
+                    descricao = 'Escolha 3 sabores para sua pizza';
+                    preco = 100;
+                    break;
+            }
+            
+            // Aqui você pode abrir um modal para escolher os sabores
+            alert(`${titulo}\n${descricao}\nPreço: R$ ${preco},00\n\n(Em breve você poderá escolher os sabores!)`);
+        }
+        
+        function abrirModalRodizio() {
+            alert(`🍽️ RODÍZIO NA CAIXA\n\nInclui:\n• 5 sabores de pizza\n• Salgados\n• Macarrão\n• Batata frita\n\nPreço: R$ 80,00\n\n(Em breve você poderá montar seu rodízio!)`);
         }
 
         // ============================================
