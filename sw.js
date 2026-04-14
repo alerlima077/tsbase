@@ -5,6 +5,7 @@ const urlsToCache = [
   '/index.html',
   '/admin.html',
   '/dashboard.html',
+  '/pizzaria.html',
   '/manifest.json'
 ];
 
@@ -22,12 +23,18 @@ self.addEventListener('install', event => {
   );
 });
 
-// Busca em cache (ignorando extensões do Chrome)
+// Busca em cache (ignorando extensões do Chrome e requisições POST)
 self.addEventListener('fetch', event => {
   const url = event.request.url;
   
   // Ignorar requisições de extensões do Chrome
   if (url.startsWith('chrome-extension://')) {
+    return;
+  }
+  
+  // Ignorar requisições POST (como envio de formulários)
+  if (event.request.method === 'POST') {
+    console.log('📤 Ignorando requisição POST (não cacheada):', url);
     return;
   }
   
@@ -64,6 +71,7 @@ self.addEventListener('activate', event => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
+            console.log('🗑️ Removendo cache antigo:', cacheName);
             return caches.delete(cacheName);
           }
         })
