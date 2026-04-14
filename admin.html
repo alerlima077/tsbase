@@ -364,12 +364,11 @@
         }
 
         function contatarLead(telefone, nome, plano) {
-            const msg = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\nVi que você demonstrou interesse no plano *${plano}*!\n\nGostaria de saber se ainda tem interesse em contratar nosso sistema?\n\n📞 Estou à disposição para tirar suas dúvidas.\n\n🌐 tsbase.com.br`;
+            const msg = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\nVi que você demonstrou interesse no plano *${plano}*!\n\nGostaria de saber se ainda tem interesse em contratar nosso sistema?\n\n📞 Estou à disposição para tirar suas dúvidas.\n\n📱 *Contato: (16) 99317-3863*`;
             const url = `https://wa.me/55${telefone}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
         }
         
-
         function fazerLogout() {
             auth.signOut();
             document.getElementById('loginScreen').style.display = 'block';
