@@ -1,5 +1,5 @@
 // Service Worker para PWA - TS Base
-const CACHE_NAME = 'tsbase-v1.0.0';
+const CACHE_NAME = 'tsbase-v2.0.0';
 const urlsToCache = [
   '/',
   '/index.html',
@@ -9,32 +9,21 @@ const urlsToCache = [
   '/manifest.json'
 ];
 
-// Instalação do Service Worker
+// Instalação
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('✅ Cache aberto');
-        return cache.addAll(urlsToCache);
-      })
-      .catch(error => {
-        console.log('❌ Erro ao adicionar ao cache:', error);
-      })
+    caches.open(CACHE_NAME).then(cache => {
+      console.log('✅ Cache aberto');
+      return cache.addAll(urlsToCache);
+    })
   );
+  self.skipWaiting(); // Força ativação imediata
 });
 
-// Busca em cache (ignorando extensões do Chrome e requisições POST)
+// Busca em cache - IGNORANDO TUDO QUE NÃO É GET
 self.addEventListener('fetch', event => {
-  const url = event.request.url;
-  
-  // Ignorar requisições de extensões do Chrome
-  if (url.startsWith('chrome-extension://')) {
-    return;
-  }
-  
-  // Ignorar requisições POST (como envio de formulários)
-  if (event.request.method === 'POST') {
-    console.log('📤 Ignorando requisição POST (não cacheada):', url);
+  // Só faz cache de requisições GET
+  if (event.request.method !== 'GET') {
     return;
   }
   
@@ -43,34 +32,25 @@ self.addEventListener('fetch', event => {
       .then(response => {
         if (response && response.status === 200) {
           const responseToCache = response.clone();
-          caches.open(CACHE_NAME)
-            .then(cache => {
-              cache.put(event.request, responseToCache);
-            })
-            .catch(err => console.log('Erro no cache:', err));
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
         }
         return response;
       })
       .catch(() => {
-        return caches.match(event.request)
-          .then(response => {
-            if (response) {
-              return response;
-            }
-            return caches.match('/');
-          });
+        return caches.match(event.request);
       })
   );
 });
 
-// Atualização do Service Worker
+// Ativação
 self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
+          if (cacheName !== CACHE_NAME) {
             console.log('🗑️ Removendo cache antigo:', cacheName);
             return caches.delete(cacheName);
           }
@@ -78,4 +58,5 @@ self.addEventListener('activate', event => {
       );
     })
   );
+  self.clients.claim(); // Toma controle imediatamente
 });
