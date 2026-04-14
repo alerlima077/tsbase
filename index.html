@@ -471,11 +471,11 @@
             if (!nome) { alert('Digite seu nome!'); return; }
             if (!telefone) { alert('Digite seu telefone!'); return; }
             
-            // Mensagem para VOCÊ (dono)
-            const msgDono = `🚀 *NOVO LEAD - TS BASE* 🚀\n\n👤 *Cliente:* ${nome}\n📱 *Telefone:* ${telefone}\n📧 *E-mail:* ${email || 'Não informado'}\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n\n📅 *Data:* ${new Date().toLocaleString()}`;
+            // Mensagem única que o cliente recebe (com seus dados)
+            const msgCliente = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\n✅ Recebemos sua solicitação do plano *${planoAtual}*!\n\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n📞 Em breve entraremos em contato para ativar seu sistema.\n\n*Contato:* (16) 99317-3863\n🌐 tsbase.com.br\n\nObrigado pelo interesse! 🎉`;
             
-            // Mensagem para o CLIENTE (confirmação)
-            const msgCliente = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\n✅ Recebemos sua solicitação do plano *${planoAtual}*!\n\n📞 Em breve entraremos em contato para ativar seu sistema.\n\n*Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n*Contato:* (16) 99317-3863\n\n🌐 tsbase.com.br\n\nObrigado pelo interesse! 🎉`;
+            // Mensagem para você (dono) - enviada por e-mail ou salvamos no Firebase
+            const msgDono = `🚀 NOVO LEAD - TS BASE\n\nCliente: ${nome}\nTelefone: ${telefone}\nE-mail: ${email || 'Não informado'}\nPlano: ${planoAtual} - R$ ${precoAtual}/mês\nData: ${new Date().toLocaleString()}`;
             
             // Salvar no Firebase
             try {
@@ -486,22 +486,21 @@
                     plano: planoAtual,
                     preco: precoAtual,
                     data: new Date(),
-                    status: 'novo'
+                    status: 'novo',
+                    mensagemDono: msgDono
                 });
                 console.log('✅ Lead salvo no Firebase!');
-            } catch(e) { console.error('Erro ao salvar lead:', e); }
+                alert('✅ Solicitação enviada! Você receberá uma confirmação no WhatsApp.');
+            } catch(e) { 
+                console.error('Erro ao salvar lead:', e);
+                alert('⚠️ Erro ao salvar, mas a mensagem será enviada.');
+            }
             
-            // Abrir WhatsApp do DONO em uma nova aba
-            const donoUrl = `https://wa.me/5516993173863?text=${encodeURIComponent(msgDono)}`;
-            window.open(donoUrl, '_blank');
+            // Abrir WhatsApp do CLIENTE com a confirmação
+            const clienteUrl = `https://wa.me/55${telefone}?text=${encodeURIComponent(msgCliente)}`;
+            window.open(clienteUrl, '_blank');
             
-            // Pequeno delay e depois abrir WhatsApp do CLIENTE
-            setTimeout(() => {
-                const clienteUrl = `https://wa.me/55${telefone}?text=${encodeURIComponent(msgCliente)}`;
-                window.open(clienteUrl, '_blank');
-            }, 1500);
-            
-            alert('✅ Solicitação enviada! Você receberá uma mensagem de confirmação no WhatsApp em alguns segundos.');
+            // Fechar modal e limpar campos
             fecharModalInteresse();
         }
 
