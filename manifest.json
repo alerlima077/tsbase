@@ -2,6 +2,7 @@
   "name": "TS Base - Plataforma de Gestão",
   "short_name": "TS Base",
   "description": "Plataforma completa para gestão do seu negócio",
+  "id": "/",
   "start_url": "/",
   "display": "standalone",
   "theme_color": "#ff6b35",
@@ -11,8 +12,7 @@
     {
       "src": "images/favicon.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "type": "image/png"
     }
   ]
 }

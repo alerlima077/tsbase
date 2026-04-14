@@ -5,7 +5,6 @@ const urlsToCache = [
   '/index.html',
   '/admin.html',
   '/dashboard.html',
-  '/style.css',
   '/manifest.json'
 ];
 
@@ -14,30 +13,45 @@ self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Cache aberto');
+        console.log('✅ Cache aberto');
         return cache.addAll(urlsToCache);
+      })
+      .catch(error => {
+        console.log('❌ Erro ao adicionar ao cache:', error);
       })
   );
 });
 
-// Busca em cache (estratégia: network first, fallback para cache)
+// Busca em cache (ignorando extensões do Chrome)
 self.addEventListener('fetch', event => {
+  const url = event.request.url;
+  
+  // Ignorar requisições de extensões do Chrome
+  if (url.startsWith('chrome-extension://')) {
+    return;
+  }
+  
   event.respondWith(
     fetch(event.request)
       .then(response => {
-        // Se a requisição foi bem-sucedida, clona e salva no cache
-        if (response.status === 200) {
+        if (response && response.status === 200) {
           const responseToCache = response.clone();
           caches.open(CACHE_NAME)
             .then(cache => {
               cache.put(event.request, responseToCache);
-            });
+            })
+            .catch(err => console.log('Erro no cache:', err));
         }
         return response;
       })
       .catch(() => {
-        // Se falhou, tenta buscar do cache
-        return caches.match(event.request);
+        return caches.match(event.request)
+          .then(response => {
+            if (response) {
+              return response;
+            }
+            return caches.match('/');
+          });
       })
   );
 });
