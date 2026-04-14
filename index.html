@@ -468,41 +468,69 @@
             const telefone = document.getElementById('interesseTelefone').value.trim();
             const email = document.getElementById('interesseEmail').value.trim();
             
-            if (!nome) { alert('Digite seu nome!'); return; }
-            if (!telefone) { alert('Digite seu telefone!'); return; }
+            // Validação
+            if (!nome) {
+                alert('❌ Por favor, digite seu nome!');
+                return;
+            }
+            if (!telefone) {
+                alert('❌ Por favor, digite seu telefone!');
+                return;
+            }
             
-            // Mensagem para VOCÊ (dono)
-            const msgDono = `🚀 *NOVO LEAD - TS BASE* 🚀\n\n👤 *Cliente:* ${nome}\n📱 *Telefone:* ${telefone}\n📧 *E-mail:* ${email || 'Não informado'}\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n\n📅 *Data:* ${new Date().toLocaleString()}`;
+            // Mostrar loading
+            const btnEnviar = event.target;
+            const textoOriginal = btnEnviar.innerText;
+            btnEnviar.innerText = '⏳ Enviando...';
+            btnEnviar.disabled = true;
             
-            // Mensagem para o CLIENTE (confirmação)
-            const msgCliente = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\n✅ Recebemos sua solicitação do plano *${planoAtual}*!\n\n📞 Em breve entraremos em contato para ativar seu sistema.\n\n*Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n*Contato:* (16) 99260-0684\n\n🌐 tsbase.com.br\n\nObrigado pelo interesse! 🎉`;
-            
-            // Salvar no Firebase
             try {
-                await db.collection('leads').add({
-                    nome: nome,
-                    telefone: telefone,
-                    email: email,
-                    plano: planoAtual,
-                    preco: precoAtual,
-                    data: new Date(),
-                    status: 'novo'
-                });
-                console.log('✅ Lead salvo no Firebase!');
-            } catch(e) { console.error('Erro ao salvar lead:', e); }
-            
-            // Abrir WhatsApp do DONO em uma nova aba
-            const donoUrl = `https://wa.me/5516992600684?text=${encodeURIComponent(msgDono)}`;
-            window.open(donoUrl, '_blank');
-            
-            // Pequeno delay e depois abrir WhatsApp do CLIENTE
-            setTimeout(() => {
+                // Mensagem para o CLIENTE (confirmação)
+                const msgCliente = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\n✅ Recebemos sua solicitação do plano *${planoAtual}*!\n\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n📞 Em breve entraremos em contato para ativar seu sistema.\n\n*Contato:* (16) 99317-3863\n🌐 tsbase.com.br\n\nObrigado pelo interesse! 🎉`;
+                
+                // Mensagem para VOCÊ (dono)
+                const msgDono = `🚀 *NOVO LEAD - TS BASE* 🚀\n\n👤 *Cliente:* ${nome}\n📱 *Telefone:* ${telefone}\n📧 *E-mail:* ${email || 'Não informado'}\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n\n📅 *Data:* ${new Date().toLocaleString()}`;
+                
+                // Salvar no Firebase
+                try {
+                    await db.collection('leads').add({
+                        nome: nome,
+                        telefone: telefone,
+                        email: email,
+                        plano: planoAtual,
+                        preco: precoAtual,
+                        data: new Date(),
+                        status: 'novo'
+                    });
+                    console.log('✅ Lead salvo no Firebase!');
+                } catch (firebaseError) {
+                    console.error('Erro ao salvar no Firebase:', firebaseError);
+                    // Continua mesmo com erro no Firebase
+                }
+                
+                // Abrir WhatsApp do CLIENTE
+                console.log('📱 Abrindo WhatsApp do cliente:', telefone);
                 const clienteUrl = `https://wa.me/55${telefone}?text=${encodeURIComponent(msgCliente)}`;
                 window.open(clienteUrl, '_blank');
-            }, 1500);
-            
-            alert('✅ Solicitação enviada! Você receberá uma mensagem de confirmação no WhatsApp em alguns segundos.');
-            fecharModalInteresse();
+                
+                // Pequeno delay para abrir o WhatsApp do dono
+                setTimeout(() => {
+                    console.log('📱 Abrindo WhatsApp do dono');
+                    const donoUrl = `https://wa.me/5516993173863?text=${encodeURIComponent(msgDono)}`;
+                    window.open(donoUrl, '_blank');
+                }, 1000);
+                
+                alert('✅ Solicitação enviada! Você receberá uma mensagem de confirmação no WhatsApp.');
+                fecharModalInteresse();
+                
+            } catch (error) {
+                console.error('Erro geral:', error);
+                alert('❌ Ocorreu um erro. Tente novamente.');
+            } finally {
+                // Restaurar botão
+                btnEnviar.innerText = textoOriginal;
+                btnEnviar.disabled = false;
+            }
         }
 
         // ============================================
