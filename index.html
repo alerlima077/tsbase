@@ -463,7 +463,7 @@
             document.getElementById('interesseEmail').value = '';
         }
 
-                async function enviarInteresse() {
+        async function enviarInteresse() {
             const nome = document.getElementById('interesseNome').value.trim();
             const telefone = document.getElementById('interesseTelefone').value.trim();
             const email = document.getElementById('interesseEmail').value.trim();
@@ -491,15 +491,17 @@
                 console.log('✅ Lead salvo no Firebase!');
             } catch(e) { console.error('Erro ao salvar lead:', e); }
             
-            // Abrir WhatsApp para VOCÊ (dono)
-            window.open(`https://wa.me/5516993173863?text=${encodeURIComponent(msgDono)}`, '_blank');
+            // Abrir WhatsApp do DONO em uma nova aba
+            const donoUrl = `https://wa.me/5516993173863?text=${encodeURIComponent(msgDono)}`;
+            window.open(donoUrl, '_blank');
             
-            // Abrir WhatsApp para o CLIENTE (confirmação)
+            // Pequeno delay e depois abrir WhatsApp do CLIENTE
             setTimeout(() => {
-                window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(msgCliente)}`, '_blank');
-            }, 1000);
+                const clienteUrl = `https://wa.me/55${telefone}?text=${encodeURIComponent(msgCliente)}`;
+                window.open(clienteUrl, '_blank');
+            }, 1500);
             
-            alert('✅ Solicitação enviada! Você receberá uma mensagem de confirmação no WhatsApp.');
+            alert('✅ Solicitação enviada! Você receberá uma mensagem de confirmação no WhatsApp em alguns segundos.');
             fecharModalInteresse();
         }
 
