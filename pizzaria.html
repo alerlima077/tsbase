@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Julio's Pizzaria - Peça Online</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+        
+        body {
+            background: #f8f8f8;
+            color: #333;
+        }
+        
+        /* ============================================ */
+        /* HEADER PRINCIPAL                             */
+        /* ============================================ */
+        .header-pizzaria {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: white;
+            padding: 20px 20px 15px 20px;
+            position: relative;
+            border-radius: 0 0 30px 30px;
+        }
+        
+        .logo-area {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .logo {
+            max-width: 80px;
+            background: white;
+            border-radius: 50%;
+            padding: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .empresa-nome {
+            font-size: 26px;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+        
+        .endereco {
+            text-align: center;
+            font-size: 12px;
+            opacity: 0.9;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        /* Grid de informações */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 12px;
+        }
+        
+        .info-item {
+            text-align: center;
+            cursor: pointer;
+            padding: 8px 5px;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+        
+        .info-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.02);
+        }
+        
+        .info-icone {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        
+        .info-valor {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .info-label {
+            font-size: 10px;
+            opacity: 0.8;
+            margin-top: 3px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .status-fechado {
+            background: #f44336;
+            color: white;
+        }
+        
+        .status-aberto {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .avaliacao-estrelas {
+            color: #ffc107;
+            letter-spacing: 2px;
+        }
+        
+        /* ============================================ */
+        /* MENU ROLANTE (TABS)                          */
+        /* ============================================ */
+        .menu-tabs {
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 12px 15px;
+            display: flex;
+            gap: 8px;
+            scrollbar-width: thin;
+        }
+        
+        .menu-tabs::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        .menu-tabs::-webkit-scrollbar-thumb {
+            background: #d32f2f;
+            border-radius: 10px;
+        }
+        
+        .tab-item {
+            display: inline-block;
+            background: #f0f0f0;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #555;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+        
+        .tab-item.ativo {
+            background: #d32f2f;
+            color: white;
+            box-shadow: 0 2px 8px rgba(211,47,47,0.3);
+        }
+        
+        .tab-item:hover {
+            background: #d32f2f;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* ============================================ */
+        /* ÁREA DE PRODUTOS                             */
+        /* ============================================ */
+        .content-area {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            padding-bottom: 100px;
+        }
+        
+        .produto-card {
+            background: white;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+        
+        .produto-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        
+        .produto-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 16px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        
+        .produto-info {
+            flex: 1;
+        }
+        
+        .produto-nome {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .produto-desc {
+            font-size: 12px;
+            color: #888;
+            margin: 5px 0;
+        }
+        
+        .produto-preco {
+            font-size: 18px;
+            font-weight: 700;
+            color: #d32f2f;
+        }
+        
+        .btn-adicionar {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: 0.3s;
+        }
+        
+        .btn-adicionar:hover {
+            background: #b71c1c;
+            transform: scale(1.02);
+        }
+        
+        /* ============================================ */
+        /* MODAIS                                       */
+        /* ============================================ */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            max-width: 400px;
+            width: 90%;
+            border-radius: 24px;
+            padding: 25px;
+            color: #333;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        .modal-content h3 {
+            color: #d32f2f;
+            margin-bottom: 20px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .modal-info-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .modal-info-item i {
+            width: 25px;
+            color: #d32f2f;
+        }
+        
+        .fechar-modal {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            width: 100%;
+            font-weight: 600;
+        }
+        
+        /* ============================================ */
+        /* CARRINHO FLUTUANTE                           */
+        /* ============================================ */
+        .carrinho-flutuante {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #d32f2f;
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 200;
+            font-size: 24px;
+            transition: 0.3s;
+        }
+        
+        .carrinho-flutuante:hover {
+            transform: scale(1.05);
+        }
+        
+        .carrinho-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ffc107;
+            color: #333;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 480px) {
+            .info-valor { font-size: 11px; }
+            .info-label { font-size: 9px; }
+            .empresa-nome { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- HEADER PRINCIPAL -->
+    <div class="header-pizzaria">
+        <div class="logo-area">
+            <img src="images/logo-julios.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/80x80?text=Logo'">
+        </div>
+        <div class="empresa-nome" id="empresaNome">JULIO'S PIZZARIA</div>
+        <div class="endereco" id="empresaEndereco">
+            <i class="fas fa-map-marker-alt"></i> Rua José Leonel Pupo, 534 - Centro - Pontal/SP
+        </div>
+        
+        <div class="info-grid">
+            <div class="info-item" onclick="abrirModalAvaliacoes()">
+                <div class="info-icone">⭐</div>
+                <div class="info-valor" id="avaliacaoNota">4.9</div>
+                <div class="info-label">Avaliações</div>
+            </div>
+            <div class="info-item" onclick="abrirModalPagamentos()">
+                <div class="info-icone">💰</div>
+                <div class="info-valor">💳 📱</div>
+                <div class="info-label">Pagamentos</div>
+            </div>
+            <div class="info-item" onclick="abrirModalHorarios()">
+                <div class="info-icone">🕒</div>
+                <div class="info-valor" id="statusFuncionamento"><span class="status-badge status-fechado">FECHADO</span></div>
+                <div class="info-label">Horários</div>
+            </div>
+            <div class="info-item">
+                <div class="info-icone">🛵</div>
+                <div class="info-valor" id="tempoEntrega">50min - 1h25</div>
+                <div class="info-label">Entrega</div>
+            </div>
+            <div class="info-item">
+                <div class="info-icone">🏪</div>
+                <div class="info-valor" id="tempoRetirada">40min</div>
+                <div class="info-label">Retirada</div>
+            </div>
+            <div class="info-item" onclick="abrirModalInformacoes()">
+                <div class="info-icone">ℹ️</div>
+                <div class="info-valor">Informações</div>
+                <div class="info-label">Clique aqui</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MENU ROLANTE -->
+    <div class="menu-tabs" id="menuTabs">
+        <span class="tab-item ativo" data-categoria="pizzas">🍕 PIZZAS</span>
+        <span class="tab-item" data-categoria="lanches">🍔 LANCHES</span>
+        <span class="tab-item" data-categoria="porcoes">🍗 PORÇÕES</span>
+        <span class="tab-item" data-categoria="salgados">🥟 SALGADOS</span>
+        <span class="tab-item" data-categoria="macarrao">🍝 MACARRÃO AO VIVO!</span>
+        <span class="tab-item" data-categoria="pratoFeito">🍽️ PRATO FEITO</span>
+        <span class="tab-item" data-categoria="omelete">🍳 OMELETE</span>
+        <span class="tab-item" data-categoria="nhoque">🥔 NHOQUE</span>
+        <span class="tab-item" data-categoria="sobremesas">🍰 SOBREMESAS</span>
+        <span class="tab-item" data-categoria="doces">🍬 DOCES</span>
+        <span class="tab-item" data-categoria="promocoesBebidas">🍺 PROMOÇÕES BEBIDAS</span>
+        <span class="tab-item" data-categoria="bebidas">🥤 BEBIDAS</span>
+        <span class="tab-item" data-categoria="rodizioPizza">🍕 RODÍZIO DE PIZZA</span>
+        <span class="tab-item" data-categoria="rodizioButeco">🍺 RODÍZIO COMIDA BUTECO</span>
+        <span class="tab-item" data-categoria="copoLimao">🍋 COPO LIMÃO</span>
+        <span class="tab-item" data-categoria="sacoGelo">🧊 SACO DE GELO</span>
+    </div>
+
+    <!-- ÁREA DE PRODUTOS -->
+    <div class="content-area" id="contentArea">
+        <div style="text-align: center; padding: 50px;">📱 Carregando cardápio...</div>
+    </div>
+
+    <!-- CARRINHO FLUTUANTE -->
+    <div class="carrinho-flutuante" id="carrinhoBtn">
+        🛒
+        <span class="carrinho-count" id="carrinhoCount">0</span>
+    </div>
+
+    <!-- MODAL AVALIAÇÕES -->
+    <div id="modalAvaliacoes" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-star" style="color: #ffc107;"></i> Avaliações</h3>
+            <div id="avaliacoesLista">
+                <div class="modal-info-item">⭐ 5.0 - Excelente pizza! Recomendo - João Silva</div>
+                <div class="modal-info-item">⭐ 4.8 - Muito boa, entrega rápida - Maria Santos</div>
+                <div class="modal-info-item">⭐ 4.9 - Melhor pizza da região! - Carlos Oliveira</div>
+            </div>
+            <button class="fechar-modal" onclick="fecharModal('modalAvaliacoes')">Fechar</button>
+        </div>
+    </div>
+
+    <!-- MODAL PAGAMENTOS -->
+    <div id="modalPagamentos" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-credit-card"></i> Formas de Pagamento</h3>
+            <div class="modal-info-item"><i class="fas fa-money-bill"></i> Dinheiro</div>
+            <div class="modal-info-item"><i class="fas fa-credit-card"></i> Cartão de Crédito/Débito</div>
+            <div class="modal-info-item"><i class="fas fa-qrcode"></i> PIX</div>
+            <button class="fechar-modal" onclick="fecharModal('modalPagamentos')">Fechar</button>
+        </div>
+    </div>
+
+    <!-- MODAL HORÁRIOS -->
+    <div id="modalHorarios" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-clock"></i> Horário de Funcionamento</h3>
+            <div class="modal-info-item"><i class="far fa-calendar-alt"></i> Segunda: 09h às 23:30h</div>
+            <div class="modal-info-item"><i class="far fa-calendar-alt"></i> Terça: 09h às 23:30h</div>
+            <div class="modal-info-item"><i class="far fa-calendar-alt"></i> Quarta: 09h às 23:30h</div>
+            <div class="modal-info-item"><i class="far fa-calendar-alt"></i> Quinta: 09h às 23:30h</div>
+            <div class="modal-info-item"><i class="far fa-calendar-alt"></i> Sexta: 09h às 23:30h</div>
+            <div class="modal-info-item"><i class="far fa-calendar-alt"></i> Sábado: 09h às 23:30h</div>
+            <div class="modal-info-item"><i class="far fa-calendar-alt"></i> Domingo: 09h às 23:30h</div>
+            <button class="fechar-modal" onclick="fecharModal('modalHorarios')">Fechar</button>
+        </div>
+    </div>
+
+        <!-- MODAL INFORMAÇÕES -->
+    <div id="modalInformacoes" class="modal">
+        <div class="modal-content">
+            <h3><i class="fas fa-info-circle"></i> Informações</h3>
+            
+            <!-- Localização - Google Maps -->
+            <div class="modal-info-item">
+                <i class="fas fa-map-marker-alt"></i> 
+                <a href="https://www.google.com/maps/search/?api=1&query=Rua+José+Leonel+Pupo,+534+-+Centro+-+Pontal/SP" target="_blank" style="color: #d32f2f; text-decoration: none;">
+                    Rua José Leonel Pupo, 534 - Centro - Pontal/SP
+                </a>
+            </div>
+            
+            <!-- WhatsApp - abre o app ou web -->
+            <div class="modal-info-item">
+                <i class="fab fa-whatsapp"></i> 
+                <a href="https://wa.me/5516991519239" target="_blank" style="color: #25D366; text-decoration: none; font-weight: 500;">
+                    WhatsApp: (16) 99151-9239
+                </a>
+            </div>
+            
+            <!-- Telefone - ligação direta -->
+            <div class="modal-info-item">
+                <i class="fas fa-phone"></i> 
+                <a href="tel:1639538263" style="color: #d32f2f; text-decoration: none;">
+                    Telefone: (16) 3953-8263
+                </a>
+            </div>
+            
+            <!-- Facebook -->
+            <div class="modal-info-item">
+                <i class="fab fa-facebook"></i> 
+                <a href="https://facebook.com/juliospizzapontal" target="_blank" style="color: #1877f2; text-decoration: none;">
+                    Facebook: juliospizzapontal
+                </a>
+            </div>
+            
+            <!-- Instagram -->
+            <div class="modal-info-item">
+                <i class="fab fa-instagram"></i> 
+                <a href="https://instagram.com/julios_pizzaria" target="_blank" style="color: #e4405f; text-decoration: none;">
+                    Instagram: @julios_pizzaria
+                </a>
+            </div>
+            
+            <button class="fechar-modal" onclick="fecharModal('modalInformacoes')">Fechar</button>
+        </div>
+    </div>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB8uUzNpj3RLdoVZoHqd61zGMxsm5KHbL8",
+            authDomain: "imperio-pizzas.firebaseapp.com",
+            projectId: "imperio-pizzas",
+            storageBucket: "imperio-pizzas.firebasestorage.app",
+            messagingSenderId: "177187165049",
+            appId: "1:177187165049:web:c0419e4fc621cd2621d5a8"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let empresaId = null;
+        let cardapioAtual = {};
+        let carrinho = [];
+
+        // ============================================
+        // DETECTAR EMPRESA PELO SUBDOMÍNIO
+        // ============================================
+        function getEmpresaFromSubdomain() {
+            const hostname = window.location.hostname;
+            const partes = hostname.split('.');
+            if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase' && partes[0] !== 'admin') {
+                return partes[0];
+            }
+            return null;
+        }
+
+        // ============================================
+        // CARREGAR SISTEMA
+        // ============================================
+        async function carregarSistema() {
+            empresaId = getEmpresaFromSubdomain();
+            if (!empresaId) {
+                document.getElementById('contentArea').innerHTML = '<div style="text-align:center;padding:50px;">Acesso inválido</div>';
+                return;
+            }
+            
+            // Buscar dados da empresa
+            const empresaDoc = await db.collection('empresas').doc(empresaId).get();
+            if (empresaDoc.exists) {
+                const empresa = empresaDoc.data();
+                document.getElementById('empresaNome').innerHTML = empresa.nome || 'JULIO\'S PIZZARIA';
+                document.getElementById('empresaEndereco').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${empresa.endereco || 'Rua José Leonel Pupo, 534 - Centro - Pontal/SP'}`;
+                document.getElementById('tempoEntrega').innerHTML = empresa.tempoEntrega || '50min - 1h25';
+                document.getElementById('tempoRetirada').innerHTML = empresa.tempoRetirada || '40min';
+                document.getElementById('avaliacaoNota').innerHTML = empresa.avaliacao || '4.9';
+            }
+            
+            // Buscar cardápio
+            const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
+            if (cardapioDoc.exists) {
+                let dados = cardapioDoc.data().dados || {};
+                if (typeof dados === 'string') {
+                    try { dados = JSON.parse(dados); } catch(e) {}
+                }
+                cardapioAtual = dados;
+                carregarCategoria('pizzas');
+            } else {
+                // Cardápio padrão para demonstração
+                cardapioAtual = {
+                    pizzas: [
+                        { nome: "Pizza Calabresa", descricao: "Calabresa, mussarela, cebola e orégano", preco: 39.90, imagem: "images/calabresa.jpg" },
+                        { nome: "Pizza Mussarela", descricao: "Mussarela, tomate e orégano", preco: 34.90, imagem: "images/musarela.jpg" },
+                        { nome: "Pizza Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela", preco: 42.90, imagem: "images/portuguesa.jpg" }
+                    ],
+                    lanches: [
+                        { nome: "X-Burguer", descricao: "Hambúrguer, queijo, alface, tomate", preco: 22.90, imagem: "" },
+                        { nome: "X-Tudo", descricao: "Hambúrguer, queijo, bacon, ovo, presunto", preco: 32.90, imagem: "" }
+                    ]
+                };
+                carregarCategoria('pizzas');
+            }
+        }
+
+        // ============================================
+        // CARREGAR CATEGORIA
+        // ============================================
+        function carregarCategoria(categoria) {
+            const produtos = cardapioAtual[categoria] || [];
+            if (produtos.length === 0) {
+                document.getElementById('contentArea').innerHTML = '<div style="text-align:center;padding:50px;">🍕 Nenhum produto encontrado</div>';
+                return;
+            }
+            
+            let html = '';
+            produtos.forEach(produto => {
+                html += `
+                    <div class="produto-card">
+                        <img src="${produto.imagem || 'https://via.placeholder.com/80x80?text=Produto'}" class="produto-img" onerror="this.src='https://via.placeholder.com/80x80?text=Produto'">
+                        <div class="produto-info">
+                            <div class="produto-nome">${produto.nome}</div>
+                            <div class="produto-desc">${produto.descricao || ''}</div>
+                            <div class="produto-preco">R$ ${produto.preco.toFixed(2)}</div>
+                            <button class="btn-adicionar" onclick="adicionarAoCarrinho('${produto.nome.replace(/'/g, "\\'")}', ${produto.preco})">+ Adicionar</button>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('contentArea').innerHTML = html;
+        }
+
+        // ============================================
+        // CARRINHO
+        // ============================================
+        function adicionarAoCarrinho(nome, preco) {
+            const existente = carrinho.find(i => i.nome === nome);
+            if (existente) {
+                existente.quantidade++;
+            } else {
+                carrinho.push({ nome, preco, quantidade: 1 });
+            }
+            atualizarCarrinhoUI();
+            alert(`✅ ${nome} adicionado ao carrinho!`);
+        }
+        
+        function atualizarCarrinhoUI() {
+            const count = carrinho.reduce((acc, i) => acc + i.quantidade, 0);
+            document.getElementById('carrinhoCount').innerText = count;
+        }
+
+        // ============================================
+        // TABS
+        // ============================================
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('ativo'));
+                tab.classList.add('ativo');
+                const categoria = tab.getAttribute('data-categoria');
+                carregarCategoria(categoria);
+            });
+        });
+
+        // ============================================
+        // MODAIS
+        // ============================================
+        function abrirModalAvaliacoes() { document.getElementById('modalAvaliacoes').style.display = 'flex'; }
+        function abrirModalPagamentos() { document.getElementById('modalPagamentos').style.display = 'flex'; }
+        function abrirModalHorarios() { document.getElementById('modalHorarios').style.display = 'flex'; }
+        function abrirModalInformacoes() { document.getElementById('modalInformacoes').style.display = 'flex'; }
+        function fecharModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // ============================================
+        // INICIAR
+        // ============================================
+        carregarSistema();
+    </script>
+</body>
+</html>
