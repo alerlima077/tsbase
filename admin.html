@@ -202,8 +202,23 @@
                         </select>
                     </div>
                     <div class="form-group">
+                        <label>📋 Template do Sistema</label>
+                        <select id="empresaTemplate">
+                            <option value="pizzaria">🍕 Pizzaria</option>
+                            <option value="hamburgueria">🍔 Hamburgueria</option>
+                            <option value="restaurante">🍽️ Restaurante</option>
+                        </select>
+                        <small style="color: #aaa;">Layout que será exibido para o cliente</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
                         <label>Telefone (com DDD)</label>
                         <input type="text" id="empresaTelefone" placeholder="16999999999">
+                    </div>
+                    <div class="form-group">
+                        <label>Taxa de Entrega (R$)</label>
+                        <input type="number" id="empresaTaxa" placeholder="3.50" step="0.01">
                     </div>
                 </div>
                 <div class="form-group">
@@ -213,10 +228,6 @@
                 <div class="form-group">
                     <label>Horário de Funcionamento</label>
                     <input type="text" id="empresaHorario" placeholder="Quarta a Domingo, 18h às 23h">
-                </div>
-                <div class="form-group">
-                    <label>Taxa de Entrega (R$)</label>
-                    <input type="number" id="empresaTaxa" placeholder="3.50" step="0.01">
                 </div>
                 <button class="btn-salvar" onclick="cadastrarEmpresa()">✅ Cadastrar Cliente</button>
             </div>
@@ -405,6 +416,7 @@
             const subdominio = document.getElementById('empresaSubdominio').value.trim().toLowerCase();
             const nome = document.getElementById('empresaNome').value.trim();
             const plano = document.getElementById('empresaPlano').value;
+            const template = document.getElementById('empresaTemplate').value;  // NOVO
             const telefone = document.getElementById('empresaTelefone').value;
             const endereco = document.getElementById('empresaEndereco').value;
             const horario = document.getElementById('empresaHorario').value;
@@ -426,6 +438,7 @@
             await db.collection('empresas').doc(subdominio).set({
                 nome: nome,
                 plano: plano,
+                template: template,  // NOVO CAMPO
                 ativo: true,
                 telefone: telefone,
                 endereco: endereco,
