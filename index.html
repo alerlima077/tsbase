@@ -475,7 +475,7 @@
             const msgDono = `🚀 *NOVO LEAD - TS BASE* 🚀\n\n👤 *Cliente:* ${nome}\n📱 *Telefone:* ${telefone}\n📧 *E-mail:* ${email || 'Não informado'}\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n\n📅 *Data:* ${new Date().toLocaleString()}`;
             
             // Mensagem para o CLIENTE (confirmação)
-            const msgCliente = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\n✅ Recebemos sua solicitação do plano *${planoAtual}*!\n\n📞 Em breve entraremos em contato para ativar seu sistema.\n\n*Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n*Contato:* (16) 99317-3863\n\n🌐 tsbase.com.br\n\nObrigado pelo interesse! 🎉`;
+            const msgCliente = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\n✅ Recebemos sua solicitação do plano *${planoAtual}*!\n\n📞 Em breve entraremos em contato para ativar seu sistema.\n\n*Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n*Contato:* (16) 99260-0684\n\n🌐 tsbase.com.br\n\nObrigado pelo interesse! 🎉`;
             
             // Salvar no Firebase
             try {
@@ -492,7 +492,7 @@
             } catch(e) { console.error('Erro ao salvar lead:', e); }
             
             // Abrir WhatsApp do DONO em uma nova aba
-            const donoUrl = `https://wa.me/5516993173863?text=${encodeURIComponent(msgDono)}`;
+            const donoUrl = `https://wa.me/5516992600684?text=${encodeURIComponent(msgDono)}`;
             window.open(donoUrl, '_blank');
             
             // Pequeno delay e depois abrir WhatsApp do CLIENTE
