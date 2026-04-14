@@ -463,7 +463,7 @@
             document.getElementById('interesseEmail').value = '';
         }
 
-        async function enviarInteresse() {
+                async function enviarInteresse() {
             const nome = document.getElementById('interesseNome').value.trim();
             const telefone = document.getElementById('interesseTelefone').value.trim();
             const email = document.getElementById('interesseEmail').value.trim();
@@ -471,8 +471,11 @@
             if (!nome) { alert('Digite seu nome!'); return; }
             if (!telefone) { alert('Digite seu telefone!'); return; }
             
-            // Mensagem para o WhatsApp
-            const msg = `🚀 *NOVO LEAD - TS BASE* 🚀\n\n👤 *Cliente:* ${nome}\n📱 *Telefone:* ${telefone}\n📧 *E-mail:* ${email || 'Não informado'}\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n\n📅 *Data:* ${new Date().toLocaleString()}`;
+            // Mensagem para VOCÊ (dono)
+            const msgDono = `🚀 *NOVO LEAD - TS BASE* 🚀\n\n👤 *Cliente:* ${nome}\n📱 *Telefone:* ${telefone}\n📧 *E-mail:* ${email || 'Não informado'}\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n\n📅 *Data:* ${new Date().toLocaleString()}`;
+            
+            // Mensagem para o CLIENTE (confirmação)
+            const msgCliente = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\n✅ Recebemos sua solicitação do plano *${planoAtual}*!\n\n📞 Em breve entraremos em contato para ativar seu sistema.\n\n*Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n*Contato:* (16) 99317-3863\n\n🌐 tsbase.com.br\n\nObrigado pelo interesse! 🎉`;
             
             // Salvar no Firebase
             try {
@@ -485,13 +488,18 @@
                     data: new Date(),
                     status: 'novo'
                 });
-                console.log('✅ Lead salvo!');
-            } catch(e) { console.error(e); }
+                console.log('✅ Lead salvo no Firebase!');
+            } catch(e) { console.error('Erro ao salvar lead:', e); }
             
-            // Abrir WhatsApp
-            window.open(`https://wa.me/5516993173863?text=${encodeURIComponent(msg)}`, '_blank');
+            // Abrir WhatsApp para VOCÊ (dono)
+            window.open(`https://wa.me/5516993173863?text=${encodeURIComponent(msgDono)}`, '_blank');
             
-            alert('✅ Solicitação enviada! Entraremos em contato em breve.');
+            // Abrir WhatsApp para o CLIENTE (confirmação)
+            setTimeout(() => {
+                window.open(`https://wa.me/55${telefone}?text=${encodeURIComponent(msgCliente)}`, '_blank');
+            }, 1000);
+            
+            alert('✅ Solicitação enviada! Você receberá uma mensagem de confirmação no WhatsApp.');
             fecharModalInteresse();
         }
 
