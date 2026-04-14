@@ -468,15 +468,8 @@
             const telefone = document.getElementById('interesseTelefone').value.trim();
             const email = document.getElementById('interesseEmail').value.trim();
             
-            // Validação
-            if (!nome) {
-                alert('❌ Por favor, digite seu nome!');
-                return;
-            }
-            if (!telefone) {
-                alert('❌ Por favor, digite seu telefone!');
-                return;
-            }
+            if (!nome) { alert('❌ Digite seu nome!'); return; }
+            if (!telefone) { alert('❌ Digite seu telefone!'); return; }
             
             // Mostrar loading
             const btnEnviar = event.target;
@@ -485,52 +478,79 @@
             btnEnviar.disabled = true;
             
             try {
-                // Mensagem para o CLIENTE (confirmação)
-                const msgCliente = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\n✅ Recebemos sua solicitação do plano *${planoAtual}*!\n\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n📞 Em breve entraremos em contato para ativar seu sistema.\n\n*Contato:* (16) 99317-3863\n🌐 tsbase.com.br\n\nObrigado pelo interesse! 🎉`;
+                // Mensagem para o CLIENTE
+                const msgCliente = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\n✅ Recebemos sua solicitação do plano *${planoAtual}*!\n\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n📞 Em breve entraremos em contato.\n\n🌐 tsbase.com.br\n\nObrigado! 🎉`;
                 
                 // Mensagem para VOCÊ (dono)
-                const msgDono = `🚀 *NOVO LEAD - TS BASE* 🚀\n\n👤 *Cliente:* ${nome}\n📱 *Telefone:* ${telefone}\n📧 *E-mail:* ${email || 'Não informado'}\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n\n📅 *Data:* ${new Date().toLocaleString()}`;
+                const msgDono = `🚀 NOVO LEAD - TS BASE\n\nCliente: ${nome}\nTelefone: ${telefone}\nE-mail: ${email || 'Não informado'}\nPlano: ${planoAtual} - R$ ${precoAtual}/mês\nData: ${new Date().toLocaleString()}`;
                 
                 // Salvar no Firebase
-                try {
-                    await db.collection('leads').add({
-                        nome: nome,
-                        telefone: telefone,
-                        email: email,
-                        plano: planoAtual,
-                        preco: precoAtual,
-                        data: new Date(),
-                        status: 'novo'
-                    });
-                    console.log('✅ Lead salvo no Firebase!');
-                } catch (firebaseError) {
-                    console.error('Erro ao salvar no Firebase:', firebaseError);
-                    // Continua mesmo com erro no Firebase
-                }
+                await db.collection('leads').add({
+                    nome: nome,
+                    telefone: telefone,
+                    email: email,
+                    plano: planoAtual,
+                    preco: precoAtual,
+                    data: new Date(),
+                    status: 'novo',
+                    mensagemDono: msgDono
+                });
                 
-                // Abrir WhatsApp do CLIENTE
-                console.log('📱 Abrindo WhatsApp do cliente:', telefone);
-                const clienteUrl = `https://wa.me/55${telefone}?text=${encodeURIComponent(msgCliente)}`;
-                window.open(clienteUrl, '_blank');
+                // Gerar link do WhatsApp para o cliente (sem abrir automaticamente)
+                const linkWhatsApp = `https://wa.me/55${telefone}?text=${encodeURIComponent(msgCliente)}`;
                 
-                // Pequeno delay para abrir o WhatsApp do dono
-                setTimeout(() => {
-                    console.log('📱 Abrindo WhatsApp do dono');
-                    const donoUrl = `https://wa.me/5516993173863?text=${encodeURIComponent(msgDono)}`;
-                    window.open(donoUrl, '_blank');
-                }, 1000);
-                
-                alert('✅ Solicitação enviada! Você receberá uma mensagem de confirmação no WhatsApp.');
+                // Fechar modal e mostrar mensagem de sucesso com link
                 fecharModalInteresse();
                 
+                // Mostrar modal de confirmação com link
+                mostrarConfirmacao(nome, planoAtual, linkWhatsApp);
+                
             } catch (error) {
-                console.error('Erro geral:', error);
+                console.error('Erro:', error);
                 alert('❌ Ocorreu um erro. Tente novamente.');
             } finally {
-                // Restaurar botão
                 btnEnviar.innerText = textoOriginal;
                 btnEnviar.disabled = false;
             }
+        }
+        
+        // Função para mostrar confirmação na tela
+        function mostrarConfirmacao(nome, plano, linkWhatsApp) {
+            // Criar modal de confirmação
+            const modalConfirmacao = document.createElement('div');
+            modalConfirmacao.style.position = 'fixed';
+            modalConfirmacao.style.top = '0';
+            modalConfirmacao.style.left = '0';
+            modalConfirmacao.style.width = '100%';
+            modalConfirmacao.style.height = '100%';
+            modalConfirmacao.style.background = 'rgba(0,0,0,0.95)';
+            modalConfirmacao.style.zIndex = '4000';
+            modalConfirmacao.style.display = 'flex';
+            modalConfirmacao.style.justifyContent = 'center';
+            modalConfirmacao.style.alignItems = 'center';
+            
+            modalConfirmacao.innerHTML = `
+                <div style="background: #1a1a2e; max-width: 400px; width: 90%; border-radius: 20px; padding: 25px; color: white; text-align: center;">
+                    <div style="font-size: 48px; margin-bottom: 15px;">✅</div>
+                    <h2 style="color: #4caf50; margin-bottom: 15px;">Solicitação Enviada!</h2>
+                    <p>Olá <strong>${nome}</strong>,</p>
+                    <p>Sua solicitação do plano <strong>${plano}</strong> foi recebida com sucesso!</p>
+                    <p>📞 Em breve entraremos em contato.</p>
+                    <hr style="margin: 20px 0; border-color: #333;">
+                    <p style="font-size: 14px; color: #aaa;">Clique no botão abaixo para receber a confirmação no WhatsApp:</p>
+                    <a href="${linkWhatsApp}" target="_blank" style="display: inline-block; background: #25D366; color: white; padding: 12px 24px; border-radius: 50px; text-decoration: none; font-weight: bold; margin: 15px 0;">📱 Receber Confirmação</a>
+                    <button onclick="this.parentElement.parentElement.remove()" style="background: #555; border: none; padding: 8px 20px; border-radius: 8px; color: white; cursor: pointer;">Fechar</button>
+                </div>
+            `;
+            
+            document.body.appendChild(modalConfirmacao);
+            
+            // Fechar após 10 segundos automaticamente
+            setTimeout(() => {
+                if (modalConfirmacao.parentElement) {
+                    modalConfirmacao.remove();
+                }
+            }, 10000);
         }
 
         // ============================================
