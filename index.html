@@ -249,7 +249,8 @@
             <h2 style="text-align: center; margin-bottom: 20px; color: #667eea;">Planos e Preços</h2>
             <div class="planos">
                 <div class="plano">
-                    <h3>🍕 Básico</h3>
+                    <div style="font-size: 48px; margin-bottom: 20px;">🚀</div>
+                    <h3>Básico</h3>
                     <div class="preco">R$ 49<span>/mês</span></div>
                     <ul style="list-style: none; margin: 20px 0; text-align: left; color: #ccc;">
                         <li>✅ Cardápio digital</li>
@@ -257,10 +258,11 @@
                         <li>✅ Carrinho de compras</li>
                         <li>✅ Dashboard básico</li>
                     </ul>
-                    <a href="#" class="btn-principal">Começar agora</a>
+                    <button class="btn-principal" onclick="abrirModalPlano('Básico', 49)">📞 Começar agora</button>
                 </div>
                 <div class="plano">
-                    <h3>🍔 Profissional</h3>
+                    <div style="font-size: 48px; margin-bottom: 20px;">💼</div>
+                    <h3>Profissional</h3>
                     <div class="preco">R$ 99<span>/mês</span></div>
                     <ul style="list-style: none; margin: 20px 0; text-align: left; color: #ccc;">
                         <li>✅ Tudo do plano Básico</li>
@@ -268,10 +270,11 @@
                         <li>✅ Programa de fidelidade</li>
                         <li>✅ Relatórios completos</li>
                     </ul>
-                    <a href="#" class="btn-principal">Começar agora</a>
+                    <button class="btn-principal" onclick="abrirModalPlano('Profissional', 99)">📞 Começar agora</button>
                 </div>
                 <div class="plano">
-                    <h3>🍽️ Premium</h3>
+                    <div style="font-size: 48px; margin-bottom: 20px;">👑</div>
+                    <h3>Premium</h3>
                     <div class="preco">R$ 199<span>/mês</span></div>
                     <ul style="list-style: none; margin: 20px 0; text-align: left; color: #ccc;">
                         <li>✅ Tudo do plano Profissional</li>
@@ -279,7 +282,7 @@
                         <li>✅ Múltiplos usuários</li>
                         <li>✅ Suporte prioritário</li>
                     </ul>
-                    <a href="#" class="btn-principal">Começar agora</a>
+                    <button class="btn-principal" onclick="abrirModalPlano('Premium', 199)">📞 Começar agora</button>
                 </div>
             </div>
         </div>
@@ -383,6 +386,28 @@
         </div>
     </div>
 
+        <!-- MODAL DE INTERESSE -->
+    <div id="modalInteresse" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 3000; justify-content: center; align-items: center;">
+        <div style="background: #1a1a2e; max-width: 400px; width: 90%; border-radius: 20px; padding: 25px; color: white;">
+            <h3 style="color: #ff6b35; margin-bottom: 20px;">📋 Solicitar Plano</h3>
+            <p id="planoSelecionado" style="margin-bottom: 15px; background: #16213e; padding: 8px; border-radius: 8px; text-align: center;"></p>
+            
+            <label style="display: block; margin-bottom: 5px;">Seu nome:</label>
+            <input type="text" id="interesseNome" placeholder="Ex: João Silva" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: none;">
+            
+            <label style="display: block; margin-bottom: 5px;">Seu telefone (com DDD):</label>
+            <input type="tel" id="interesseTelefone" placeholder="Ex: 16999999999" style="width: 100%; padding: 10px; margin-bottom: 15px; border-radius: 8px; border: none;">
+            
+            <label style="display: block; margin-bottom: 5px;">Seu e-mail:</label>
+            <input type="email" id="interesseEmail" placeholder="Ex: joao@email.com" style="width: 100%; padding: 10px; margin-bottom: 20px; border-radius: 8px; border: none;">
+            
+            <div style="display: flex; gap: 10px;">
+                <button onclick="fecharModalInteresse()" style="flex: 1; padding: 12px; background: #555; border: none; border-radius: 8px; color: white; cursor: pointer;">Cancelar</button>
+                <button onclick="enviarInteresse()" style="flex: 1; padding: 12px; background: #25D366; border: none; border-radius: 8px; color: white; font-weight: bold; cursor: pointer;">📞 Enviar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyB8uUzNpj3RLdoVZoHqd61zGMxsm5KHbL8",
@@ -416,6 +441,58 @@
                 return partes[0];
             }
             return null;
+        }
+
+                // ============================================
+        // MODAL DE INTERESSE (PLANOS)
+        // ============================================
+        let planoAtual = '';
+        let precoAtual = 0;
+
+        function abrirModalPlano(plano, preco) {
+            planoAtual = plano;
+            precoAtual = preco;
+            document.getElementById('planoSelecionado').innerHTML = `📌 Plano selecionado: <strong>${plano}</strong> - R$ ${preco}/mês`;
+            document.getElementById('modalInteresse').style.display = 'flex';
+        }
+
+        function fecharModalInteresse() {
+            document.getElementById('modalInteresse').style.display = 'none';
+            document.getElementById('interesseNome').value = '';
+            document.getElementById('interesseTelefone').value = '';
+            document.getElementById('interesseEmail').value = '';
+        }
+
+        async function enviarInteresse() {
+            const nome = document.getElementById('interesseNome').value.trim();
+            const telefone = document.getElementById('interesseTelefone').value.trim();
+            const email = document.getElementById('interesseEmail').value.trim();
+            
+            if (!nome) { alert('Digite seu nome!'); return; }
+            if (!telefone) { alert('Digite seu telefone!'); return; }
+            
+            // Mensagem para o WhatsApp
+            const msg = `🚀 *NOVO LEAD - TS BASE* 🚀\n\n👤 *Cliente:* ${nome}\n📱 *Telefone:* ${telefone}\n📧 *E-mail:* ${email || 'Não informado'}\n📋 *Plano:* ${planoAtual} - R$ ${precoAtual}/mês\n\n📅 *Data:* ${new Date().toLocaleString()}`;
+            
+            // Salvar no Firebase
+            try {
+                await db.collection('leads').add({
+                    nome: nome,
+                    telefone: telefone,
+                    email: email,
+                    plano: planoAtual,
+                    preco: precoAtual,
+                    data: new Date(),
+                    status: 'novo'
+                });
+                console.log('✅ Lead salvo!');
+            } catch(e) { console.error(e); }
+            
+            // Abrir WhatsApp
+            window.open(`https://wa.me/5516993173863?text=${encodeURIComponent(msg)}`, '_blank');
+            
+            alert('✅ Solicitação enviada! Entraremos em contato em breve.');
+            fecharModalInteresse();
         }
 
         // ============================================
