@@ -545,6 +545,79 @@
         let carrinho = [];
 
         // ============================================
+        // VERIFICAR SE A EMPRESA ESTÁ ABERTA
+        // ============================================
+        function verificarStatusFuncionamento(horarioTexto) {
+            if (!horarioTexto) return 'FECHADO';
+            
+            const agora = new Date();
+            const horaAtual = agora.getHours();
+            const minutoAtual = agora.getMinutes();
+            const diaSemana = agora.getDay(); // 0 = Domingo, 1 = Segunda, ...
+            
+            // Mapeamento dos dias em português
+            const dias = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+            const diaHoje = dias[diaSemana];
+            
+            // Verificar se o horário é "FECHADO" ou contém o dia de hoje
+            if (horarioTexto === 'FECHADO') {
+                return 'FECHADO';
+            }
+            
+            // Extrair horário do texto: "Segunda a Domingo, 09h às 23:30h"
+            // Procurar padrão de horário como "09h" e "23:30h"
+            const matchHoras = horarioTexto.match(/(\d{1,2})h(?:\s*às\s*(\d{1,2}):?(\d{2})?h?)/i);
+            
+            if (matchHoras) {
+                let horaAbre = parseInt(matchHoras[1]);
+                let horaFecha = parseInt(matchHoras[2]);
+                let minutoFecha = matchHoras[3] ? parseInt(matchHoras[3]) : 0;
+                
+                // Ajustar se for meia-noite
+                if (horaFecha === 0) horaFecha = 24;
+                
+                const totalMinutosAtual = horaAtual * 60 + minutoAtual;
+                const totalMinutosAbre = horaAbre * 60;
+                const totalMinutosFecha = horaFecha * 60 + minutoFecha;
+                
+                // Verificar dias de funcionamento
+                let diasFuncionamento = [];
+                
+                // Extrair dias do texto: "Segunda a Domingo"
+                const matchDias = horarioTexto.match(/([a-zA-Zçã]+)(?:\s*a\s*([a-zA-Zçã]+))?/i);
+                if (matchDias) {
+                    const diasSemana = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+                    const diaInicio = matchDias[1].toLowerCase();
+                    const diaFim = matchDias[2] ? matchDias[2].toLowerCase() : diaInicio;
+                    
+                    let iniciar = false;
+                    for (const dia of diasSemana) {
+                        if (dia === diaInicio) iniciar = true;
+                        if (iniciar) diasFuncionamento.push(dia);
+                        if (dia === diaFim) break;
+                    }
+                }
+                
+                // Se não conseguiu extrair dias, assume todos os dias
+                if (diasFuncionamento.length === 0) {
+                    diasFuncionamento = ['segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado', 'domingo'];
+                }
+                
+                // Verificar se hoje está nos dias de funcionamento
+                if (!diasFuncionamento.includes(diaHoje)) {
+                    return 'FECHADO';
+                }
+                
+                // Verificar se está dentro do horário
+                if (totalMinutosAtual >= totalMinutosAbre && totalMinutosAtual < totalMinutosFecha) {
+                    return 'ABERTO';
+                }
+            }
+            
+            return 'FECHADO';
+        }
+
+        // ============================================
         // DETECTAR EMPRESA PELO SUBDOMÍNIO
         // ============================================
         function getEmpresaFromSubdomain() {
@@ -575,8 +648,17 @@
                 document.getElementById('tempoEntrega').innerHTML = empresa.tempoEntrega || '50min - 1h25';
                 document.getElementById('tempoRetirada').innerHTML = empresa.tempoRetirada || '40min';
                 document.getElementById('avaliacaoNota').innerHTML = empresa.avaliacao || '4.9';
+
+                // Verificar status de funcionamento
+                const status = verificarStatusFuncionamento(empresa.horario);
+                const statusElement = document.getElementById('statusFuncionamento');
+                if (status === 'ABERTO') {
+                    statusElement.innerHTML = '<span class="status-badge status-aberto">ABERTO</span>';
+                } else {
+                    statusElement.innerHTML = '<span class="status-badge status-fechado">FECHADO</span>';
+                }
             }
-            
+
             // Buscar cardápio
             const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
             if (cardapioDoc.exists) {
