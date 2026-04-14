@@ -122,6 +122,27 @@
         .info { background: #2196f3; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
         .erro { background: #ff4444; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
         .loading { text-align: center; padding: 50px; color: #aaa; }
+
+        /* Leads */
+        .leads-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .lead-card {
+            background: #16213e;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #333;
+            transition: 0.3s;
+        }
+        .lead-card:hover { border-color: #ff6b35; }
+        .lead-card h4 { color: #ff6b35; margin-bottom: 10px; }
+        .lead-card p { margin: 5px 0; color: #aaa; font-size: 14px; }
+        .btn-contato { background: #25D366; border: none; padding: 8px 15px; border-radius: 8px; color: white; cursor: pointer; margin-top: 10px; }
+        .filtro-leads { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .filtro-leads input { padding: 10px; border-radius: 8px; border: none; background: #0f0f1a; color: white; flex: 1; }
         
         @media (max-width: 768px) {
             .form-row { grid-template-columns: 1fr; }
@@ -205,6 +226,30 @@
             <div id="empresasLista" class="empresas-grid">
                 <div class="loading">Carregando clientes...</div>
             </div>
+
+        <!-- SEÇÃO DE LEADS -->
+        <div style="margin-top: 50px;">
+            <div class="admin-header" style="border-bottom: none; margin-bottom: 20px;">
+                <h2 style="color: #ff6b35;">📋 Leads (Clientes Interessados)</h2>
+                <button class="btn-caixa" onclick="carregarLeads()" style="background: #2196f3;">🔄 Atualizar</button>
+            </div>
+            
+            <div class="leads-stats" id="leadsStats">
+                <div class="stat-card"><h3>📊 Total Leads</h3><div class="numero" id="totalLeads">0</div></div>
+                <div class="stat-card"><h3>📅 Leads Hoje</h3><div class="numero" id="leadsHoje">0</div></div>
+                <div class="stat-card"><h3>🚀 Plano Básico</h3><div class="numero" id="leadsBasico">0</div></div>
+                <div class="stat-card"><h3>💼 Plano Profissional</h3><div class="numero" id="leadsProfissional">0</div></div>
+                <div class="stat-card"><h3>👑 Plano Premium</h3><div class="numero" id="leadsPremium">0</div></div>
+            </div>
+            
+            <div class="filtro-leads">
+                <input type="text" id="filtroLeads" placeholder="🔍 Buscar por nome, telefone ou e-mail..." onkeyup="filtrarLeads()">
+            </div>
+            
+            <div id="leadsLista" class="empresas-grid">
+                <div class="loading">Carregando leads...</div>
+            </div>
+        </div>
         </div>
     </div>
     
@@ -237,6 +282,93 @@
                 alert('Erro no login: ' + error.message);
             }
         }
+
+        // ============================================
+        // LEADS (CLIENTES INTERESSADOS)
+        // ============================================
+        let todosLeads = [];
+
+        async function carregarLeads() {
+            try {
+                const snapshot = await db.collection('leads').orderBy('data', 'desc').get();
+                todosLeads = [];
+                snapshot.forEach(doc => {
+                    todosLeads.push({ id: doc.id, ...doc.data() });
+                });
+                
+                atualizarEstatisticasLeads();
+                renderizarLeads();
+            } catch (error) {
+                console.error('Erro ao carregar leads:', error);
+                document.getElementById('leadsLista').innerHTML = '<div class="loading">❌ Erro ao carregar leads</div>';
+            }
+        }
+
+        function atualizarEstatisticasLeads() {
+            const hoje = new Date().toLocaleDateString();
+            let total = todosLeads.length;
+            let hojeCount = 0;
+            let basico = 0, profissional = 0, premium = 0;
+            
+            todosLeads.forEach(lead => {
+                const dataLead = lead.data?.toDate() || new Date(lead.data);
+                if (dataLead.toLocaleDateString() === hoje) hojeCount++;
+                
+                if (lead.plano === 'Básico') basico++;
+                else if (lead.plano === 'Profissional') profissional++;
+                else if (lead.plano === 'Premium') premium++;
+            });
+            
+            document.getElementById('totalLeads').innerText = total;
+            document.getElementById('leadsHoje').innerText = hojeCount;
+            document.getElementById('leadsBasico').innerText = basico;
+            document.getElementById('leadsProfissional').innerText = profissional;
+            document.getElementById('leadsPremium').innerText = premium;
+        }
+
+        function renderizarLeads() {
+            const filtro = document.getElementById('filtroLeads')?.value.toLowerCase() || '';
+            const leadsFiltrados = todosLeads.filter(lead => {
+                return lead.nome?.toLowerCase().includes(filtro) ||
+                       lead.telefone?.includes(filtro) ||
+                       lead.email?.toLowerCase().includes(filtro) ||
+                       lead.plano?.toLowerCase().includes(filtro);
+            });
+            
+            if (leadsFiltrados.length === 0) {
+                document.getElementById('leadsLista').innerHTML = '<div class="loading">Nenhum lead encontrado</div>';
+                return;
+            }
+            
+            let html = '';
+            leadsFiltrados.forEach(lead => {
+                const data = lead.data?.toDate() || new Date(lead.data);
+                const planoIcon = lead.plano === 'Básico' ? '🚀' : lead.plano === 'Profissional' ? '💼' : '👑';
+                
+                html += `
+                    <div class="lead-card">
+                        <h4>${planoIcon} ${lead.nome}</h4>
+                        <p>📱 ${lead.telefone}</p>
+                        <p>📧 ${lead.email || 'Não informado'}</p>
+                        <p>📋 ${lead.plano} - R$ ${lead.preco}/mês</p>
+                        <p>📅 ${data.toLocaleString()}</p>
+                        <button class="btn-contato" onclick="contatarLead('${lead.telefone}', '${lead.nome}', '${lead.plano}')">📞 Entrar em Contato</button>
+                    </div>
+                `;
+            });
+            document.getElementById('leadsLista').innerHTML = html;
+        }
+
+        function filtrarLeads() {
+            renderizarLeads();
+        }
+
+        function contatarLead(telefone, nome, plano) {
+            const msg = `🚀 *TS BASE* 🚀\n\nOlá ${nome},\n\nVi que você demonstrou interesse no plano *${plano}*!\n\nGostaria de saber se ainda tem interesse em contratar nosso sistema?\n\n📞 Estou à disposição para tirar suas dúvidas.\n\n🌐 tsbase.com.br`;
+            const url = `https://wa.me/55${telefone}?text=${encodeURIComponent(msg)}`;
+            window.open(url, '_blank');
+        }
+        
 
         function fazerLogout() {
             auth.signOut();
