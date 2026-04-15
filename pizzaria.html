@@ -40,9 +40,9 @@
         }
         
         .logo {
-            max-width: 80px;
+            max-width: 250px;
             background: white;
-            border-radius: 50%;
+            border-radius: 25%;
             padding: 8px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
@@ -505,7 +505,7 @@
     <!-- HEADER PRINCIPAL -->
     <div class="header-pizzaria">
         <div class="logo-area">
-            <img src="images/logo-julios.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/80x80?text=Logo'">
+            <img src="images/Logo-Julios_SF.png" alt="Logo" class="logo" onerror="this.src='https://via.placeholder.com/80x80?text=Logo'">
         </div>
         <div class="empresa-nome" id="empresaNome">JULIO'S PIZZARIA</div>
         <div class="endereco" id="empresaEndereco">
@@ -568,13 +568,14 @@
 
     <!-- SEÇÃO DE CATEGORIAS ESPECIAIS (PIZZAS) -->
     <div class="content-area">
+        <h1 style="color: #d32f2f; font-size: 28px; margin-bottom: 20px; text-align: center;">🍕 PIZZAS</h1>
         <div class="categorias-especiais" id="categoriasEspeciais">
             <!-- Pizza Pequena -->
             <div class="card-categoria" onclick="abrirModalPizza('pequena')">
                 <img src="images/PizzaPequena.jpg" alt="Pizza Pequena" class="card-imagem" onerror="this.src='https://via.placeholder.com/600x600?text=Pizza+Pequena'">
                 <h3>Pizza Pequena</h3>
                 <div class="sabores">1 sabor</div>
-                <div class="preco">R$ 50,00</div>
+                <div class="preco">A partir de R$ 50,00</div>
                 <button class="btn-escolher">Escolher</button>
             </div>
             
@@ -583,7 +584,7 @@
                 <img src="images/PizzaGrande.jpg" alt="Pizza Grande" class="card-imagem" onerror="this.src='https://via.placeholder.com/600x600?text=Pizza+Grande'">
                 <h3>Pizza Grande</h3>
                 <div class="sabores">2 sabores</div>
-                <div class="preco">R$ 65,00</div>
+                <div class="preco">A partir de R$ 65,00</div>
                 <button class="btn-escolher">Escolher</button>
             </div>
             
@@ -592,7 +593,7 @@
                 <img src="images/Pizza3Sabores.png" alt="Pizza 3 Sabores" class="card-imagem" onerror="this.src='https://via.placeholder.com/600x600?text=Pizza+3+Sabores'">
                 <h3>Pizza 3 Sabores</h3>
                 <div class="sabores">3 sabores</div>
-                <div class="preco">R$ 100,00</div>
+                <div class="preco">A partir de R$ 100,00</div>
                 <button class="btn-escolher">Escolher</button>
             </div>
             
@@ -602,7 +603,7 @@
                 <img src="images/RodizioCaixa.png" alt="Rodízio na Caixa" class="card-imagem" onerror="this.src='https://via.placeholder.com/600x600?text=Rod%C3%ADzio+na+Caixa'">
                 <h3>RODÍZIO NA CAIXA</h3>
                 <div class="sabores">5 sabores + salgado + macarrão + batata frita</div>
-                <div class="preco">R$ 80,00</div>
+                <div class="preco">A partir de R$ 80,00</div>
                 <button class="btn-escolher">Escolher</button>
             </div>
         </div>
@@ -794,30 +795,8 @@
         // FUNÇÕES PARA CARDS DE PIZZA
         // ============================================
         function abrirModalPizza(tipo) {
-            let titulo = '';
-            let descricao = '';
-            let preco = 0;
-            
-            switch(tipo) {
-                case 'pequena':
-                    titulo = '🍕 Pizza Pequena';
-                    descricao = 'Escolha 1 sabor para sua pizza';
-                    preco = 50;
-                    break;
-                case 'grande':
-                    titulo = '🍕 Pizza Grande';
-                    descricao = 'Escolha 2 sabores para sua pizza';
-                    preco = 65;
-                    break;
-                case 'tresSabores':
-                    titulo = '🍕 Pizza 3 Sabores';
-                    descricao = 'Escolha 3 sabores para sua pizza';
-                    preco = 100;
-                    break;
-            }
-            
-            // Aqui você pode abrir um modal para escolher os sabores
-            alert(`${titulo}\n${descricao}\nPreço: R$ ${preco},00\n\n(Em breve você poderá escolher os sabores!)`);
+            // Redirecionar para a página de seleção
+            window.location.href = `/selecionar-pizza.html?tipo=${tipo}`;
         }
         
         function abrirModalRodizio() {

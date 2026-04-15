@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Monte sua Pizza - Julio's Pizzaria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: #f8f8f8;
+            color: #333;
+            padding-bottom: 120px;
+        }
+        
+        /* Header */
+        .header-pizza {
+            background: linear-gradient(135deg, #d32f2f 0%, #b71c1c 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-pizza h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .header-pizza p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .btn-voltar {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 20px;
+            padding: 8px 15px;
+            border-radius: 30px;
+            cursor: pointer;
+        }
+        
+        /* Container principal */
+        .container-pizza {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Seção de bordas */
+        .secao-bordas {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .secao-titulo {
+            color: #d32f2f;
+            font-size: 20px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ffc107;
+            display: inline-block;
+        }
+        
+        .borda-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .borda-item:hover {
+            background: #f9f9f9;
+            padding-left: 10px;
+        }
+        
+        .borda-info {
+            flex: 1;
+        }
+        
+        .borda-nome {
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .borda-preco {
+            font-size: 14px;
+            color: #d32f2f;
+            font-weight: 600;
+        }
+        
+        .borda-selecionado {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            margin-right: 15px;
+        }
+        
+        .borda-item.selecionado .borda-selecionado {
+            background: #d32f2f;
+            border-color: #d32f2f;
+            box-shadow: inset 0 0 0 4px white;
+        }
+        
+        /* Seção de sabores */
+        .secao-sabores {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .sabores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .sabor-card {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .sabor-card:hover {
+            border-color: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .sabor-card.selecionado {
+            border: 2px solid #d32f2f;
+            background: #fff5f5;
+        }
+        
+        .sabor-nome {
+            font-weight: 700;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .sabor-ingredientes {
+            font-size: 12px;
+            color: #888;
+            margin: 5px 0;
+        }
+        
+        .sabor-preco {
+            font-size: 14px;
+            font-weight: 700;
+            color: #d32f2f;
+        }
+        
+        /* Rodapé fixo */
+        .rodape-fixo {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            z-index: 200;
+        }
+        
+        .rodape-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .resumo-pedido {
+            flex: 1;
+        }
+        
+        .resumo-item {
+            font-size: 14px;
+            margin: 3px 0;
+        }
+        
+        .resumo-total {
+            font-size: 20px;
+            font-weight: 800;
+            color: #d32f2f;
+            margin-top: 5px;
+        }
+        
+        .btn-proximo {
+            background: #d32f2f;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .btn-proximo:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .btn-proximo:not(:disabled):hover {
+            background: #b71c1c;
+            transform: scale(1.02);
+        }
+        
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #888;
+        }
+        
+        @media (max-width: 600px) {
+            .sabores-grid {
+                grid-template-columns: 1fr;
+            }
+            .rodape-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            .btn-proximo {
+                width: 100%;
+            }
+        }
+    </style>
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+    <div class="header-pizza">
+        <button class="btn-voltar" onclick="window.location.href='/pizzaria.html'">
+            <i class="fas fa-arrow-left"></i> Voltar
+        </button>
+        <h1 id="tituloPagina">🍕 Pizza Pequena</h1>
+        <p id="subtituloPagina">1 sabor</p>
+    </div>
+    
+    <div class="container-pizza">
+        <!-- SEÇÃO BORDAS -->
+        <div class="secao-bordas">
+            <h2 class="secao-titulo">🍞 Escolha a Borda</h2>
+            <div id="listaBordas"></div>
+        </div>
+        
+        <!-- SEÇÃO SABORES -->
+        <div class="secao-sabores">
+            <h2 class="secao-titulo">🍕 Escolha o Sabor</h2>
+            <div id="listaSabores" class="loading">Carregando sabores...</div>
+        </div>
+    </div>
+    
+    <!-- RODAPÉ FIXO -->
+    <div class="rodape-fixo">
+        <div class="rodape-container">
+            <div class="resumo-pedido">
+                <div class="resumo-item" id="resumoBorda">🍞 Borda: <strong>Não selecionada</strong> - R$ 0,00</div>
+                <div class="resumo-item" id="resumoPizza">🍕 Pizza: <strong>Não selecionada</strong></div>
+                <div class="resumo-total" id="resumoTotal">💰 Total: R$ 0,00</div>
+            </div>
+            <button class="btn-proximo" id="btnProximo" disabled>📞 Próximo</button>
+        </div>
+    </div>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyB8uUzNpj3RLdoVZoHqd61zGMxsm5KHbL8",
+            authDomain: "imperio-pizzas.firebaseapp.com",
+            projectId: "imperio-pizzas",
+            storageBucket: "imperio-pizzas.firebasestorage.app",
+            messagingSenderId: "177187165049",
+            appId: "1:177187165049:web:c0419e4fc621cd2621d5a8"
+        };
+        
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Dados recebidos via URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const tipoPizza = urlParams.get('tipo') || 'pequena';
+        const empresaId = getEmpresaFromSubdomain();
+        
+        let saboresLista = [];
+        let bordaSelecionada = null;
+        let pizzaSelecionada = null;
+        let precoBasePizza = 0;
+        
+        // Preços base por tipo de pizza
+        const precosPizza = {
+            'pequena': 50.00,
+            'grande': 65.00,
+            'tresSabores': 100.00
+        };
+        
+        const titulos = {
+            'pequena': { titulo: '🍕 Pizza Pequena', subtitulo: '1 sabor', qtdSabores: 1 },
+            'grande': { titulo: '🍕 Pizza Grande', subtitulo: '2 sabores', qtdSabores: 2 },
+            'tresSabores': { titulo: '🍕 Pizza 3 Sabores', subtitulo: '3 sabores', qtdSabores: 3 }
+        };
+        
+        // Bordas disponíveis
+        const bordas = [
+            { nome: 'Sem Borda', preco: 0.00 },
+            { nome: 'Borda de Catupiry', preco: 25.00 },
+            { nome: 'Borda de Cheddar', preco: 28.00 },
+            { nome: 'Borda de Calabresa', preco: 28.00 },
+            { nome: 'Borda de Presunto', preco: 25.00 },
+            { nome: 'Borda de Pãozinho Frango e Catupiry', preco: 36.00 },
+            { nome: 'Borda de Banana', preco: 15.00 },
+            { nome: 'Borda de Pãozinho Calabresa e Catupiry', preco: 36.00 },
+            { nome: 'Borda de Mussarela', preco: 33.00 },
+            { nome: 'Borda Nutella', preco: 40.00 },
+            { nome: 'Borda Leite Ninho', preco: 36.00 },
+            { nome: 'Borda Brigadeiro', preco: 36.00 }
+        ];
+        
+        function getEmpresaFromSubdomain() {
+            const hostname = window.location.hostname;
+            const partes = hostname.split('.');
+            if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase' && partes[0] !== 'admin') {
+                return partes[0];
+            }
+            return null;
+        }
+        
+        // Carregar sabores do Firebase
+        async function carregarSabores() {
+            try {
+                const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
+                if (cardapioDoc.exists) {
+                    let dados = cardapioDoc.data().dados || {};
+                    if (typeof dados === 'string') dados = JSON.parse(dados);
+                    
+                    if (dados.pizzasSalgadas && dados.pizzasSalgadas.length) {
+                        saboresLista = dados.pizzasSalgadas;
+                    } else {
+                        // Dados padrão
+                        saboresLista = [
+                            { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 34.90 },
+                            { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 32.90 },
+                            { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 39.90 },
+                            { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 42.90 },
+                            { id: 5, nome: "Peperoni", descricao: "Peperoni fatiado, mussarela e orégano", preco: 44.90 },
+                            { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 45.90 }
+                        ];
+                    }
+                    renderizarSabores();
+                }
+            } catch (error) {
+                console.error('Erro ao carregar sabores:', error);
+                document.getElementById('listaSabores').innerHTML = '<div class="loading">Erro ao carregar sabores</div>';
+            }
+        }
+        
+        function renderizarBordas() {
+            const container = document.getElementById('listaBordas');
+            let html = '';
+            bordas.forEach((borda, index) => {
+                html += `
+                    <div class="borda-item" data-borda="${borda.nome}" data-preco="${borda.preco}">
+                        <div class="borda-info">
+                            <div class="borda-nome">${borda.nome}</div>
+                            <div class="borda-preco">R$ ${borda.preco.toFixed(2)}</div>
+                        </div>
+                        <div class="borda-selecionado"></div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            
+            // Adicionar eventos de clique
+            document.querySelectorAll('.borda-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.borda-item').forEach(i => i.classList.remove('selecionado'));
+                    item.classList.add('selecionado');
+                    bordaSelecionada = {
+                        nome: item.dataset.borda,
+                        preco: parseFloat(item.dataset.preco)
+                    };
+                    atualizarResumo();
+                });
+            });
+        }
+        
+        function renderizarSabores() {
+            const container = document.getElementById('listaSabores');
+            let html = '<div class="sabores-grid">';
+            saboresLista.forEach(sabor => {
+                html += `
+                    <div class="sabor-card" data-id="${sabor.id}" data-nome="${sabor.nome}" data-preco="${sabor.preco}" data-desc="${sabor.descricao || ''}">
+                        <div class="sabor-nome">${sabor.nome}</div>
+                        <div class="sabor-ingredientes">${sabor.descricao || ''}</div>
+                        <div class="sabor-preco">R$ ${(sabor.preco || 34.90).toFixed(2)}</div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            container.innerHTML = html;
+            
+            document.querySelectorAll('.sabor-card').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.sabor-card').forEach(i => i.classList.remove('selecionado'));
+                    item.classList.add('selecionado');
+                    pizzaSelecionada = {
+                        id: item.dataset.id,
+                        nome: item.dataset.nome,
+                        preco: parseFloat(item.dataset.preco),
+                        descricao: item.dataset.desc
+                    };
+                    atualizarResumo();
+                });
+            });
+        }
+        
+        function atualizarResumo() {
+            const precoPizza = precoBasePizza;
+            const precoBorda = bordaSelecionada ? bordaSelecionada.preco : 0;
+            const total = precoPizza + precoBorda;
+            const nomeBorda = bordaSelecionada ? bordaSelecionada.nome : 'Não selecionada';
+            const nomePizza = pizzaSelecionada ? pizzaSelecionada.nome : 'Não selecionada';
+            
+            document.getElementById('resumoBorda').innerHTML = `🍞 Borda: <strong>${nomeBorda}</strong> - R$ ${precoBorda.toFixed(2)}`;
+            document.getElementById('resumoPizza').innerHTML = `🍕 Pizza: <strong>${nomePizza}</strong> - R$ ${precoPizza.toFixed(2)}`;
+            document.getElementById('resumoTotal').innerHTML = `💰 Total: R$ ${total.toFixed(2)}`;
+            
+            const btnProximo = document.getElementById('btnProximo');
+            if (pizzaSelecionada) {
+                btnProximo.disabled = false;
+            } else {
+                btnProximo.disabled = true;
+            }
+        }
+        
+        function finalizar() {
+            if (!pizzaSelecionada) {
+                alert('Selecione um sabor de pizza!');
+                return;
+            }
+            
+            const precoPizza = precoBasePizza;
+            const precoBorda = bordaSelecionada ? bordaSelecionada.preco : 0;
+            const total = precoPizza + precoBorda;
+            const nomeBorda = bordaSelecionada ? bordaSelecionada.nome : 'Sem Borda';
+            
+            // Criar item para o carrinho
+            const item = {
+                id: `pizza_${Date.now()}`,
+                nome: `${titulos[tipoPizza].titulo} - ${pizzaSelecionada.nome}`,
+                descricao: `🍞 Borda: ${nomeBorda} | 🍕 Sabor: ${pizzaSelecionada.nome}`,
+                preco: total,
+                quantidade: 1,
+                tipo: 'pizza_personalizada',
+                detalhes: {
+                    tamanho: tipoPizza,
+                    borda: nomeBorda,
+                    sabor: pizzaSelecionada.nome,
+                    precoBorda: precoBorda,
+                    precoPizza: precoPizza
+                }
+            };
+            
+            // Salvar no localStorage para ser capturado pelo carrinho
+            let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+            carrinho.push(item);
+            localStorage.setItem('carrinho', JSON.stringify(carrinho));
+            
+            alert(`✅ Pizza adicionada ao carrinho!\n\n${titulos[tipoPizza].titulo}\n🍞 Borda: ${nomeBorda}\n🍕 Sabor: ${pizzaSelecionada.nome}\n💰 Total: R$ ${total.toFixed(2)}`);
+            
+            window.location.href = '/pizzaria.html';
+        }
+        
+        // Inicializar
+        if (titulos[tipoPizza]) {
+            document.getElementById('tituloPagina').innerHTML = titulos[tipoPizza].titulo;
+            document.getElementById('subtituloPagina').innerHTML = titulos[tipoPizza].subtitulo;
+            precoBasePizza = precosPizza[tipoPizza];
+        }
+        
+        renderizarBordas();
+        carregarSabores();
+        document.getElementById('btnProximo').onclick = finalizar;
+    </script>
+</body>
+</html>
