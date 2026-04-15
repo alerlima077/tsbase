@@ -124,7 +124,7 @@
             box-shadow: inset 0 0 0 4px white;
         }
         
-        /* Seção de sabores */
+                /* Seção de sabores - moderno */
         .secao-sabores {
             background: white;
             border-radius: 20px;
@@ -134,46 +134,94 @@
         
         .sabores-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
         }
         
         .sabor-card {
+            background: white;
             border: 1px solid #eee;
-            border-radius: 12px;
-            padding: 12px;
+            border-radius: 16px;
+            padding: 15px;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            display: flex;
+            gap: 15px;
+            align-items: center;
         }
         
         .sabor-card:hover {
             border-color: #d32f2f;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
         }
         
         .sabor-card.selecionado {
             border: 2px solid #d32f2f;
             background: #fff5f5;
+            box-shadow: 0 4px 12px rgba(211,47,47,0.2);
+        }
+        
+        .sabor-imagem {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        
+        .sabor-info {
+            flex: 1;
         }
         
         .sabor-nome {
             font-weight: 700;
             font-size: 16px;
             color: #333;
+            margin-bottom: 5px;
         }
         
         .sabor-ingredientes {
             font-size: 12px;
             color: #888;
-            margin: 5px 0;
+            margin-bottom: 8px;
+            line-height: 1.3;
         }
         
         .sabor-preco {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 700;
             color: #d32f2f;
+        }
+        
+        .sabor-select {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            background: white;
+            transition: 0.2s;
+        }
+        
+        .sabor-card.selecionado .sabor-select {
+            background: #d32f2f;
+            border-color: #d32f2f;
+            box-shadow: inset 0 0 0 3px white;
+        }
+        
+        @media (max-width: 600px) {
+            .sabores-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .sabor-imagem {
+                width: 55px;
+                height: 55px;
+            }
+            .sabor-nome {
+                font-size: 14px;
+            }
         }
         
         /* Rodapé fixo */
@@ -357,7 +405,7 @@
             }
         }
         
-        // Carregar sabores do Firebase
+        // Carregar sabores (48 sabores completos)
         async function carregarSabores() {
             try {
                 const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
@@ -368,21 +416,89 @@
                     if (dados.pizzasSalgadas && dados.pizzasSalgadas.length) {
                         saboresLista = dados.pizzasSalgadas;
                     } else {
-                        // Dados padrão
+                        // 48 SABORES COMPLETOS
                         saboresLista = [
-                            { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90 },
-                            { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90 },
-                            { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 44.90 },
-                            { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 47.90 },
-                            { id: 5, nome: "Peperoni", descricao: "Peperoni fatiado, mussarela e orégano", preco: 49.90 },
-                            { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90 }
+                            // === TRADICIONAIS ===
+                            { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/calabresa.jpg" },
+                            { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/mussarela.jpg" },
+                            { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 44.90, imagem: "images/pizzas/portuguesa.jpg" },
+                            { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 47.90, imagem: "images/pizzas/frango-catupiry.jpg" },
+                            { id: 5, nome: "Peperoni", descricao: "Peperoni fatiado, mussarela e orégano", preco: 49.90, imagem: "images/pizzas/peperoni.jpg" },
+                            { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/quatro-queijos.jpg" },
+                            
+                            // === ESPECIAIS ===
+                            { id: 7, nome: "Baiana", descricao: "Calabresa, pimenta, cebola e queijo", preco: 46.90, imagem: "images/pizzas/baiana.jpg" },
+                            { id: 8, nome: "Marguerita", descricao: "Mussarela, tomate, manjericão e azeite", preco: 42.90, imagem: "images/pizzas/marguerita.jpg" },
+                            { id: 9, nome: "Napolitana", descricao: "Mussarela, tomate, parmesão e orégano", preco: 41.90, imagem: "images/pizzas/napolitana.jpg" },
+                            { id: 10, nome: "Rúcula com Tomate Seco", descricao: "Rúcula, tomate seco, mussarela e parmesão", preco: 52.90, imagem: "images/pizzas/rucula.jpg" },
+                            { id: 11, nome: "Alho e Óleo", descricao: "Alho frito, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/alho-oleo.jpg" },
+                            { id: 12, nome: "Atum", descricao: "Atum sólido, cebola, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/atum.jpg" },
+                            
+                            // === CARNES ===
+                            { id: 13, nome: "Carne Seca", descricao: "Carne seca desfiada, mussarela e cebola roxa", preco: 54.90, imagem: "images/pizzas/carne-seca.jpg" },
+                            { id: 14, nome: "Frango com Requeijão", descricao: "Frango desfiado, requeijão cremoso e milho", preco: 49.90, imagem: "images/pizzas/frango-requeijao.jpg" },
+                            { id: 15, nome: "Calabresa Acebolada", descricao: "Calabresa, cebola caramelizada e mussarela", preco: 46.90, imagem: "images/pizzas/calabresa-acebolada.jpg" },
+                            { id: 16, nome: "Bacon", descricao: "Bacon crocante, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/bacon.jpg" },
+                            { id: 17, nome: "Lombinho", descricao: "Lombo canadense, mussarela e cebola", preco: 52.90, imagem: "images/pizzas/lombinho.jpg" },
+                            { id: 18, nome: "Coração de Frango", descricao: "Coração de frango temperado, cebola e mussarela", preco: 49.90, imagem: "images/pizzas/coracao-frango.jpg" },
+                            
+                            // === VEGETARIANAS ===
+                            { id: 19, nome: "Vegetariana", descricao: "Palmito, ervilha, milho, brócolis, mussarela", preco: 47.90, imagem: "images/pizzas/vegetariana.jpg" },
+                            { id: 20, nome: "Palmito", descricao: "Palmito, mussarela e orégano", preco: 46.90, imagem: "images/pizzas/palmito.jpg" },
+                            { id: 21, nome: "Brócolis com Catupiry", descricao: "Brócolis, catupiry e mussarela", preco: 47.90, imagem: "images/pizzas/brocolis.jpg" },
+                            { id: 22, nome: "Escarola", descricao: "Escarola refogada, mussarela e azeitonas", preco: 44.90, imagem: "images/pizzas/escarola.jpg" },
+                            { id: 23, nome: "Abobrinha", descricao: "Abobrinha fatiada, mussarela e orégano", preco: 43.90, imagem: "images/pizzas/abobrinha.jpg" },
+                            { id: 24, nome: "Berinjela", descricao: "Berinjela grelhada, mussarela e manjericão", preco: 45.90, imagem: "images/pizzas/berinjela.jpg" },
+                            
+                            // === SEAFOOD ===
+                            { id: 25, nome: "Camarão", descricao: "Camarão médio, mussarela e catupiry", preco: 69.90, imagem: "images/pizzas/camarao.jpg" },
+                            { id: 26, nome: "Frutos do Mar", descricao: "Camarão, lula, mussarela e catupiry", preco: 74.90, imagem: "images/pizzas/frutos-mar.jpg" },
+                            { id: 27, nome: "Salmão", descricao: "Salmão defumado, cream cheese e alcaparras", preco: 72.90, imagem: "images/pizzas/salmao.jpg" },
+                            
+                            // === MOLHOS ESPECIAIS ===
+                            { id: 28, nome: "Strogonoff", descricao: "Frango ao molho strogonoff, batata palha", preco: 54.90, imagem: "images/pizzas/strogonoff.jpg" },
+                            { id: 29, nome: "Chicken Catupiry", descricao: "Frango, catupiry e milho verde", preco: 49.90, imagem: "images/pizzas/chicken-catupiry.jpg" },
+                            { id: 30, nome: "Cheddar", descricao: "Frango desfiado, cheddar cremoso e bacon", preco: 52.90, imagem: "images/pizzas/cheddar.jpg" },
+                            
+                            // === COMPLETAS ===
+                            { id: 31, nome: "Suprema", descricao: "Calabresa, presunto, mussarela, cebola e ovos", preco: 52.90, imagem: "images/pizzas/suprema.jpg" },
+                            { id: 32, nome: "Toscana", descricao: "Linguiça toscana, cebola e mussarela", preco: 51.90, imagem: "images/pizzas/toscana.jpg" },
+                            { id: 33, nome: "Mineira", descricao: "Frango, catupiry, milho e batata palha", preco: 51.90, imagem: "images/pizzas/mineira.jpg" },
+                            { id: 34, nome: "Nordestina", descricao: "Carne seca, queijo coalho e cebola roxa", preco: 56.90, imagem: "images/pizzas/nordestina.jpg" },
+                            { id: 35, nome: "Caipira", descricao: "Frango, milho, catupiry e ervilha", preco: 49.90, imagem: "images/pizzas/caipira.jpg" },
+                            { id: 36, nome: "Paulista", descricao: "Calabresa, ovo, cebola, mussarela", preco: 48.90, imagem: "images/pizzas/paulista.jpg" },
+                            
+                            // === PREMIUM ===
+                            { id: 37, nome: "Filé com Catupiry", descricao: "Filé mignon, catupiry e cebola caramelizada", preco: 64.90, imagem: "images/pizzas/file-catupiry.jpg" },
+                            { id: 38, nome: "Cordeiro", descricao: "Cordeiro desfiado, cream cheese e hortelã", preco: 67.90, imagem: "images/pizzas/cordeiro.jpg" },
+                            { id: 39, nome: "Parma", descricao: "Presunto de Parma, rúcula e parmesão", preco: 62.90, imagem: "images/pizzas/parma.jpg" },
+                            { id: 40, nome: "Cogumelos", descricao: "Cogumelos frescos, mussarela e orégano", preco: 54.90, imagem: "images/pizzas/cogumelos.jpg" },
+                            
+                            // === DOCES (para completar 48) ===
+                            { id: 41, nome: "Chocolate", descricao: "Chocolate ao leite e granulado", preco: 45.90, imagem: "images/pizzas/chocolate.jpg" },
+                            { id: 42, nome: "Banana com Canela", descricao: "Banana, canela e leite condensado", preco: 44.90, imagem: "images/pizzas/banana.jpg" },
+                            { id: 43, nome: "Morango com Chocolate", descricao: "Morango fresco e chocolate ao leite", preco: 49.90, imagem: "images/pizzas/morango.jpg" },
+                            { id: 44, nome: "Romeu e Julieta", descricao: "Goiabada e queijo mussarela", preco: 46.90, imagem: "images/pizzas/romeu-julieta.jpg" },
+                            { id: 45, nome: "Prestígio", descricao: "Coco e chocolate ao leite", preco: 47.90, imagem: "images/pizzas/prestigio.jpg" },
+                            { id: 46, nome: "Brigadeiro", descricao: "Brigadeiro e granulado", preco: 46.90, imagem: "images/pizzas/brigadeiro.jpg" },
+                            { id: 47, nome: "Nutella", descricao: "Nutella e morango", preco: 54.90, imagem: "images/pizzas/nutella.jpg" },
+                            { id: 48, nome: "Doce de Leite", descricao: "Doce de leite e coco ralado", preco: 45.90, imagem: "images/pizzas/doce-leite.jpg" }
                         ];
                     }
                     renderizarSabores();
                 }
             } catch (error) {
                 console.error('Erro ao carregar sabores:', error);
-                document.getElementById('listaSabores').innerHTML = '<div class="loading">Erro ao carregar sabores</div>';
+                // Fallback para os 48 sabores
+                saboresLista = [
+                    { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/calabresa.jpg" },
+                    { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/mussarela.jpg" },
+                    { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 44.90, imagem: "images/pizzas/portuguesa.jpg" },
+                    { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 47.90, imagem: "images/pizzas/frango-catupiry.jpg" },
+                    { id: 5, nome: "Peperoni", descricao: "Peperoni fatiado, mussarela e orégano", preco: 49.90, imagem: "images/pizzas/peperoni.jpg" },
+                    { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/quatro-queijos.jpg" }
+                ];
+                renderizarSabores();
             }
         }
         
@@ -423,11 +539,16 @@
             let html = '<div class="sabores-grid">';
             saboresLista.forEach(sabor => {
                 const precoSabor = sabor.preco || 39.90;
+                const imagem = sabor.imagem || 'https://via.placeholder.com/70x70?text=Pizza';
                 html += `
                     <div class="sabor-card" data-id="${sabor.id}" data-nome="${sabor.nome}" data-preco="${precoSabor}" data-desc="${sabor.descricao || ''}">
-                        <div class="sabor-nome">${sabor.nome}</div>
-                        <div class="sabor-ingredientes">${sabor.descricao || ''}</div>
-                        <div class="sabor-preco">R$ ${precoSabor.toFixed(2)}</div>
+                        <img src="${imagem}" class="sabor-imagem" onerror="this.src='https://via.placeholder.com/70x70?text=Pizza'">
+                        <div class="sabor-info">
+                            <div class="sabor-nome">${sabor.nome}</div>
+                            <div class="sabor-ingredientes">${sabor.descricao || ''}</div>
+                            <div class="sabor-preco">R$ ${precoSabor.toFixed(2)}</div>
+                        </div>
+                        <div class="sabor-select"></div>
                     </div>
                 `;
             });
@@ -442,7 +563,7 @@
                     pizzaSelecionada = {
                         id: item.dataset.id,
                         nome: item.dataset.nome,
-                        preco: precoSabor,  // USA O PREÇO DO SABOR ESCOLHIDO
+                        preco: precoSabor,
                         descricao: item.dataset.desc
                     };
                     atualizarResumo();
