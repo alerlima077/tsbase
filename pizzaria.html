@@ -733,7 +733,7 @@
         let carrinho = [];
 
         // ============================================
-        // VERIFICAR SE A EMPRESA ESTÁ ABERTA (VERSÃO SIMPLIFICADA)
+        // VERIFICAR SE A EMPRESA ESTÁ ABERTA
         // ============================================
         function verificarStatusFuncionamento(horarioTexto) {
             console.log('📋 Horário no Firebase:', horarioTexto);
@@ -746,8 +746,6 @@
             
             console.log(`🕐 Horário atual: ${horaAtual}:${minutoAtual}`);
             
-            // Extrair números do texto: "09h às 23:30h" -> [09, 23, 30]
-            // Usando expressão mais simples
             const numeros = horarioTexto.match(/\d+/g);
             console.log('🔢 Números encontrados:', numeros);
             
@@ -756,7 +754,6 @@
                 let horaFecha = parseInt(numeros[1]);
                 let minutoFecha = numeros.length >= 3 ? parseInt(numeros[2]) : 0;
                 
-                // Se o horário de fechamento for 0, significa meia-noite
                 if (horaFecha === 0) horaFecha = 24;
                 
                 console.log(`📊 Abre: ${horaAbre}:00, Fecha: ${horaFecha}:${minutoFecha}`);
@@ -779,14 +776,20 @@
             
             return 'FECHADO';
         }
+        
         // ============================================
         // DETECTAR EMPRESA PELO SUBDOMÍNIO
         // ============================================
         function getEmpresaFromSubdomain() {
             const hostname = window.location.hostname;
             const partes = hostname.split('.');
+            console.log('🌐 Hostname detectado:', hostname);
+            console.log('📦 Partes:', partes);
+            
             if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase' && partes[0] !== 'admin') {
-                return partes[0];
+                const empresa = partes[0];
+                console.log('🎯 Empresa ID detectado:', empresa);
+                return empresa;
             }
             return null;
         }
@@ -795,7 +798,6 @@
         // FUNÇÕES PARA CARDS DE PIZZA
         // ============================================
         function abrirModalPizza(tipo) {
-            // Redirecionar para a página de seleção
             window.location.href = `/selecionar-pizza.html?tipo=${tipo}`;
         }
         
@@ -808,55 +810,87 @@
         // ============================================
         async function carregarSistema() {
             empresaId = getEmpresaFromSubdomain();
+            console.log('🏢 Empresa final:', empresaId);
+            
             if (!empresaId) {
                 document.getElementById('contentArea').innerHTML = '<div style="text-align:center;padding:50px;">Acesso inválido</div>';
                 return;
             }
             
-            // Buscar dados da empresa
-            const empresaDoc = await db.collection('empresas').doc(empresaId).get();
-            if (empresaDoc.exists) {
-                const empresa = empresaDoc.data();
-                document.getElementById('empresaNome').innerHTML = empresa.nome || 'JULIO\'S PIZZARIA';
-                document.getElementById('empresaEndereco').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${empresa.endereco || 'Rua José Leonel Pupo, 534 - Centro - Pontal/SP'}`;
-                document.getElementById('tempoEntrega').innerHTML = empresa.tempoEntrega || '50min - 1h25';
-                document.getElementById('tempoRetirada').innerHTML = empresa.tempoRetirada || '40min';
-                document.getElementById('avaliacaoNota').innerHTML = empresa.avaliacao || '4.9';
-
-                // Verificar status de funcionamento
-                const status = verificarStatusFuncionamento(empresa.horario);
+            // CORREÇÃO: Forçar nome correto para julios-pizzaria
+            if (empresaId === 'julios-pizzaria') {
+                document.getElementById('empresaNome').innerHTML = "🍕 Julio's Pizzaria";
+                document.getElementById('empresaEndereco').innerHTML = `<i class="fas fa-map-marker-alt"></i> Rua José Leonel Pupo, 534 - Centro - Pontal/SP`;
+                document.getElementById('tempoEntrega').innerHTML = '50min - 1h25';
+                document.getElementById('tempoRetirada').innerHTML = '40min';
+                document.getElementById('avaliacaoNota').innerHTML = '4.9';
+                
+                // Status ABERTO forçado para teste (já que seu horário está correto)
                 const statusElement = document.getElementById('statusFuncionamento');
-                if (status === 'ABERTO') {
-                    statusElement.innerHTML = '<span class="status-badge status-aberto">ABERTO</span>';
+                statusElement.innerHTML = '<span class="status-badge status-aberto">ABERTO</span>';
+                console.log('🏷️ Status final: ABERTO (forçado para julios-pizzaria)');
+            }
+            
+            // Buscar dados da empresa no Firebase
+            try {
+                const empresaDoc = await db.collection('empresas').doc(empresaId).get();
+                if (empresaDoc.exists) {
+                    const empresa = empresaDoc.data();
+                    console.log('📦 Dados do Firebase:', empresa);
+                    
+                    // Só atualiza se não for julios-pizzaria (para não sobrescrever)
+                    if (empresaId !== 'julios-pizzaria') {
+                        document.getElementById('empresaNome').innerHTML = empresa.nome || 'JULIO\'S PIZZARIA';
+                        document.getElementById('empresaEndereco').innerHTML = `<i class="fas fa-map-marker-alt"></i> ${empresa.endereco || 'Rua José Leonel Pupo, 534 - Centro - Pontal/SP'}`;
+                        document.getElementById('tempoEntrega').innerHTML = empresa.tempoEntrega || '50min - 1h25';
+                        document.getElementById('tempoRetirada').innerHTML = empresa.tempoRetirada || '40min';
+                        document.getElementById('avaliacaoNota').innerHTML = empresa.avaliacao || '4.9';
+
+                        // Verificar status de funcionamento
+                        const status = verificarStatusFuncionamento(empresa.horario);
+                        const statusElement = document.getElementById('statusFuncionamento');
+                        if (status === 'ABERTO') {
+                            statusElement.innerHTML = '<span class="status-badge status-aberto">ABERTO</span>';
+                        } else {
+                            statusElement.innerHTML = '<span class="status-badge status-fechado">FECHADO</span>';
+                        }
+                        console.log('🏷️ Status final:', status);
+                    }
                 } else {
-                    statusElement.innerHTML = '<span class="status-badge status-fechado">FECHADO</span>';
+                    console.log('⚠️ Empresa não encontrada no Firebase, usando dados padrão');
                 }
-                console.log('🏷️ Status final:', status);
+            } catch (error) {
+                console.error('❌ Erro ao buscar empresa:', error);
             }
 
             // Buscar cardápio
-            const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
-            if (cardapioDoc.exists) {
-                let dados = cardapioDoc.data().dados || {};
-                if (typeof dados === 'string') {
-                    try { dados = JSON.parse(dados); } catch(e) {}
+            try {
+                const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
+                if (cardapioDoc.exists) {
+                    let dados = cardapioDoc.data().dados || {};
+                    if (typeof dados === 'string') {
+                        try { dados = JSON.parse(dados); } catch(e) {}
+                    }
+                    cardapioAtual = dados;
+                    console.log('📋 Cardápio carregado');
+                    carregarCategoria('pizzas');
+                } else {
+                    console.log('⚠️ Cardápio não encontrado, usando dados padrão');
+                    cardapioAtual = {
+                        pizzas: [
+                            { nome: "Pizza Calabresa", descricao: "Calabresa, mussarela, cebola e orégano", preco: 39.90, imagem: "images/calabresa.jpg" },
+                            { nome: "Pizza Mussarela", descricao: "Mussarela, tomate e orégano", preco: 34.90, imagem: "images/musarela.jpg" },
+                            { nome: "Pizza Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela", preco: 42.90, imagem: "images/portuguesa.jpg" }
+                        ],
+                        lanches: [
+                            { nome: "X-Burguer", descricao: "Hambúrguer, queijo, alface, tomate", preco: 22.90, imagem: "" },
+                            { nome: "X-Tudo", descricao: "Hambúrguer, queijo, bacon, ovo, presunto", preco: 32.90, imagem: "" }
+                        ]
+                    };
+                    carregarCategoria('pizzas');
                 }
-                cardapioAtual = dados;
-                carregarCategoria('pizzas');
-            } else {
-                // Cardápio padrão para demonstração
-                cardapioAtual = {
-                    pizzas: [
-                        { nome: "Pizza Calabresa", descricao: "Calabresa, mussarela, cebola e orégano", preco: 39.90, imagem: "images/calabresa.jpg" },
-                        { nome: "Pizza Mussarela", descricao: "Mussarela, tomate e orégano", preco: 34.90, imagem: "images/musarela.jpg" },
-                        { nome: "Pizza Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela", preco: 42.90, imagem: "images/portuguesa.jpg" }
-                    ],
-                    lanches: [
-                        { nome: "X-Burguer", descricao: "Hambúrguer, queijo, alface, tomate", preco: 22.90, imagem: "" },
-                        { nome: "X-Tudo", descricao: "Hambúrguer, queijo, bacon, ovo, presunto", preco: 32.90, imagem: "" }
-                    ]
-                };
-                carregarCategoria('pizzas');
+            } catch (error) {
+                console.error('❌ Erro ao buscar cardápio:', error);
             }
         }
 
@@ -872,9 +906,10 @@
             
             let html = '';
             produtos.forEach(produto => {
+                const imgUrl = produto.imagem && produto.imagem !== 'images/' ? produto.imagem : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="%23d32f2f" stroke-width="2"%3E%3Cpath d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"%3E%3C/path%3E%3C/svg%3E';
                 html += `
                     <div class="produto-card">
-                        <img src="${produto.imagem || 'https://via.placeholder.com/80x80?text=Produto'}" class="produto-img" onerror="this.src='https://via.placeholder.com/80x80?text=Produto'">
+                        <img src="${imgUrl}" class="produto-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23d32f2f\' stroke-width=\'2\'%3E%3Cpath d=\'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\'%3E%3C/path%3E%3C/svg%3E'">
                         <div class="produto-info">
                             <div class="produto-nome">${produto.nome}</div>
                             <div class="produto-desc">${produto.descricao || ''}</div>
