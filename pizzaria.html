@@ -369,7 +369,7 @@
         .card-categoria {
             background: linear-gradient(135deg, #fff 0%, #f8f8f8 100%);
             border-radius: 24px;
-            padding: 25px 20px;
+            padding: 20px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -394,9 +394,19 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.15);
         }
         
-        .card-categoria .icone {
-            font-size: 48px;
+        /* Imagem do card */
+        .card-imagem {
+            width: 100%;
+            aspect-ratio: 1 / 1; /* Mantém proporção quadrada 1:1 */
+            border-radius: 20px;
+            object-fit: cover;
             margin-bottom: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: 0.3s;
+        }
+        
+        .card-categoria:hover .card-imagem {
+            transform: scale(1.02);
         }
         
         .card-categoria h3 {
@@ -436,6 +446,7 @@
             cursor: pointer;
             margin-top: 12px;
             transition: 0.3s;
+            width: 100%;
         }
         
         .card-categoria .btn-escolher:hover {
@@ -458,6 +469,7 @@
             border-radius: 20px;
             font-size: 11px;
             font-weight: bold;
+            z-index: 10;
         }
         
         /* Divisória entre seções */
@@ -557,35 +569,39 @@
     <!-- SEÇÃO DE CATEGORIAS ESPECIAIS (PIZZAS) -->
     <div class="content-area">
         <div class="categorias-especiais" id="categoriasEspeciais">
+            <!-- Pizza Pequena -->
             <div class="card-categoria" onclick="abrirModalPizza('pequena')">
-                <div class="icone">🍕</div>
+                <img src="images/PizzaPequena.jpg" alt="Pizza Pequena" class="card-imagem" onerror="this.src='https://via.placeholder.com/600x600?text=Pizza+Pequena'">
                 <h3>Pizza Pequena</h3>
                 <div class="sabores">1 sabor</div>
                 <div class="preco">R$ 50,00</div>
                 <button class="btn-escolher">Escolher</button>
             </div>
             
+            <!-- Pizza Grande -->
             <div class="card-categoria" onclick="abrirModalPizza('grande')">
-                <div class="icone">🍕🔥</div>
+                <img src="images/PizzaGrande.jpg" alt="Pizza Grande" class="card-imagem" onerror="this.src='https://via.placeholder.com/600x600?text=Pizza+Grande'">
                 <h3>Pizza Grande</h3>
                 <div class="sabores">2 sabores</div>
                 <div class="preco">R$ 65,00</div>
                 <button class="btn-escolher">Escolher</button>
             </div>
             
+            <!-- Pizza 3 Sabores -->
             <div class="card-categoria" onclick="abrirModalPizza('tresSabores')">
-                <div class="icone">🍕🍕🍕</div>
+                <img src="images/Pizza3Sabores.png" alt="Pizza 3 Sabores" class="card-imagem" onerror="this.src='https://via.placeholder.com/600x600?text=Pizza+3+Sabores'">
                 <h3>Pizza 3 Sabores</h3>
                 <div class="sabores">3 sabores</div>
                 <div class="preco">R$ 100,00</div>
                 <button class="btn-escolher">Escolher</button>
             </div>
             
+            <!-- Rodízio na Caixa (Destaque) -->
             <div class="card-categoria card-destaque" onclick="abrirModalRodizio()">
                 <div class="badge">🔥 MAIS PEDIDO</div>
-                <div class="icone">🍽️🍕🍝</div>
+                <img src="images/RodizioCaixa.png" alt="Rodízio na Caixa" class="card-imagem" onerror="this.src='https://via.placeholder.com/600x600?text=Rod%C3%ADzio+na+Caixa'">
                 <h3>RODÍZIO NA CAIXA</h3>
-                <div class="sabores">5 sabores de pizza + salgado + macarrão + batata frita</div>
+                <div class="sabores">5 sabores + salgado + macarrão + batata frita</div>
                 <div class="preco">R$ 80,00</div>
                 <button class="btn-escolher">Escolher</button>
             </div>
