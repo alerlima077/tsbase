@@ -689,34 +689,44 @@
 
         function renderizarCardapio() {
             let html = '';
+            
             if (cardapioAtual.promocoes && cardapioAtual.promocoes.length) {
                 html += '<h2 class="categoria-titulo">🔥 Promoções</h2><div class="cardapio-grid">';
                 cardapioAtual.promocoes.forEach(item => {
-                    html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
+                    // Usa imagem local ou fallback base64
+                    const imgUrl = item.imagem && item.imagem !== 'images/' ? item.imagem : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="%23d32f2f" stroke-width="2"%3E%3Cpath d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"%3E%3C/path%3E%3C/svg%3E';
+                    html += `<div class="card-item"><img src="${imgUrl}" class="card-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23d32f2f\' stroke-width=\'2\'%3E%3Cpath d=\'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\'%3E%3C/path%3E%3C/svg%3E'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
                 });
                 html += '</div>';
             }
+            
             if (cardapioAtual.pizzasSalgadas && cardapioAtual.pizzasSalgadas.length) {
                 html += '<h2 class="categoria-titulo">🍕 Pizzas Salgadas</h2><div class="cardapio-grid">';
                 cardapioAtual.pizzasSalgadas.forEach(item => {
-                    html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
+                    const imgUrl = item.imagem && item.imagem !== 'images/' ? item.imagem : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="%23d32f2f" stroke-width="2"%3E%3Cpath d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"%3E%3C/path%3E%3C/svg%3E';
+                    html += `<div class="card-item"><img src="${imgUrl}" class="card-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23d32f2f\' stroke-width=\'2\'%3E%3Cpath d=\'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\'%3E%3C/path%3E%3C/svg%3E'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
                 });
                 html += '</div>';
             }
+            
             if (cardapioAtual.pizzasDoces && cardapioAtual.pizzasDoces.length) {
                 html += '<h2 class="categoria-titulo">🍫 Pizzas Doces</h2><div class="cardapio-grid">';
                 cardapioAtual.pizzasDoces.forEach(item => {
-                    html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
+                    const imgUrl = item.imagem && item.imagem !== 'images/' ? item.imagem : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="%23d32f2f" stroke-width="2"%3E%3Cpath d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"%3E%3C/path%3E%3C/svg%3E';
+                    html += `<div class="card-item"><img src="${imgUrl}" class="card-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23d32f2f\' stroke-width=\'2\'%3E%3Cpath d=\'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\'%3E%3C/path%3E%3C/svg%3E'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
                 });
                 html += '</div>';
             }
+            
             if (cardapioAtual.bebidas && cardapioAtual.bebidas.length) {
                 html += '<h2 class="categoria-titulo">🥤 Bebidas</h2><div class="cardapio-grid">';
                 cardapioAtual.bebidas.forEach(item => {
-                    html += `<div class="card-item"><img src="${item.imagem || 'https://via.placeholder.com/280x180?text=Imagem'}" class="card-img" onerror="this.src='https://via.placeholder.com/280x180?text=Produto'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
+                    const imgUrl = item.imagem && item.imagem !== 'images/' ? item.imagem : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="%23d32f2f" stroke-width="2"%3E%3Cpath d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"%3E%3C/path%3E%3C/svg%3E';
+                    html += `<div class="card-item"><img src="${imgUrl}" class="card-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'80\' height=\'80\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%23d32f2f\' stroke-width=\'2\'%3E%3Cpath d=\'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5\'%3E%3C/path%3E%3C/svg%3E'"><h3>${item.nome}</h3><p>${item.descricao}</p><div class="preco-item">R$ ${item.preco.toFixed(2)}</div><button class="btn-adicionar" onclick="adicionarAoCarrinho('${item.nome.replace(/'/g, "\\'")}', ${item.preco})">Adicionar</button></div>`;
                 });
                 html += '</div>';
             }
+            
             document.getElementById('cardapioContainer').innerHTML = html || '<p style="text-align:center;">Cardápio vazio</p>';
         }
 

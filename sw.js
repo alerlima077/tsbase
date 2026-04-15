@@ -1,62 +1,42 @@
-// Service Worker para PWA - TS Base
-const CACHE_NAME = 'tsbase-v2.0.0';
-const urlsToCache = [
-  '/',
-  '/index.html',
-  '/admin.html',
-  '/dashboard.html',
-  '/pizzaria.html',
-  '/manifest.json'
-];
+// Service Worker simplificado para PWA - TS Base
+const CACHE_NAME = 'tsbase-v3';
 
 // Instalação
 self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      console.log('✅ Cache aberto');
-      return cache.addAll(urlsToCache);
-    })
-  );
-  self.skipWaiting(); // Força ativação imediata
+    self.skipWaiting();
+    console.log('✅ Service Worker instalado');
 });
 
-// Busca em cache - IGNORANDO TUDO QUE NÃO É GET
+// Busca - NÃO FAZ CACHE de nada para evitar erros
 self.addEventListener('fetch', event => {
-  // Só faz cache de requisições GET
-  if (event.request.method !== 'GET') {
-    return;
-  }
-  
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (response && response.status === 200) {
-          const responseToCache = response.clone();
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, responseToCache);
-          });
-        }
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request);
-      })
-  );
+    // Ignora requisições que não são GET
+    if (event.request.method !== 'GET') {
+        return;
+    }
+    
+    // Tenta buscar da rede, sem cache
+    event.respondWith(
+        fetch(event.request).catch(() => {
+            // Se falhar, tenta retornar uma resposta básica
+            return new Response('Recurso não disponível offline', {
+                status: 200,
+                headers: new Headers({ 'Content-Type': 'text/plain' })
+            });
+        })
+    );
 });
 
 // Ativação
 self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(cacheNames => {
-      return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('🗑️ Removendo cache antigo:', cacheName);
-            return caches.delete(cacheName);
-          }
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cache => {
+                    console.log('🗑️ Removendo cache:', cache);
+                    return caches.delete(cache);
+                })
+            );
         })
-      );
-    })
-  );
-  self.clients.claim(); // Toma controle imediatamente
+    );
+    self.clients.claim();
 });
