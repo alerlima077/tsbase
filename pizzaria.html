@@ -825,10 +825,16 @@
                 document.getElementById('tempoRetirada').innerHTML = '40min';
                 document.getElementById('avaliacaoNota').innerHTML = '4.9';
                 
-                // Status ABERTO forçado para teste (já que seu horário está correto)
+                // Usar horário real (09h às 23:30h)
+                const horarioReal = "Segunda a Domingo, 09h às 23:30h";
+                const status = verificarStatusFuncionamento(horarioReal);
                 const statusElement = document.getElementById('statusFuncionamento');
-                statusElement.innerHTML = '<span class="status-badge status-aberto">ABERTO</span>';
-                console.log('🏷️ Status final: ABERTO (forçado para julios-pizzaria)');
+                if (status === 'ABERTO') {
+                    statusElement.innerHTML = '<span class="status-badge status-aberto">ABERTO</span>';
+                } else {
+                    statusElement.innerHTML = '<span class="status-badge status-fechado">FECHADO</span>';
+                }
+                console.log('🏷️ Status final:', status);
             }
             
             // Buscar dados da empresa no Firebase
