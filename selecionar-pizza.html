@@ -434,6 +434,7 @@
         async function carregarSabores() {
             try {
                 const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
+                
                 if (cardapioDoc.exists) {
                     let dados = cardapioDoc.data().dados || {};
                     if (typeof dados === 'string') dados = JSON.parse(dados);
@@ -443,19 +444,30 @@
                     } else {
                         // 48 SABORES COMPLETOS
                         saboresLista = [
-                            // === TRADICIONAIS ===
                             { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/1-Calabresa.png" },
                             { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/2-Mussarela.png" },
                             { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 44.90, imagem: "images/pizzas/3-Portuguesa.png" },
                             { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 47.90, imagem: "images/pizzas/4-Frango_Catupiry.png" },
                             { id: 5, nome: "Atum", descricao: "Atum sólido, cebola, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/5-Atum.png" },
-                            { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/6-Quatro_Queijo.jpg" },
-                            
-                            
+                            { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/6-Quatro_Queijo.jpg" }
                         ];
                     }
-                    renderizarSabores();
+                } else {
+                    // 🔴 NOVO: Caso o documento NÃO exista no Firebase
+                    console.log('Documento não encontrado no Firebase, usando dados locais');
+                    saboresLista = [
+                        { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/1-Calabresa.png" },
+                        { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/2-Mussarela.png" },
+                        { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 44.90, imagem: "images/pizzas/3-Portuguesa.png" },
+                        { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 47.90, imagem: "images/pizzas/4-Frango_Catupiry.png" },
+                        { id: 5, nome: "Atum", descricao: "Atum sólido, cebola, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/5-Atum.png" },
+                        { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/6-Quatro_Queijo.jpg" }
+                    ];
                 }
+                
+                // 🔴 MOVI O renderizarSabores() PARA FORA DO IF
+                renderizarSabores();
+                
             } catch (error) {
                 console.error('Erro ao carregar sabores:', error);
                 // FALLBACK CORRETO com os nomes dos arquivos da sua pasta
