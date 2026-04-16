@@ -384,6 +384,57 @@
         .btn-proximo:disabled { background: #ccc; cursor: not-allowed; }
         .loading { text-align: center; padding: 40px; color: #666; }
     </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Júlio's Pizzaria - Monte sua Pizza</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- FIREBASE - URLs CORRETAS e CONFIRMADAS -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f5f5f5; padding-bottom: 120px; }
+        .header-pizza { background: linear-gradient(135deg, #e53935, #c62828); color: white; padding: 20px; text-align: center; position: relative; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .btn-voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 25px; cursor: pointer; font-size: 14px; }
+        .btn-voltar:hover { background: rgba(255,255,255,0.3); }
+        .header-pizza h1 { font-size: 1.5rem; margin-bottom: 5px; }
+        .header-pizza p { font-size: 0.9rem; opacity: 0.9; }
+        .container-pizza { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .secao-bordas, .secao-sabores { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .secao-titulo { font-size: 1.3rem; margin-bottom: 15px; color: #333; border-left: 4px solid #e53935; padding-left: 12px; }
+        #listaBordas { display: flex; flex-direction: column; gap: 10px; }
+        .borda-item { display: flex; justify-content: space-between; align-items: center; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; transition: all 0.3s; }
+        .borda-item:hover { border-color: #e53935; background: #fff5f5; }
+        .borda-item.selecionado { border-color: #e53935; background: #ffe8e8; }
+        .borda-info { flex: 1; }
+        .borda-nome { font-weight: bold; font-size: 1rem; margin-bottom: 5px; }
+        .borda-preco { color: #e53935; font-weight: bold; font-size: 0.9rem; }
+        .borda-selecionado { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ddd; }
+        .borda-item.selecionado .borda-selecionado { background: #e53935; border-color: #e53935; }
+        .sabores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .sabor-card { border: 2px solid #e0e0e0; border-radius: 12px; overflow: hidden; cursor: pointer; transition: all 0.3s; background: white; }
+        .sabor-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); border-color: #e53935; }
+        .sabor-card.selecionado { border-color: #e53935; background: #ffe8e8; }
+        .sabor-imagem { width: 100%; height: 180px; object-fit: cover; }
+        .sabor-info { padding: 12px; }
+        .sabor-nome { font-weight: bold; font-size: 1.1rem; margin-bottom: 5px; color: #333; }
+        .sabor-ingredientes { font-size: 0.8rem; color: #666; margin-bottom: 8px; line-height: 1.3; }
+        .sabor-preco { color: #e53935; font-weight: bold; font-size: 1.1rem; }
+        .sabor-select { width: 24px; height: 24px; border-radius: 50%; border: 2px solid #ddd; margin: 12px; margin-left: auto; }
+        .sabor-card.selecionado .sabor-select { background: #e53935; border-color: #e53935; }
+        .rodape-fixo { position: fixed; bottom: 0; left: 0; right: 0; background: white; box-shadow: 0 -2px 15px rgba(0,0,0,0.1); padding: 15px 20px; z-index: 100; }
+        .rodape-container { max-width: 800px; margin: 0 auto; }
+        .resumo-pedido { margin-bottom: 12px; }
+        .resumo-item { font-size: 0.9rem; margin-bottom: 5px; color: #555; }
+        .resumo-total { font-size: 1.2rem; font-weight: bold; color: #e53935; margin-top: 8px; }
+        .btn-proximo { width: 100%; background: linear-gradient(135deg, #e53935, #c62828); color: white; border: none; padding: 14px; border-radius: 30px; font-size: 1.1rem; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
+        .btn-proximo:hover:not(:disabled) { transform: scale(1.02); }
+        .btn-proximo:disabled { background: #ccc; cursor: not-allowed; }
+        .loading { text-align: center; padding: 40px; color: #666; }
+    </style>
 </head>
 <body>
     <div class="header-pizza">
@@ -418,59 +469,39 @@
     </div>
     
     <script>
-        // Aguarda o Firebase carregar completamente
-        window.addEventListener('load', function() {
-            console.log('🚀 Página carregada, verificando Firebase...');
-            
-            // Verifica se o Firebase está disponível
-            if (typeof firebase !== 'undefined' && firebase.apps.length) {
-                console.log('✅ Firebase já está inicializado!');
-                iniciarApp();
-            } else {
-                console.log('⚠️ Firebase não encontrado, aguardando...');
-                // Tenta novamente após 1 segundo
-                setTimeout(function() {
-                    if (typeof firebase !== 'undefined') {
-                        console.log('✅ Firebase detectado após aguardar!');
-                        iniciarApp();
-                    } else {
-                        console.error('❌ Firebase não carregou!');
-                        document.getElementById('listaSabores').innerHTML = '<div class="loading">❌ Erro ao carregar Firebase. Recarregue a página.</div>';
-                    }
-                }, 1000);
-            }
-        });
+        // INICIALIZAÇÃO IMEDIATA DO FIREBASE
+        console.log('🚀 Iniciando configuração do Firebase...');
         
-        function iniciarApp() {
-            console.log('🔥 Inicializando Firebase...');
-            
-            // Configuração do Firebase
-            const firebaseConfig = {
-                apiKey: "AIzaSyB8uUzNpj3RLdoVZoHqd61zGMxsm5KHbL8",
-                authDomain: "imperio-pizzas.firebaseapp.com",
-                projectId: "imperio-pizzas",
-                storageBucket: "imperio-pizzas.firebasestorage.app",
-                messagingSenderId: "177187165049",
-                appId: "1:177187165049:web:c0419e4fc621cd2621d5a8"
-            };
-            
-            // Inicializa se não existir
+        const firebaseConfig = {
+            apiKey: "AIzaSyB8uUzNpj3RLdoVZoHqd61zGMxsm5KHbL8",
+            authDomain: "imperio-pizzas.firebaseapp.com",
+            projectId: "imperio-pizzas",
+            storageBucket: "imperio-pizzas.firebasestorage.app",
+            messagingSenderId: "177187165049",
+            appId: "1:177187165049:web:c0419e4fc621cd2621d5a8"
+        };
+        
+        // Verificar se o Firebase já está disponível
+        if (typeof firebase !== 'undefined') {
+            console.log('✅ Firebase SDK carregado!');
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
                 console.log('✅ Firebase inicializado!');
+            } else {
+                console.log('✅ Firebase já estava inicializado!');
             }
-            
             window.db = firebase.firestore();
             window.empresaId = "imperio-pizzas";
+            console.log('✅ db disponível, empresaId:', empresaId);
             
-            console.log('✅ db:', typeof db);
-            console.log('✅ empresaId:', empresaId);
-            
-            // Inicia o app
-            rodarApp();
+            // Iniciar o app
+            iniciarApp();
+        } else {
+            console.error('❌ Firebase SDK NÃO carregou!');
+            document.getElementById('listaSabores').innerHTML = '<div class="loading">❌ Erro ao carregar sistema. Recarregue a página.</div>';
         }
         
-        function rodarApp() {
+        function iniciarApp() {
             const urlParams = new URLSearchParams(window.location.search);
             const tipoPizza = urlParams.get('tipo') || 'pequena';
             
