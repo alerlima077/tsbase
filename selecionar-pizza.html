@@ -6,6 +6,10 @@
     <title>Monte sua Pizza - Julio's Pizzaria</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -328,10 +332,7 @@
                 width: 100%;
             }
         }
-    </style>
-    
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    </style>      
 </head>
 <body>
     <div class="header-pizza">
@@ -369,6 +370,7 @@
     </div>
     
     <script>
+        // FIREBASE CONFIGURATION
         const firebaseConfig = {
             apiKey: "AIzaSyB8uUzNpj3RLdoVZoHqd61zGMxsm5KHbL8",
             authDomain: "imperio-pizzas.firebaseapp.com",
@@ -378,27 +380,30 @@
             appId: "1:177187165049:web:c0419e4fc621cd2621d5a8"
         };
         
-        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        // Inicializar Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const db = firebase.firestore();
+        
+        // 🔥 FIX: empresaId fixo em vez de função que retorna null
+        const empresaId = "imperio-pizzas";
         
         // Dados recebidos via URL
         const urlParams = new URLSearchParams(window.location.search);
         const tipoPizza = urlParams.get('tipo') || 'pequena';
-        const empresaId = getEmpresaFromSubdomain();
         
         let saboresLista = [];
         let bordaSelecionada = null;
         let pizzaSelecionada = null;
         let precoBasePizza = 0;
         
-        // Preços base por tipo de pizza (NÃO SERÃO MAIS USADOS - agora usa o preço do sabor)
         const titulos = {
             'pequena': { titulo: '🍕 Pizza Pequena', subtitulo: '1 sabor', qtdSabores: 1 },
             'grande': { titulo: '🍕 Pizza Grande', subtitulo: '2 sabores', qtdSabores: 2 },
             'tresSabores': { titulo: '🍕 Pizza 3 Sabores', subtitulo: '3 sabores', qtdSabores: 3 }
         };
         
-        // Bordas disponíveis
         const bordas = [
             { nome: 'Sem Borda', preco: 0.00 },
             { nome: 'Borda de Catupiry', preco: 25.00 },
@@ -413,16 +418,6 @@
             { nome: 'Borda Brigadeiro', preco: 36.00 }
         ];
         
-        function getEmpresaFromSubdomain() {
-            const hostname = window.location.hostname;
-            const partes = hostname.split('.');
-            if (partes.length >= 3 && partes[0] !== 'www' && partes[0] !== 'tsbase' && partes[0] !== 'admin') {
-                return partes[0];
-            }
-            return null;
-        }
-        
-        // FUNÇÃO PARA ROLAR ATÉ OS SABORES
         function rolarParaSabores() {
             const secaoSabores = document.querySelector('.secao-sabores');
             if (secaoSabores) {
@@ -430,9 +425,9 @@
             }
         }
         
-        // Carregar sabores (48 sabores completos)
         async function carregarSabores() {
             try {
+                console.log('🟡 Buscando cardápio para empresa:', empresaId);
                 const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
                 
                 if (cardapioDoc.exists) {
@@ -441,78 +436,19 @@
                     
                     if (dados.pizzasSalgadas && dados.pizzasSalgadas.length) {
                         saboresLista = dados.pizzasSalgadas;
+                        console.log('✅ Usando dados do Firebase:', saboresLista.length, 'sabores');
                     } else {
-                        // 48 SABORES COMPLETOS
                         saboresLista = [
                             { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/1-Calabresa.png" },
                             { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/2-Mussarela.png" },
                             { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 44.90, imagem: "images/pizzas/3-Portuguesa.png" },
                             { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 47.90, imagem: "images/pizzas/4-Frango_Catupiry.png" },
                             { id: 5, nome: "Atum", descricao: "Atum sólido, cebola, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/5-Atum.png" },
-                            { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/6-Quatro_Queijo.jpg" },
-                            
-                            // === ESPECIAIS ===
-                            { id: 7, nome: "Baiana", descricao: "Calabresa, pimenta, cebola e queijo", preco: 46.90, imagem: "images/pizzas/baiana.jpg" },
-                            { id: 8, nome: "Marguerita", descricao: "Mussarela, tomate, manjericão e azeite", preco: 42.90, imagem: "images/pizzas/marguerita.jpg" },
-                            { id: 9, nome: "Napolitana", descricao: "Mussarela, tomate, parmesão e orégano", preco: 41.90, imagem: "images/pizzas/napolitana.jpg" },
-                            { id: 10, nome: "Rúcula com Tomate Seco", descricao: "Rúcula, tomate seco, mussarela e parmesão", preco: 52.90, imagem: "images/pizzas/rucula.jpg" },
-                            { id: 11, nome: "Alho e Óleo", descricao: "Alho frito, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/alho-oleo.jpg" },
-                            { id: 12, nome: "Atum", descricao: "Atum sólido, cebola, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/atum.jpg" },
-                            
-                            // === CARNES ===
-                            { id: 13, nome: "Carne Seca", descricao: "Carne seca desfiada, mussarela e cebola roxa", preco: 54.90, imagem: "images/pizzas/carne-seca.jpg" },
-                            { id: 14, nome: "Frango com Requeijão", descricao: "Frango desfiado, requeijão cremoso e milho", preco: 49.90, imagem: "images/pizzas/frango-requeijao.jpg" },
-                            { id: 15, nome: "Calabresa Acebolada", descricao: "Calabresa, cebola caramelizada e mussarela", preco: 46.90, imagem: "images/pizzas/calabresa-acebolada.jpg" },
-                            { id: 16, nome: "Bacon", descricao: "Bacon crocante, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/bacon.jpg" },
-                            { id: 17, nome: "Lombinho", descricao: "Lombo canadense, mussarela e cebola", preco: 52.90, imagem: "images/pizzas/lombinho.jpg" },
-                            { id: 18, nome: "Coração de Frango", descricao: "Coração de frango temperado, cebola e mussarela", preco: 49.90, imagem: "images/pizzas/coracao-frango.jpg" },
-                            
-                            // === VEGETARIANAS ===
-                            { id: 19, nome: "Vegetariana", descricao: "Palmito, ervilha, milho, brócolis, mussarela", preco: 47.90, imagem: "images/pizzas/vegetariana.jpg" },
-                            { id: 20, nome: "Palmito", descricao: "Palmito, mussarela e orégano", preco: 46.90, imagem: "images/pizzas/palmito.jpg" },
-                            { id: 21, nome: "Brócolis com Catupiry", descricao: "Brócolis, catupiry e mussarela", preco: 47.90, imagem: "images/pizzas/brocolis.jpg" },
-                            { id: 22, nome: "Escarola", descricao: "Escarola refogada, mussarela e azeitonas", preco: 44.90, imagem: "images/pizzas/escarola.jpg" },
-                            { id: 23, nome: "Abobrinha", descricao: "Abobrinha fatiada, mussarela e orégano", preco: 43.90, imagem: "images/pizzas/abobrinha.jpg" },
-                            { id: 24, nome: "Berinjela", descricao: "Berinjela grelhada, mussarela e manjericão", preco: 45.90, imagem: "images/pizzas/berinjela.jpg" },
-                            
-                            // === SEAFOOD ===
-                            { id: 25, nome: "Camarão", descricao: "Camarão médio, mussarela e catupiry", preco: 69.90, imagem: "images/pizzas/camarao.jpg" },
-                            { id: 26, nome: "Frutos do Mar", descricao: "Camarão, lula, mussarela e catupiry", preco: 74.90, imagem: "images/pizzas/frutos-mar.jpg" },
-                            { id: 27, nome: "Salmão", descricao: "Salmão defumado, cream cheese e alcaparras", preco: 72.90, imagem: "images/pizzas/salmao.jpg" },
-                            
-                            // === MOLHOS ESPECIAIS ===
-                            { id: 28, nome: "Strogonoff", descricao: "Frango ao molho strogonoff, batata palha", preco: 54.90, imagem: "images/pizzas/strogonoff.jpg" },
-                            { id: 29, nome: "Chicken Catupiry", descricao: "Frango, catupiry e milho verde", preco: 49.90, imagem: "images/pizzas/chicken-catupiry.jpg" },
-                            { id: 30, nome: "Cheddar", descricao: "Frango desfiado, cheddar cremoso e bacon", preco: 52.90, imagem: "images/pizzas/cheddar.jpg" },
-                            
-                            // === COMPLETAS ===
-                            { id: 31, nome: "Suprema", descricao: "Calabresa, presunto, mussarela, cebola e ovos", preco: 52.90, imagem: "images/pizzas/suprema.jpg" },
-                            { id: 32, nome: "Toscana", descricao: "Linguiça toscana, cebola e mussarela", preco: 51.90, imagem: "images/pizzas/toscana.jpg" },
-                            { id: 33, nome: "Mineira", descricao: "Frango, catupiry, milho e batata palha", preco: 51.90, imagem: "images/pizzas/mineira.jpg" },
-                            { id: 34, nome: "Nordestina", descricao: "Carne seca, queijo coalho e cebola roxa", preco: 56.90, imagem: "images/pizzas/nordestina.jpg" },
-                            { id: 35, nome: "Caipira", descricao: "Frango, milho, catupiry e ervilha", preco: 49.90, imagem: "images/pizzas/caipira.jpg" },
-                            { id: 36, nome: "Paulista", descricao: "Calabresa, ovo, cebola, mussarela", preco: 48.90, imagem: "images/pizzas/paulista.jpg" },
-                            
-                            // === PREMIUM ===
-                            { id: 37, nome: "Filé com Catupiry", descricao: "Filé mignon, catupiry e cebola caramelizada", preco: 64.90, imagem: "images/pizzas/file-catupiry.jpg" },
-                            { id: 38, nome: "Cordeiro", descricao: "Cordeiro desfiado, cream cheese e hortelã", preco: 67.90, imagem: "images/pizzas/cordeiro.jpg" },
-                            { id: 39, nome: "Parma", descricao: "Presunto de Parma, rúcula e parmesão", preco: 62.90, imagem: "images/pizzas/parma.jpg" },
-                            { id: 40, nome: "Cogumelos", descricao: "Cogumelos frescos, mussarela e orégano", preco: 54.90, imagem: "images/pizzas/cogumelos.jpg" },
-                            
-                            // === DOCES (para completar 48) ===
-                            { id: 41, nome: "Chocolate", descricao: "Chocolate ao leite e granulado", preco: 45.90, imagem: "images/pizzas/chocolate.jpg" },
-                            { id: 42, nome: "Banana com Canela", descricao: "Banana, canela e leite condensado", preco: 44.90, imagem: "images/pizzas/banana.jpg" },
-                            { id: 43, nome: "Morango com Chocolate", descricao: "Morango fresco e chocolate ao leite", preco: 49.90, imagem: "images/pizzas/morango.jpg" },
-                            { id: 44, nome: "Romeu e Julieta", descricao: "Goiabada e queijo mussarela", preco: 46.90, imagem: "images/pizzas/romeu-julieta.jpg" },
-                            { id: 45, nome: "Prestígio", descricao: "Coco e chocolate ao leite", preco: 47.90, imagem: "images/pizzas/prestigio.jpg" },
-                            { id: 46, nome: "Brigadeiro", descricao: "Brigadeiro e granulado", preco: 46.90, imagem: "images/pizzas/brigadeiro.jpg" },
-                            { id: 47, nome: "Nutella", descricao: "Nutella e morango", preco: 54.90, imagem: "images/pizzas/nutella.jpg" },
-                            { id: 48, nome: "Doce de Leite", descricao: "Doce de leite e coco ralado", preco: 45.90, imagem: "images/pizzas/doce-leite.jpg" }
+                            { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/6-Quatro_Queijo.jpg" }
                         ];
                     }
                 } else {
-                    // 🔴 NOVO: Caso o documento NÃO exista no Firebase
-                    console.log('Documento não encontrado no Firebase, usando dados locais');
+                    console.log('⚠️ Documento não encontrado, usando dados locais');
                     saboresLista = [
                         { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/1-Calabresa.png" },
                         { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/2-Mussarela.png" },
@@ -523,12 +459,10 @@
                     ];
                 }
                 
-                // 🔴 MOVI O renderizarSabores() PARA FORA DO IF
                 renderizarSabores();
                 
             } catch (error) {
-                console.error('Erro ao carregar sabores:', error);
-                // FALLBACK CORRETO com os nomes dos arquivos da sua pasta
+                console.error('❌ Erro ao carregar sabores:', error);
                 saboresLista = [
                     { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/1-Calabresa.png" },
                     { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/2-Mussarela.png" },
@@ -557,7 +491,6 @@
             });
             container.innerHTML = html;
             
-            // Adicionar eventos de clique
             document.querySelectorAll('.borda-item').forEach(item => {
                 item.addEventListener('click', () => {
                     document.querySelectorAll('.borda-item').forEach(i => i.classList.remove('selecionado'));
@@ -567,7 +500,6 @@
                         preco: parseFloat(item.dataset.preco)
                     };
                     atualizarResumo();
-                    // ROLAR PARA OS SABORES APÓS SELECIONAR A BORDA
                     rolarParaSabores();
                 });
             });
@@ -575,6 +507,8 @@
         
         function renderizarSabores() {
             const container = document.getElementById('listaSabores');
+            if (!container) return;
+            
             let html = '<div class="sabores-grid">';
             saboresLista.forEach(sabor => {
                 const precoSabor = sabor.preco || 39.90;
@@ -611,22 +545,23 @@
         }
         
         function atualizarResumo() {
-            // O PREÇO DA PIZZA É O VALOR DO SABOR ESCOLHIDO
             const precoPizza = pizzaSelecionada ? pizzaSelecionada.preco : 0;
             const precoBorda = bordaSelecionada ? bordaSelecionada.preco : 0;
             const total = precoPizza + precoBorda;
             const nomeBorda = bordaSelecionada ? bordaSelecionada.nome : 'Não selecionada';
             const nomePizza = pizzaSelecionada ? pizzaSelecionada.nome : 'Não selecionada';
             
-            document.getElementById('resumoBorda').innerHTML = `🍞 Borda: <strong>${nomeBorda}</strong> - R$ ${precoBorda.toFixed(2)}`;
-            document.getElementById('resumoPizza').innerHTML = `🍕 Pizza: <strong>${nomePizza}</strong> - R$ ${precoPizza.toFixed(2)}`;
-            document.getElementById('resumoTotal').innerHTML = `💰 Total: R$ ${total.toFixed(2)}`;
-            
+            const resumoBorda = document.getElementById('resumoBorda');
+            const resumoPizza = document.getElementById('resumoPizza');
+            const resumoTotal = document.getElementById('resumoTotal');
             const btnProximo = document.getElementById('btnProximo');
-            if (pizzaSelecionada) {
-                btnProximo.disabled = false;
-            } else {
-                btnProximo.disabled = true;
+            
+            if (resumoBorda) resumoBorda.innerHTML = `🍞 Borda: <strong>${nomeBorda}</strong> - R$ ${precoBorda.toFixed(2)}`;
+            if (resumoPizza) resumoPizza.innerHTML = `🍕 Pizza: <strong>${nomePizza}</strong> - R$ ${precoPizza.toFixed(2)}`;
+            if (resumoTotal) resumoTotal.innerHTML = `💰 Total: R$ ${total.toFixed(2)}`;
+            
+            if (btnProximo) {
+                btnProximo.disabled = !pizzaSelecionada;
             }
         }
         
@@ -641,7 +576,6 @@
             const total = precoPizza + precoBorda;
             const nomeBorda = bordaSelecionada ? bordaSelecionada.nome : 'Sem Borda';
             
-            // Criar item para o carrinho
             const item = {
                 id: `pizza_${Date.now()}`,
                 nome: `${titulos[tipoPizza].titulo} - ${pizzaSelecionada.nome}`,
@@ -658,7 +592,6 @@
                 }
             };
             
-            // Salvar no localStorage para ser capturado pelo carrinho
             let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
             carrinho.push(item);
             localStorage.setItem('carrinho', JSON.stringify(carrinho));
@@ -670,13 +603,17 @@
         
         // Inicializar
         if (titulos[tipoPizza]) {
-            document.getElementById('tituloPagina').innerHTML = titulos[tipoPizza].titulo;
-            document.getElementById('subtituloPagina').innerHTML = titulos[tipoPizza].subtitulo;
+            const tituloElem = document.getElementById('tituloPagina');
+            const subtituloElem = document.getElementById('subtituloPagina');
+            if (tituloElem) tituloElem.innerHTML = titulos[tipoPizza].titulo;
+            if (subtituloElem) subtituloElem.innerHTML = titulos[tipoPizza].subtitulo;
         }
         
         renderizarBordas();
         carregarSabores();
-        document.getElementById('btnProximo').onclick = finalizar;
+        
+        const btnProximo = document.getElementById('btnProximo');
+        if (btnProximo) btnProximo.onclick = finalizar;
     </script>
 </body>
 </html>
