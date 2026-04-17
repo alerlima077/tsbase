@@ -435,12 +435,46 @@
         .btn-proximo:disabled { background: #ccc; cursor: not-allowed; }
         .loading { text-align: center; padding: 40px; color: #666; }
     </style>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Júlio's Pizzaria - Monte sua Pizza</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- FIREBASE - UMA ÚNICA VEZ -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding-bottom: 120px; }
+        .header-pizza { background: #e53935; color: white; padding: 20px; text-align: center; position: relative; }
+        .btn-voltar { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 15px; border-radius: 25px; cursor: pointer; }
+        .container-pizza { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .secao-bordas, .secao-sabores { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .secao-titulo { font-size: 1.3rem; margin-bottom: 15px; color: #333; border-left: 4px solid #e53935; padding-left: 12px; }
+        #listaBordas { display: flex; flex-direction: column; gap: 10px; }
+        .borda-item { display: flex; justify-content: space-between; padding: 15px; border: 2px solid #e0e0e0; border-radius: 12px; cursor: pointer; }
+        .borda-item.selecionado { border-color: #e53935; background: #ffe8e8; }
+        .borda-nome { font-weight: bold; }
+        .borda-preco { color: #e53935; }
+        .sabores-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 15px; }
+        .sabor-card { border: 2px solid #e0e0e0; border-radius: 12px; overflow: hidden; cursor: pointer; background: white; }
+        .sabor-card.selecionado { border-color: #e53935; background: #ffe8e8; }
+        .sabor-imagem { width: 100%; height: 180px; object-fit: cover; }
+        .sabor-info { padding: 12px; }
+        .sabor-nome { font-weight: bold; font-size: 1.1rem; }
+        .sabor-ingredientes { font-size: 0.8rem; color: #666; margin: 5px 0; }
+        .sabor-preco { color: #e53935; font-weight: bold; }
+        .rodape-fixo { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 15px 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        .btn-proximo { width: 100%; background: #e53935; color: white; border: none; padding: 14px; border-radius: 30px; font-size: 1.1rem; font-weight: bold; cursor: pointer; }
+        .btn-proximo:disabled { background: #ccc; cursor: not-allowed; }
+        .loading { text-align: center; padding: 40px; color: #666; }
+    </style>
 </head>
 <body>
     <div class="header-pizza">
-        <button class="btn-voltar" onclick="window.location.href='/pizzaria.html'">
-            <i class="fas fa-arrow-left"></i> Voltar
-        </button>
+        <button class="btn-voltar" onclick="window.location.href='/pizzaria.html'">← Voltar</button>
         <h1 id="tituloPagina">🍕 Pizza Pequena</h1>
         <p id="subtituloPagina">1 sabor</p>
     </div>
@@ -460,48 +494,40 @@
     <div class="rodape-fixo">
         <div class="rodape-container">
             <div class="resumo-pedido">
-                <div class="resumo-item" id="resumoBorda">🍞 Borda: <strong>Não selecionada</strong> - R$ 0,00</div>
-                <div class="resumo-item" id="resumoPizza">🍕 Pizza: <strong>Não selecionada</strong></div>
-                <div class="resumo-total" id="resumoTotal">💰 Total: R$ 0,00</div>
+                <div id="resumoBorda">🍞 Borda: <strong>Não selecionada</strong> - R$ 0,00</div>
+                <div id="resumoPizza">🍕 Pizza: <strong>Não selecionada</strong></div>
+                <div id="resumoTotal">💰 Total: R$ 0,00</div>
             </div>
             <button class="btn-proximo" id="btnProximo" disabled>📞 Próximo</button>
         </div>
     </div>
     
     <script>
-        // INICIALIZAÇÃO IMEDIATA DO FIREBASE
-        console.log('🚀 Iniciando configuração do Firebase...');
+        // AGUARDA O FIREBASE CARREGAR
+        console.log('🚀 Iniciando...');
         
-        const firebaseConfig = {
-            apiKey: "AIzaSyB8uUzNpj3RLdoVZoHqd61zGMxsm5KHbL8",
-            authDomain: "imperio-pizzas.firebaseapp.com",
-            projectId: "imperio-pizzas",
-            storageBucket: "imperio-pizzas.firebasestorage.app",
-            messagingSenderId: "177187165049",
-            appId: "1:177187165049:web:c0419e4fc621cd2621d5a8"
-        };
-        
-        // Verificar se o Firebase já está disponível
-        if (typeof firebase !== 'undefined') {
-            console.log('✅ Firebase SDK carregado!');
+        // Função para iniciar o app
+        function iniciarApp() {
+            console.log('✅ Firebase detectado! Iniciando app...');
+            
+            // Configurar Firebase
+            const firebaseConfig = {
+                apiKey: "AIzaSyB8uUzNpj3RLdoVZoHqd61zGMxsm5KHbL8",
+                authDomain: "imperio-pizzas.firebaseapp.com",
+                projectId: "imperio-pizzas",
+                storageBucket: "imperio-pizzas.firebasestorage.app",
+                messagingSenderId: "177187165049",
+                appId: "1:177187165049:web:c0419e4fc621cd2621d5a8"
+            };
+            
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
-                console.log('✅ Firebase inicializado!');
-            } else {
-                console.log('✅ Firebase já estava inicializado!');
             }
-            window.db = firebase.firestore();
-            window.empresaId = "imperio-pizzas";
-            console.log('✅ db disponível, empresaId:', empresaId);
+            const db = firebase.firestore();
+            const empresaId = "imperio-pizzas";
             
-            // Iniciar o app
-            iniciarApp();
-        } else {
-            console.error('❌ Firebase SDK NÃO carregou!');
-            document.getElementById('listaSabores').innerHTML = '<div class="loading">❌ Erro ao carregar sistema. Recarregue a página.</div>';
-        }
-        
-        function iniciarApp() {
+            console.log('✅ Firebase pronto! db:', typeof db);
+            
             const urlParams = new URLSearchParams(window.location.search);
             const tipoPizza = urlParams.get('tipo') || 'pequena';
             
@@ -510,214 +536,143 @@
             let pizzaSelecionada = null;
             
             const titulos = {
-                'pequena': { titulo: '🍕 Pizza Pequena', subtitulo: '1 sabor', qtdSabores: 1 },
-                'grande': { titulo: '🍕 Pizza Grande', subtitulo: '2 sabores', qtdSabores: 2 },
-                'tresSabores': { titulo: '🍕 Pizza 3 Sabores', subtitulo: '3 sabores', qtdSabores: 3 }
+                'pequena': { titulo: '🍕 Pizza Pequena', subtitulo: '1 sabor' },
+                'grande': { titulo: '🍕 Pizza Grande', subtitulo: '2 sabores' },
+                'tresSabores': { titulo: '🍕 Pizza 3 Sabores', subtitulo: '3 sabores' }
             };
             
             const bordas = [
-                { nome: 'Sem Borda', preco: 0.00 },
-                { nome: 'Borda de Catupiry', preco: 25.00 },
-                { nome: 'Borda de Cheddar', preco: 28.00 },
-                { nome: 'Borda de Calabresa', preco: 28.00 },
-                { nome: 'Borda de Presunto', preco: 25.00 },
-                { nome: 'Borda de Pãozinho Frango e Catupiry', preco: 36.00 },
-                { nome: 'Borda de Pãozinho Calabresa e Catupiry', preco: 36.00 },
-                { nome: 'Borda de Mussarela', preco: 33.00 },
-                { nome: 'Borda Nutella', preco: 40.00 },
-                { nome: 'Borda Leite Ninho', preco: 36.00 },
-                { nome: 'Borda Brigadeiro', preco: 36.00 }
+                { nome: 'Sem Borda', preco: 0 },
+                { nome: 'Borda de Catupiry', preco: 25 },
+                { nome: 'Borda de Cheddar', preco: 28 },
+                { nome: 'Borda de Calabresa', preco: 28 },
+                { nome: 'Borda de Presunto', preco: 25 },
+                { nome: 'Borda de Mussarela', preco: 33 }
             ];
             
-            function rolarParaSabores() {
-                const secaoSabores = document.querySelector('.secao-sabores');
-                if (secaoSabores) secaoSabores.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            function renderizarBordas() {
+                const container = document.getElementById('listaBordas');
+                container.innerHTML = bordas.map(borda => `
+                    <div class="borda-item" data-nome="${borda.nome}" data-preco="${borda.preco}">
+                        <span class="borda-nome">${borda.nome}</span>
+                        <span class="borda-preco">R$ ${borda.preco.toFixed(2)}</span>
+                    </div>
+                `).join('');
+                
+                document.querySelectorAll('.borda-item').forEach(el => {
+                    el.onclick = () => {
+                        document.querySelectorAll('.borda-item').forEach(i => i.classList.remove('selecionado'));
+                        el.classList.add('selecionado');
+                        bordaSelecionada = { nome: el.dataset.nome, preco: parseFloat(el.dataset.preco) };
+                        atualizarResumo();
+                    };
+                });
             }
             
             async function carregarSabores() {
                 try {
-                    console.log('🟡 Buscando cardápio para empresa:', empresaId);
-                    const cardapioDoc = await db.collection('cardapio').doc(empresaId).get();
-                    
-                    if (cardapioDoc.exists) {
-                        let dados = cardapioDoc.data().dados || {};
+                    const doc = await db.collection('cardapio').doc(empresaId).get();
+                    if (doc.exists) {
+                        let dados = doc.data().dados || {};
                         if (typeof dados === 'string') dados = JSON.parse(dados);
-                        
                         if (dados.pizzasSalgadas && dados.pizzasSalgadas.length) {
                             saboresLista = dados.pizzasSalgadas;
-                            console.log('✅ Usando dados do Firebase:', saboresLista.length, 'sabores');
+                            console.log('✅ Usando Firebase:', saboresLista.length, 'sabores');
                         } else {
-                            saboresLista = [
-                                { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/1-Calabresa.png" },
-                                { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/2-Mussarela.png" },
-                                { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 44.90, imagem: "images/pizzas/3-Portuguesa.png" },
-                                { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 47.90, imagem: "images/pizzas/4-Frango_Catupiry.png" },
-                                { id: 5, nome: "Atum", descricao: "Atum sólido, cebola, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/5-Atum.png" },
-                                { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/6-Quatro_Queijo.jpg" }
-                            ];
+                            usarDadosLocais();
                         }
                     } else {
-                        console.log('⚠️ Documento não encontrado, usando dados locais');
-                        saboresLista = [
-                            { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/1-Calabresa.png" },
-                            { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/2-Mussarela.png" },
-                            { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 44.90, imagem: "images/pizzas/3-Portuguesa.png" },
-                            { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 47.90, imagem: "images/pizzas/4-Frango_Catupiry.png" },
-                            { id: 5, nome: "Atum", descricao: "Atum sólido, cebola, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/5-Atum.png" },
-                            { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/6-Quatro_Queijo.jpg" }
-                        ];
+                        usarDadosLocais();
                     }
-                    
-                    renderizarSabores();
-                } catch (error) {
-                    console.error('❌ Erro ao carregar sabores:', error);
-                    saboresLista = [
-                        { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/1-Calabresa.png" },
-                        { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/2-Mussarela.png" },
-                        { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 44.90, imagem: "images/pizzas/3-Portuguesa.png" },
-                        { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 47.90, imagem: "images/pizzas/4-Frango_Catupiry.png" },
-                        { id: 5, nome: "Atum", descricao: "Atum sólido, cebola, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/5-Atum.png" },
-                        { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/6-Quatro_Queijo.jpg" }
-                    ];
-                    renderizarSabores();
+                } catch(e) {
+                    console.log('⚠️ Erro no Firebase, usando dados locais:', e);
+                    usarDadosLocais();
                 }
+                renderizarSabores();
             }
             
-            function renderizarBordas() {
-                const container = document.getElementById('listaBordas');
-                let html = '';
-                bordas.forEach((borda) => {
-                    html += `
-                        <div class="borda-item" data-borda="${borda.nome}" data-preco="${borda.preco}">
-                            <div class="borda-info">
-                                <div class="borda-nome">${borda.nome}</div>
-                                <div class="borda-preco">R$ ${borda.preco.toFixed(2)}</div>
-                            </div>
-                            <div class="borda-selecionado"></div>
-                        </div>
-                    `;
-                });
-                container.innerHTML = html;
-                
-                document.querySelectorAll('.borda-item').forEach(item => {
-                    item.addEventListener('click', () => {
-                        document.querySelectorAll('.borda-item').forEach(i => i.classList.remove('selecionado'));
-                        item.classList.add('selecionado');
-                        bordaSelecionada = {
-                            nome: item.dataset.borda,
-                            preco: parseFloat(item.dataset.preco)
-                        };
-                        atualizarResumo();
-                        rolarParaSabores();
-                    });
-                });
+            function usarDadosLocais() {
+                saboresLista = [
+                    { id: 1, nome: "Calabresa", descricao: "Calabresa fatiada, cebola, mussarela e orégano", preco: 39.90, imagem: "images/pizzas/1-Calabresa.png" },
+                    { id: 2, nome: "Mussarela", descricao: "Mussarela, tomate, orégano e azeitonas", preco: 37.90, imagem: "images/pizzas/2-Mussarela.png" },
+                    { id: 3, nome: "Portuguesa", descricao: "Presunto, ovo, cebola, ervilha, mussarela e azeitona", preco: 44.90, imagem: "images/pizzas/3-Portuguesa.png" },
+                    { id: 4, nome: "Frango com Catupiry", descricao: "Frango desfiado, catupiry e milho", preco: 47.90, imagem: "images/pizzas/4-Frango_Catupiry.png" },
+                    { id: 5, nome: "Atum", descricao: "Atum sólido, cebola, mussarela e orégano", preco: 48.90, imagem: "images/pizzas/5-Atum.png" },
+                    { id: 6, nome: "4 Queijos", descricao: "Mussarela, provolone, parmesão e catupiry", preco: 50.90, imagem: "images/pizzas/6-Quatro_Queijo.jpg" }
+                ];
             }
             
             function renderizarSabores() {
                 const container = document.getElementById('listaSabores');
-                if (!container) return;
-                
-                let html = '<div class="sabores-grid">';
-                saboresLista.forEach(sabor => {
-                    const precoSabor = sabor.preco || 39.90;
-                    const imagem = sabor.imagem || 'https://via.placeholder.com/280x280?text=Pizza';
-                    html += `
-                        <div class="sabor-card" data-id="${sabor.id}" data-nome="${sabor.nome}" data-preco="${precoSabor}" data-desc="${sabor.descricao || ''}">
-                            <img src="${imagem}" class="sabor-imagem" onerror="this.src='https://via.placeholder.com/280x280?text=Pizza'">
-                            <div class="sabor-info">
-                                <div class="sabor-nome">${sabor.nome}</div>
-                                <div class="sabor-ingredientes">${sabor.descricao || ''}</div>
-                                <div class="sabor-preco">R$ ${precoSabor.toFixed(2)}</div>
-                            </div>
-                            <div class="sabor-select"></div>
+                container.innerHTML = `<div class="sabores-grid">${saboresLista.map(sabor => `
+                    <div class="sabor-card" data-id="${sabor.id}" data-nome="${sabor.nome}" data-preco="${sabor.preco}">
+                        <img src="${sabor.imagem}" class="sabor-imagem" onerror="this.src='https://via.placeholder.com/280x280?text=Pizza'">
+                        <div class="sabor-info">
+                            <div class="sabor-nome">${sabor.nome}</div>
+                            <div class="sabor-ingredientes">${sabor.descricao}</div>
+                            <div class="sabor-preco">R$ ${sabor.preco.toFixed(2)}</div>
                         </div>
-                    `;
-                });
-                html += '</div>';
-                container.innerHTML = html;
+                    </div>
+                `).join('')}</div>`;
                 
-                document.querySelectorAll('.sabor-card').forEach(item => {
-                    item.addEventListener('click', () => {
+                document.querySelectorAll('.sabor-card').forEach(el => {
+                    el.onclick = () => {
                         document.querySelectorAll('.sabor-card').forEach(i => i.classList.remove('selecionado'));
-                        item.classList.add('selecionado');
-                        const precoSabor = parseFloat(item.dataset.preco);
-                        pizzaSelecionada = {
-                            id: item.dataset.id,
-                            nome: item.dataset.nome,
-                            preco: precoSabor,
-                            descricao: item.dataset.desc
+                        el.classList.add('selecionado');
+                        pizzaSelecionada = { 
+                            id: el.dataset.id, 
+                            nome: el.dataset.nome, 
+                            preco: parseFloat(el.dataset.preco) 
                         };
                         atualizarResumo();
-                    });
+                    };
                 });
             }
             
             function atualizarResumo() {
-                const precoPizza = pizzaSelecionada ? pizzaSelecionada.preco : 0;
-                const precoBorda = bordaSelecionada ? bordaSelecionada.preco : 0;
-                const total = precoPizza + precoBorda;
-                const nomeBorda = bordaSelecionada ? bordaSelecionada.nome : 'Não selecionada';
-                const nomePizza = pizzaSelecionada ? pizzaSelecionada.nome : 'Não selecionada';
-                
-                const resumoBorda = document.getElementById('resumoBorda');
-                const resumoPizza = document.getElementById('resumoPizza');
-                const resumoTotal = document.getElementById('resumoTotal');
-                const btnProximo = document.getElementById('btnProximo');
-                
-                if (resumoBorda) resumoBorda.innerHTML = `🍞 Borda: <strong>${nomeBorda}</strong> - R$ ${precoBorda.toFixed(2)}`;
-                if (resumoPizza) resumoPizza.innerHTML = `🍕 Pizza: <strong>${nomePizza}</strong> - R$ ${precoPizza.toFixed(2)}`;
-                if (resumoTotal) resumoTotal.innerHTML = `💰 Total: R$ ${total.toFixed(2)}`;
-                if (btnProximo) btnProximo.disabled = !pizzaSelecionada;
+                const precoPizza = pizzaSelecionada?.preco || 0;
+                const precoBorda = bordaSelecionada?.preco || 0;
+                document.getElementById('resumoBorda').innerHTML = `🍞 Borda: <strong>${bordaSelecionada?.nome || 'Não selecionada'}</strong> - R$ ${precoBorda.toFixed(2)}`;
+                document.getElementById('resumoPizza').innerHTML = `🍕 Pizza: <strong>${pizzaSelecionada?.nome || 'Não selecionada'}</strong> - R$ ${precoPizza.toFixed(2)}`;
+                document.getElementById('resumoTotal').innerHTML = `💰 Total: R$ ${(precoPizza + precoBorda).toFixed(2)}`;
+                document.getElementById('btnProximo').disabled = !pizzaSelecionada;
             }
             
             function finalizar() {
-                if (!pizzaSelecionada) {
-                    alert('Selecione um sabor de pizza!');
-                    return;
-                }
-                
-                const precoPizza = pizzaSelecionada.preco;
-                const precoBorda = bordaSelecionada ? bordaSelecionada.preco : 0;
-                const total = precoPizza + precoBorda;
-                const nomeBorda = bordaSelecionada ? bordaSelecionada.nome : 'Sem Borda';
-                
-                const item = {
+                if (!pizzaSelecionada) return alert('Selecione um sabor!');
+                const total = (pizzaSelecionada.preco + (bordaSelecionada?.preco || 0));
+                let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
+                carrinho.push({
                     id: `pizza_${Date.now()}`,
                     nome: `${titulos[tipoPizza].titulo} - ${pizzaSelecionada.nome}`,
-                    descricao: `🍞 Borda: ${nomeBorda} | 🍕 Sabor: ${pizzaSelecionada.nome}`,
                     preco: total,
-                    quantidade: 1,
-                    tipo: 'pizza_personalizada',
-                    detalhes: {
-                        tamanho: tipoPizza,
-                        borda: nomeBorda,
-                        sabor: pizzaSelecionada.nome,
-                        precoBorda: precoBorda,
-                        precoPizza: precoPizza
-                    }
-                };
-                
-                let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-                carrinho.push(item);
+                    quantidade: 1
+                });
                 localStorage.setItem('carrinho', JSON.stringify(carrinho));
-                
-                alert(`✅ Pizza adicionada ao carrinho!\n\n${titulos[tipoPizza].titulo}\n🍞 Borda: ${nomeBorda}\n🍕 Sabor: ${pizzaSelecionada.nome}\n💰 Total: R$ ${total.toFixed(2)}`);
+                alert(`✅ Pizza adicionada!\n${pizzaSelecionada.nome}\nTotal: R$ ${total.toFixed(2)}`);
                 window.location.href = '/pizzaria.html';
             }
             
-            // Inicializar UI
-            if (titulos[tipoPizza]) {
-                const tituloElem = document.getElementById('tituloPagina');
-                const subtituloElem = document.getElementById('subtituloPagina');
-                if (tituloElem) tituloElem.innerHTML = titulos[tipoPizza].titulo;
-                if (subtituloElem) subtituloElem.innerHTML = titulos[tipoPizza].subtitulo;
-            }
+            document.getElementById('tituloPagina').innerHTML = titulos[tipoPizza]?.titulo || '🍕 Pizza';
+            document.getElementById('subtituloPagina').innerHTML = titulos[tipoPizza]?.subtitulo || '1 sabor';
+            document.getElementById('btnProximo').onclick = finalizar;
             
             renderizarBordas();
             carregarSabores();
-            
-            const btnProximo = document.getElementById('btnProximo');
-            if (btnProximo) btnProximo.onclick = finalizar;
+        }
+        
+        // Aguarda o Firebase carregar
+        if (typeof firebase !== 'undefined') {
+            iniciarApp();
+        } else {
+            window.addEventListener('load', function() {
+                if (typeof firebase !== 'undefined') {
+                    iniciarApp();
+                } else {
+                    console.error('Firebase não carregou!');
+                    document.getElementById('listaSabores').innerHTML = '<div class="loading">❌ Erro ao carregar. Recarregue a página.</div>';
+                }
+            });
         }
     </script>
 </body>
